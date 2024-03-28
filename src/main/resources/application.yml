@@ -1,5 +1,9 @@
 server:
   port: 0
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 
 eureka:
   instance:
@@ -9,9 +13,22 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+
 spring:
   application:
     name: api-service
+  datasource:
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+    url: jdbc:mysql://133.186.244.96:3306/nhn_academy_21
+    username: "nhn_academy_21"
+    password: "*L]RAMG*8NYJnCKK"
+
+  jpa:
+    database: MYSQL
+    database-platform: "org.hibernate.dialect.MySQL8Dialect"
+    show-sql: true
+    hibernate:
+      ddl-auto: create
 
 ioteatime:
   user:

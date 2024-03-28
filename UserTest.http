@@ -1,0 +1,8 @@
+POST localhost:8080/users/
+Content-Type: application/json
+
+{
+  "id" : "haedanui",
+  "password": "helloworld",
+  "name": "유승진"
+}
