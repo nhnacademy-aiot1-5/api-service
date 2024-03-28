@@ -8,4 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 public class UserProperties {
     private String userDetailUri;
+
+    public void setUserDetailUri(String userDetailUri) {
+        this.userDetailUri = userDetailUri;
+    }
 }
