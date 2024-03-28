@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 가입일은 LocalDate를 통해 현재 날짜를 넣음<p>
+     * CreatedAt은 LocalDate를 통해 현재 날짜를 넣음<p>
      * Role은 가입할때는 기본적으로 User로 설정<p>
      * Password는 인코딩 작업 후에 추가되어야 하므로 BeanUtils로 추가하지 않았음
      *
