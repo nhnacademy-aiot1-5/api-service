@@ -12,3 +12,8 @@ eureka:
 spring:
   application:
     name: api-service
+
+ioteatime:
+  user:
+    userDetailUri:
+      http://localhost:8080/user

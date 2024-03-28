@@ -1,7 +1,7 @@
 package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.User;
-import live.ioteatime.apiservice.dto.UserGetDto;
+import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -38,7 +37,7 @@ class UserServiceTest {
         String id = "ryu";
         given(userRepository.findById(any())).willReturn(Optional.of(user));
 
-        UserGetDto response = userService.loadUserByUserName(id);
+        UserDto response = userService.loadUserByUserName(id);
 
         Assertions.assertThat(response.getId()).isEqualTo(id);
         //이 테스트를 통과시키기 위해서 userGetDto에 setter를 넣었음

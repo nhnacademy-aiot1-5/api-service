@@ -1,10 +1,9 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.dto.UserCreateDto;
-import live.ioteatime.apiservice.dto.UserGetDto;
+import live.ioteatime.apiservice.dto.UserDto;
 
 public interface UserService {
-    UserGetDto loadUserByUserName(String userId);
+    UserDto loadUserByUserName(String userId);
 
-    void createUser(UserCreateDto userCreateDto);
+    String createUser(UserDto userDto);
 }
