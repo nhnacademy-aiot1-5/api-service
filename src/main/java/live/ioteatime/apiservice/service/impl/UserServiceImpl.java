@@ -22,13 +22,13 @@ public class UserServiceImpl implements UserService {
 
     /**
      * @param userId 유저아이디
-     * @return userDTO 유저 정보를 반환합니다.
+     * @return userDTO 유저 id, pw를 반환합니다.
      */
     @Override
     public UserDto loadUserByUserName(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto);
+        BeanUtils.copyProperties(user, userDto, "name", "createdAt", "role");
 
         return userDto;
     }
@@ -55,5 +55,17 @@ public class UserServiceImpl implements UserService {
         user.setRole(Role.USER);
         userRepository.save(user);
         return user.getId();
+    }
+
+    /**
+     * @param userId 유저아이디
+     * @return userDTO pw 제외한 유저 정보를 반환합니다.
+     */
+    @Override
+    public UserDto getUserInfo(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto, "password");
+        return userDto;
     }
 }

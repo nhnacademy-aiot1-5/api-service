@@ -12,16 +12,20 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://${discovery.id}:${discovery.password}@${discovery.ip}:8761/eureka
 
 spring:
   application:
     name: api-service
+  profiles:
+      include:
+        - secret
   datasource:
-    driver-class-name: "com.mysql.cj.jdbc.Driver"
-    url: jdbc:mysql://133.186.244.96:3306/nhn_academy_21
-    username: "nhn_academy_21"
-    password: "*L]RAMG*8NYJnCKK"
+    driver-class-name: ${mysql.driver-class-name}
+    url: ${mysql.url}
+    username: ${mysql.username}
+    password: ${mysql.password}
+
 
   jpa:
     database: MYSQL
@@ -33,4 +37,4 @@ spring:
 ioteatime:
   user:
     userDetailUri:
-      http://localhost:8080/user
+      ${ioteatime.user.userDetailUri}
