@@ -29,7 +29,17 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> loadUserByUserName(@PathVariable String userId) {
+    public ResponseEntity<UserDto> getUserInfo(@PathVariable String userId) {
+        return ResponseEntity.ok(userService.getUserInfo(userId));
+    }
+
+    /**
+     * 유저의 UserDetail 정보를 반환하는 함수
+     *
+     * @return HttpStatus 200번 OK
+     */
+    @GetMapping("/{userId}/details")
+    public ResponseEntity<UserDto> loadUserByUserName(@PathVariable String userId){
         return ResponseEntity.ok(userService.loadUserByUserName(userId));
     }
 
@@ -49,4 +59,6 @@ public class UserController {
 
         return ResponseEntity.created(location).build();
     }
+
+
 }
