@@ -21,6 +21,7 @@ import java.net.URI;
 public class UserController {
     private final UserService userService;
     private final UserProperties userProperties;
+    private final String X_USER_ID = "X-USER-ID";
 
     /**
      * 유저 아이디를 가지고 있는 유저의 정보를 반환하는 함수
@@ -29,7 +30,17 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> loadUserByUserName(@PathVariable String userId) {
+    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId) {
+        return ResponseEntity.ok(userService.getUserInfo(userId));
+    }
+
+    /**
+     * 유저의 UserDetails 정보를 반환하는 함수
+     *
+     * @return HttpStatus 200번 OK
+     */
+    @GetMapping("/{userId}/details")
+    public ResponseEntity<UserDto> loadUserByUserName(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId){
         return ResponseEntity.ok(userService.loadUserByUserName(userId));
     }
 
@@ -39,7 +50,7 @@ public class UserController {
      * @return HttpStatus 201번 Created
      */
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Void> createUser(@RequestHeader(X_USER_ID) String xUserID, @RequestBody UserDto userDto) {
         String createdUserId = userService.createUser(userDto);
 
         URI location = UriComponentsBuilder
@@ -49,4 +60,6 @@ public class UserController {
 
         return ResponseEntity.created(location).build();
     }
+
+
 }
