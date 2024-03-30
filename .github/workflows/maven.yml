@@ -35,7 +35,7 @@ jobs:
 
     - name : add application-secret
       run : touch ./src/main/resources/application-secret.properties
-      run: echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application.properties
+            echo "${{ secrets.APPLICATION_SECRET }}" > ./src/main/resources/application.properties
 
     - name : upload file
       uses: appleboy/scp-action@master
