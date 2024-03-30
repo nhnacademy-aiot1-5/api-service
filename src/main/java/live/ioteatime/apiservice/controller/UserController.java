@@ -30,7 +30,7 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId) {
+    public ResponseEntity<UserDto> getUserInfo(/*@RequestHeader(X_USER_ID) String xUserID, */@PathVariable String userId) {
         return ResponseEntity.ok(userService.getUserInfo(userId));
     }
 
@@ -40,7 +40,7 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping("/{userId}/details")
-    public ResponseEntity<UserDto> loadUserByUserName(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId){
+    public ResponseEntity<UserDto> loadUserByUserName(/*@RequestHeader(X_USER_ID) String xUserID, */@PathVariable String userId){
         return ResponseEntity.ok(userService.loadUserByUserName(userId));
     }
 
@@ -50,7 +50,7 @@ public class UserController {
      * @return HttpStatus 201번 Created
      */
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestHeader(X_USER_ID) String xUserID, @RequestBody UserDto userDto) {
+    public ResponseEntity<Void> createUser(/*@RequestHeader(X_USER_ID) String xUserID, */@RequestBody UserDto userDto) {
         String createdUserId = userService.createUser(userDto);
 
         URI location = UriComponentsBuilder

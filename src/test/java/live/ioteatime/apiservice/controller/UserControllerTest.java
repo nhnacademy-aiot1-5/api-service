@@ -58,12 +58,11 @@ class UserControllerTest {
     void loadUserByUserName() throws Exception {
         Mockito.when(userService.loadUserByUserName(anyString())).thenReturn(testUserDto);
 
-        mockMvc.perform(get("/users/{userId}", "testId"))
+        mockMvc.perform(get("/users/{userId}/details", "testId"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testUserDto.getId()))
-                .andExpect(jsonPath("$.name").value(testUserDto.getName()))
-                .andExpect(jsonPath("$.role").value(testUserDto.getRole().toString()));
+                .andExpect(jsonPath("$.pw").value(testUserDto.getPassword()));
     }
 
     @Test
@@ -72,7 +71,7 @@ class UserControllerTest {
 
         Mockito.when(userService.loadUserByUserName(anyString())).thenThrow(new UserNotFoundException(testUser.getId()));
 
-        mockMvc.perform(get("/users/{userId}", "testId"))
+        mockMvc.perform(get("/users/{userId}/details", "testId"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string("User not found: testId"));
