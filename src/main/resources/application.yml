@@ -17,6 +17,8 @@ spring:
     name: api-service
   profiles:
     active: prod
+  jackson:
+    default-property-inclusion: non_null
 
 ioteatime:
   user:
