@@ -1,13 +1,11 @@
 server:
-  port: 0
+  port: 8080
   servlet:
     encoding:
       charset: UTF-8
       force: true
 
 eureka:
-  instance:
-    instance-id: ${spring.application.name}:${random.uuid}
   client:
     register-with-eureka: true
     fetch-registry: true
