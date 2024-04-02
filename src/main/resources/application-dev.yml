@@ -1,18 +1,15 @@
 discovery:
-  id: admin
-  password: admin
-  ip: 192.168.0.39
+  id: test
+  password: test
+  ip: 127.0.0.1
 
 spring:
   datasource:
-    driver-class-name: "com.mysql.cj.jdbc.Driver"
-    url: jdbc:mysql://133.186.244.96:3306/nhn_academy_21
-    username: "nhn_academy_21"
-    password: "*L]RAMG*8NYJnCKK"
-
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=MYSQL
+    username: SA
+    password:
   jpa:
-    database: MYSQL
-    database-platform: "org.hibernate.dialect.MySQL8Dialect"
-    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
