@@ -60,6 +60,4 @@ public class UserController {
 
         return ResponseEntity.created(location).build();
     }
-
-
 }
