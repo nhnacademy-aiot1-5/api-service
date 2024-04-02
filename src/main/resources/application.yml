@@ -1,13 +1,11 @@
 server:
-  port: 0
+  port: 8080
   servlet:
     encoding:
       charset: UTF-8
       force: true
 
 eureka:
-  instance:
-    instance-id: ${spring.application.name}:${random.uuid}
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -18,23 +16,11 @@ spring:
   application:
     name: api-service
   profiles:
-      include:
-        - secret
-  datasource:
-    driver-class-name: ${mysql.driver-class-name}
-    url: ${mysql.url}
-    username: ${mysql.username}
-    password: ${mysql.password}
-
-
-  jpa:
-    database: MYSQL
-    database-platform: "org.hibernate.dialect.MySQL8Dialect"
-    show-sql: true
-    hibernate:
-      ddl-auto: create
+    active: prod
+  jackson:
+    default-property-inclusion: non_null
 
 ioteatime:
   user:
     userDetailUri:
-      ${ioteatime.user.userDetailUri}
+      http://localhost:8080/user
