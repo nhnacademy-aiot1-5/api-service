@@ -48,7 +48,7 @@ public class BeforeExecuteMethodAspect {
         String host = request.getHeader("host");
 
         if (!host.equals(referer)) {
-            throw new RefererNotMatchesException("referer가 host와 일치하지 않습니다." + "referer : " + referer + " host : " + host);
+            throw new RefererNotMatchesException("referer가 host와 일치하지 않습니다. " + "referer : " + referer + " host : " + host);
         }
     }
 }
