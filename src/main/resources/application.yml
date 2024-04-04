@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8090
   servlet:
     encoding:
       charset: UTF-8
@@ -16,7 +16,7 @@ spring:
   application:
     name: api-service
   profiles:
-    active: prod
+    active: dev
   jackson:
     default-property-inclusion: non_null
 

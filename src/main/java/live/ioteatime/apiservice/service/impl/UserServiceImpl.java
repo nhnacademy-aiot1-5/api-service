@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String createUser(UserDto userDto) {
 
-        if(userRepository.existsById(userDto.getId())) {
+        if (userRepository.existsById(userDto.getId())) {
             throw new UserAlreadyExistsException(userDto.getId());
         }
         User user = new User();
@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         String encodingPassword = passwordEncoder.encode(userDto.getPassword());
         user.setPassword(encodingPassword);
         user.setCreatedAt(LocalDate.now());
-        user.setRole(Role.USER);
+        user.setRole(Role.GUEST);
         userRepository.save(user);
         return user.getId();
     }
@@ -67,5 +67,21 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto, "password");
         return userDto;
+    }
+
+    @Override
+    public String updateUserRole(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        user.setRole(Role.USER);
+        userRepository.save(user);
+        return user.getId();
+    }
+
+    @Override
+    public String updateUser(UserDto userDto) {
+        User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UserNotFoundException(userDto.getId()));
+        BeanUtils.copyProperties(userDto, user);
+        userRepository.save(user);
+        return user.getId();
     }
 }
