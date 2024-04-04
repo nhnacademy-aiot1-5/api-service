@@ -20,8 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -78,6 +77,33 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("getUserInfo 성공")
+    void getUserInfo() throws Exception {
+        Mockito.when(userService.getUserInfo(anyString())).thenReturn(testUserDto);
+
+        mockMvc.perform(get("/users/{userId}", "testId"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(testUserDto.getId()))
+                .andExpect(jsonPath("$.pw").value(testUserDto.getPassword()))
+                .andExpect(jsonPath("$.name").value(testUserDto.getName()))
+                .andExpect(jsonPath("$.role").value(testUserDto.getRole().toString()));
+    }
+
+    @Test
+    @DisplayName("getUserInfo 실패 - user not found")
+    void getUserInfoFail() throws Exception {
+
+        Mockito.when(userService.getUserInfo(anyString())).thenThrow(new UserNotFoundException(testUser.getId()));
+
+        mockMvc.perform(get("/users/{userId}", "testId"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+                .andExpect(content().string("User not found: testId"));
+    }
+
+
+    @Test
     void createUser() throws Exception {
         Mockito.when(userService.createUser(any())).thenReturn(testUser.getId());
         Mockito.when(userProperties.getUserDetailUri()).thenReturn("http://localhost:8080/users");
@@ -92,16 +118,22 @@ class UserControllerTest {
                 .andReturn();
     }
 
-//    @Test
-//    void updateUserRole() throws Exception{
-//        Mockito.when(userService.updateUserRole(any())).thenReturn(testUser.getId());
-//
-//        mockMvc.perform(get("/users/{userId}/roles", "testId"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.id").value(testUserDto.getId()))
-//                .andExpect(jsonPath("$.pw").value(testUserDto.getPassword()));
-//
-//
-//    }
+    @Test
+    void updateUserRole() throws Exception{
+        testUserDto.setRole(Role.USER);
+        Mockito.when(userService.updateUserRole(any())).thenReturn(testUserDto.getId());
+        Mockito.when(userService.getUserInfo(anyString())).thenReturn(testUserDto);
+
+        mockMvc.perform(put("/users/{userId}/roles", "testId"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
+                .andExpect(content().string(testUserDto.getId()));
+
+        mockMvc.perform(get("/users/{userId}", "testId"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.role").value(testUserDto.getRole().toString()));
+    }
+
+
+
 }
