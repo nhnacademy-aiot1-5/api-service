@@ -57,7 +57,8 @@ class UserControllerTest {
     void loadUserByUserName() throws Exception {
         Mockito.when(userService.loadUserByUserName(anyString())).thenReturn(testUserDto);
 
-        mockMvc.perform(get("/users/{userId}/details", "testId"))
+        mockMvc.perform(get("/users/{userId}/details", "testId")
+                        .header("X-USER-ID", "testId"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testUserDto.getId()))
@@ -70,7 +71,8 @@ class UserControllerTest {
 
         Mockito.when(userService.loadUserByUserName(anyString())).thenThrow(new UserNotFoundException(testUser.getId()));
 
-        mockMvc.perform(get("/users/{userId}/details", "testId"))
+        mockMvc.perform(get("/users/{userId}/details", "testId")
+                        .header("X-USER-ID", "testId"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string("User not found: testId"));
@@ -81,7 +83,8 @@ class UserControllerTest {
     void getUserInfo() throws Exception {
         Mockito.when(userService.getUserInfo(anyString())).thenReturn(testUserDto);
 
-        mockMvc.perform(get("/users/{userId}", "testId"))
+        mockMvc.perform(get("/users/{userId}", "testId")
+                        .header("X-USER-ID", "testId"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testUserDto.getId()))
@@ -96,14 +99,15 @@ class UserControllerTest {
 
         Mockito.when(userService.getUserInfo(anyString())).thenThrow(new UserNotFoundException(testUser.getId()));
 
-        mockMvc.perform(get("/users/{userId}", "testId"))
+        mockMvc.perform(get("/users/{userId}", "testId")
+                        .header("X-USER-ID", "testId"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string("User not found: testId"));
     }
 
-
     @Test
+    @DisplayName("createUser 성공")
     void createUser() throws Exception {
         Mockito.when(userService.createUser(any())).thenReturn(testUser.getId());
         Mockito.when(userProperties.getUserDetailUri()).thenReturn("http://localhost:8080/users");
@@ -119,21 +123,22 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("updateUserRole 성공")
     void updateUserRole() throws Exception{
         testUserDto.setRole(Role.USER);
         Mockito.when(userService.updateUserRole(any())).thenReturn(testUserDto.getId());
         Mockito.when(userService.getUserInfo(anyString())).thenReturn(testUserDto);
 
-        mockMvc.perform(put("/users/{userId}/roles", "testId"))
+        mockMvc.perform(put("/users/{userId}/roles", "testId")
+                        .header("X-USER-ID", "testId"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string(testUserDto.getId()));
 
-        mockMvc.perform(get("/users/{userId}", "testId"))
+        mockMvc.perform(get("/users/{userId}", "testId")
+                        .header("X-USER-ID", "testId"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.role").value(testUserDto.getRole().toString()));
     }
-
-
 
 }
