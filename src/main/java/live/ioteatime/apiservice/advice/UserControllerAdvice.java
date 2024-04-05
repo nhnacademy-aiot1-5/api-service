@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.advice;
 
+import live.ioteatime.apiservice.exception.UnauthorizedException;
 import live.ioteatime.apiservice.exception.UserAlreadyExistsException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -11,13 +12,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class UserControllerAdvice {
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> userNotFound(UserNotFoundException e) {
+    public ResponseEntity<String> userNotFoundException(UserNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<String> userAlreadyExists(UserAlreadyExistsException e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<String> userAlreadyExistsException(UserAlreadyExistsException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> unauthorizedUserException(UnauthorizedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
 
