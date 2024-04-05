@@ -69,6 +69,10 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
+/**
+     * @param userId 유저아이디
+     * @return userId 유저아이디
+     */
     @Override
     public String updateUserRole(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
@@ -77,6 +81,10 @@ public class UserServiceImpl implements UserService {
         return user.getId();
     }
 
+    /**
+     * @param userDto 유저 정보
+     * @return userId 유저아이디
+     */
     @Override
     public String updateUser(UserDto userDto) {
         User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UserNotFoundException(userDto.getId()));
