@@ -32,10 +32,10 @@ springdoc:
   swagger-ui:
     path: /service
     tags-sorter: alpha
-    operations-sorter: alpha
+    operations-sorter: method
   api-docs:
     path: /service/v3/api-docs
     groups:
       enabled: true
-    cache:
-      disabled: true
+  cache:
+    disabled: true
