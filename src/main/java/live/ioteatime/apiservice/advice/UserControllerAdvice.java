@@ -13,17 +13,17 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> userNotFoundException(UserNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<String> userAlreadyExistsException(UserAlreadyExistsException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<String> unauthorizedUserException(UnauthorizedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
 

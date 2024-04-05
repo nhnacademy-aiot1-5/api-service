@@ -23,13 +23,19 @@ spring:
 ioteatime:
   user:
     userDetailUri:
-      http://localhost:8080/user
+      http://ioteatime.live/mypage
 
 springdoc:
+  packages-to-scan: live.ioteatime.apiservice
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
-    enabled: true
-    version: "v0.1.0"
-
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-  model-and-view-allowed: true
+    path: /service
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /service/v3/api-docs
+    groups:
+      enabled: true
+    cache:
+      disabled: true

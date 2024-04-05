@@ -1,5 +1,5 @@
 package live.ioteatime.apiservice.domain;
 
 public enum Role {
-    ADMIN, USER, GUEST
+    GUEST, USER, ADMIN
 }

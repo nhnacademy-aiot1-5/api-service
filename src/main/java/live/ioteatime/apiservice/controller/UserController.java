@@ -1,5 +1,8 @@
 package live.ioteatime.apiservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.properties.UserProperties;
 import live.ioteatime.apiservice.service.UserService;
@@ -13,11 +16,12 @@ import java.net.URI;
 /**
  * 유저와 관련된 요청을 처리하여 요청에 해당하는 응답을 반환하는 컨트롤러입니다.
  *
- * @author 유승진
+ * @author 유승진, 임세연
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
+@Tag(name = "USER 컨트롤러", description = "유저정보와 관련된 정보를 처리하는 컨트롤러입니다.")
 public class UserController {
     private final UserService userService;
     private final UserProperties userProperties;
@@ -30,7 +34,8 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUserInfo(/*@RequestHeader(X_USER_ID) String xUserID, */@PathVariable String userId) {
+    @Operation(summary = "유저 정보를 가져오는 API", description = "유저의 정보를 가져옵니다.")
+    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId) {
         return ResponseEntity.ok(userService.getUserInfo(userId));
     }
 
@@ -40,7 +45,8 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping("/{userId}/details")
-    public ResponseEntity<UserDto> loadUserByUserName(/*@RequestHeader(X_USER_ID) String xUserID, */@PathVariable String userId){
+    @Operation(summary = "유저 인증을 담당하는 API", description = "로그인 요청을 받았을 때 유저 ID와 유저 PASSWORD를 반환합니다.")
+    public ResponseEntity<UserDto> loadUserByUserName(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId){
         return ResponseEntity.ok(userService.loadUserByUserName(userId));
     }
 
@@ -50,7 +56,8 @@ public class UserController {
      * @return HttpStatus 201번 Created
      */
     @PostMapping
-    public ResponseEntity<Void> createUser(/*@RequestHeader(X_USER_ID) String xUserID, */@RequestBody UserDto userDto) {
+    @Operation(summary = "회원정보를 생성하는 API", description = "회원가입 페이지에서 받은 정보를 데이터베이스에 저장합니다.")
+    public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
         String createdUserId = userService.createUser(userDto);
 
         URI location = UriComponentsBuilder
@@ -67,18 +74,21 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @PutMapping("/{userId}/roles")
-    public ResponseEntity<String> updateUserRole(/*@RequestHeader(X_USER_ID) String xUserID, */@PathVariable("userId") String userId){
+    @Operation(summary = "유저 권한을 수정하는 API", description = "ADMIN 유저가 승인 대기중인 유저의 권한을 GUEST에서 USER로 수정합니다.")
+    @AdminOnly
+    public ResponseEntity<String> updateUserRole(@RequestHeader(X_USER_ID) String xUserID, @PathVariable("userId") String userId){
         return ResponseEntity.ok(userService.updateUserRole(userId));
     }
 
     /**
      * 유저 정보를 수정하는 컨트롤러
-     * 경로 : "/users/{userId}
+     * 경로 : /users/{userId}
      * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
      * @return HttpStatus 200 OK
      */
     @PutMapping("/{userId}")
-    public ResponseEntity<String> updateUser(/*@RequestHeader(X_USER_ID) String xUserID, */@PathVariable("userId") UserDto userDto){
+    @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
+    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String xUserID, @PathVariable("userId") UserDto userDto){
         return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
