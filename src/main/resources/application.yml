@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8090
   servlet:
     encoding:
       charset: UTF-8
@@ -16,7 +16,7 @@ spring:
   application:
     name: api-service
   profiles:
-    active: prod
+    active: dev
   jackson:
     default-property-inclusion: non_null
 
@@ -24,3 +24,12 @@ ioteatime:
   user:
     userDetailUri:
       http://localhost:8080/user
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    version: "v0.1.0"
+
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  model-and-view-allowed: true

@@ -8,4 +8,8 @@ public interface UserService {
     String createUser(UserDto userDto);
 
     UserDto getUserInfo(String userId);
+
+    String updateUserRole(String userId);
+
+    String updateUser(UserDto userDto);
 }
