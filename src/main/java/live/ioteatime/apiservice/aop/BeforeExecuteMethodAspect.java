@@ -1,7 +1,6 @@
 package live.ioteatime.apiservice.aop;
 
 import live.ioteatime.apiservice.domain.Role;
-import live.ioteatime.apiservice.exception.RefererNotMatchesException;
 import live.ioteatime.apiservice.exception.UnauthorizedException;
 import live.ioteatime.apiservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,26 +28,6 @@ public class BeforeExecuteMethodAspect {
 
         if (!role.equals(Role.ADMIN)) {
             throw new UnauthorizedException();
-        }
-    }
-
-    @Before("@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
-            "@annotation(org.springframework.web.bind.annotation.PutMapping) || " +
-            "@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
-    public void areRefererAndHeaderSame() {
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-
-        if (attributes == null) {
-            throw new IllegalStateException("ServletRequestAttributes 또는 요청이 존재하지 않습니다.");
-        }
-
-        HttpServletRequest request = attributes.getRequest();
-
-        String referer = request.getHeader("referer");
-        String host = request.getHeader("host");
-
-        if (!host.equals(referer)) {
-            throw new RefererNotMatchesException("referer가 host와 일치하지 않습니다. " + "referer : " + referer + " host : " + host);
         }
     }
 }
