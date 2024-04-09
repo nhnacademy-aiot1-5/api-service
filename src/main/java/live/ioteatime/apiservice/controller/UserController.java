@@ -46,7 +46,7 @@ public class UserController {
      */
     @GetMapping("/{userId}/details")
     @Operation(summary = "유저 인증을 담당하는 API", description = "로그인 요청을 받았을 때 유저 ID와 유저 PASSWORD를 반환합니다.")
-    public ResponseEntity<UserDto> loadUserByUserName(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId){
+    public ResponseEntity<UserDto> loadUserByUserName(@PathVariable String userId){
         return ResponseEntity.ok(userService.loadUserByUserName(userId));
     }
 
