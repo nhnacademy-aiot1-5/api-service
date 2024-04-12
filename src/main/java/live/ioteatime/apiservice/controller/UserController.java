@@ -33,9 +33,9 @@ public class UserController {
      * @param userId 유저 아이디
      * @return HttpStatus 200번 OK
      */
-    @GetMapping("/{userId}")
+    @GetMapping
     @Operation(summary = "유저 정보를 가져오는 API", description = "유저의 정보를 가져옵니다.")
-    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId) {
+    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.ok(userService.getUserInfo(userId));
     }
 
