@@ -73,22 +73,22 @@ public class UserController {
      * @param userId 유저 권한을 GUEST -> USER로 바꿔줄 유저의 아이디
      * @return HttpStatus 200번 OK
      */
-    @PutMapping("/{userId}/roles")
+    @PutMapping("/roles")
     @Operation(summary = "유저 권한을 수정하는 API", description = "ADMIN 유저가 승인 대기중인 유저의 권한을 GUEST에서 USER로 수정합니다.")
     @AdminOnly
-    public ResponseEntity<String> updateUserRole(@RequestHeader(X_USER_ID) String xUserID, @PathVariable("userId") String userId){
+    public ResponseEntity<String> updateUserRole(@RequestHeader(X_USER_ID) String userId){
         return ResponseEntity.ok(userService.updateUserRole(userId));
     }
 
     /**
      * 유저 정보를 수정하는 컨트롤러
-     * 경로 : /users/{userId}
+     * 경로 : /users
      * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
      * @return HttpStatus 200 OK
      */
-    @PutMapping("/{userId}")
+    @PutMapping
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
-    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String xUserID, @PathVariable("userId") UserDto userDto){
+    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String userId, @PathVariable("userId") UserDto userDto){
         return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
