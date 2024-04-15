@@ -57,7 +57,7 @@ public class UserController {
      */
     @PostMapping
     @Operation(summary = "회원정보를 생성하는 API", description = "회원가입 페이지에서 받은 정보를 데이터베이스에 저장합니다.")
-    public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> createUser(@RequestBody UserDto userDto) {
         String createdUserId = userService.createUser(userDto);
 
         URI location = UriComponentsBuilder
@@ -65,7 +65,7 @@ public class UserController {
                 .pathSegment(createdUserId)
                 .build().toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body("Successfully registered: userId="+ createdUserId);
     }
 
     /**
@@ -88,7 +88,7 @@ public class UserController {
      */
     @PutMapping
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
-    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String userId, @PathVariable("userId") UserDto userDto){
+    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String xUserID, @RequestBody UserDto userDto){
         return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
