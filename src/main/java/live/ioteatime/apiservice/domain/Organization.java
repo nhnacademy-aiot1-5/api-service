@@ -1,9 +1,12 @@
 package live.ioteatime.apiservice.domain;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.math.BigInteger;
 
 @Entity
+@Getter
 @Table(name = "organization")
 public class Organization {
     @Id
