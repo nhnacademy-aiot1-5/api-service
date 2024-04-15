@@ -3,10 +3,9 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
 import live.ioteatime.apiservice.dto.OrganizationDto;
+import live.ioteatime.apiservice.dto.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.UserDto;
-import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
-import live.ioteatime.apiservice.exception.UserAlreadyExistsException;
-import live.ioteatime.apiservice.exception.UserNotFoundException;
+import live.ioteatime.apiservice.exception.*;
 import live.ioteatime.apiservice.repository.UserRepository;
 import live.ioteatime.apiservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -112,5 +111,19 @@ public class UserServiceImpl implements UserService {
         }
         BeanUtils.copyProperties(user.getOrganization(), organizationDto);
         return organizationDto;
+    }
+
+    @Override
+    public String updateUserPassword(String userId, UpdateUserPasswordRequest updatePasswordRequest) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        if (! passwordEncoder.matches(updatePasswordRequest.getCurrentPassword(), user.getPassword())) {
+            throw new UnauthenticatedException();
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
+        user.setPassword(encodedNewPassword);
+        userRepository.save(user);
+
+        return user.getId();
     }
 }

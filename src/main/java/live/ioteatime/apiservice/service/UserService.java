@@ -1,6 +1,7 @@
 package live.ioteatime.apiservice.service;
 
 import live.ioteatime.apiservice.dto.OrganizationDto;
+import live.ioteatime.apiservice.dto.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 
 public interface UserService {
@@ -15,4 +16,6 @@ public interface UserService {
     String updateUser(UserDto userDto);
 
     OrganizationDto getOrganizationByUserId(String userId);
+
+    String updateUserPassword(String userId, UpdateUserPasswordRequest updatePasswordRequest);
 }

@@ -1,6 +1,5 @@
 package live.ioteatime.apiservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ public class OrganizationDto {
     private int id;
     @Schema(description = "조직 이름입니다.")
     private String name;
-    @JsonProperty("electricity_budget")
     @Schema(description = "조직 ADMIN이 설정한 이번 달 목표 전기 요금 값입니다.")
     private BigInteger electricityBudget;
 }
