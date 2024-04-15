@@ -5,7 +5,6 @@ import live.ioteatime.apiservice.domain.User;
 import live.ioteatime.apiservice.exception.UnauthorizedException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.AdminRepository;
-import live.ioteatime.apiservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
