@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     public UserDto loadUserByUserName(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto, "name", "createdAt", "role");
+        BeanUtils.copyProperties(user, userDto, "name", "createdAt", "role", "organization");
 
         return userDto;
     }
