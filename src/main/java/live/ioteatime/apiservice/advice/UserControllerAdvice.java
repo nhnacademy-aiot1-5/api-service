@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.advice;
 
+import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.UnauthorizedException;
 import live.ioteatime.apiservice.exception.UserAlreadyExistsException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
@@ -24,6 +25,11 @@ public class UserControllerAdvice {
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<String> unauthorizedUserException(UnauthorizedException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(OrganizationNotFoundException.class)
+    public ResponseEntity<String> organizationNotFoundException(OrganizationNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
 

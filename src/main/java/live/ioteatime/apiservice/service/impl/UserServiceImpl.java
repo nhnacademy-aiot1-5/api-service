@@ -2,18 +2,23 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
+import live.ioteatime.apiservice.dto.OrganizationDto;
 import live.ioteatime.apiservice.dto.UserDto;
+import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.UserAlreadyExistsException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.UserRepository;
 import live.ioteatime.apiservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -91,5 +96,21 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userDto, user);
         userRepository.save(user);
         return user.getId();
+    }
+
+    /**
+     * 유저가 소속한 조직 정보를 리턴합니다.
+     * @param userId 유저아이디
+     * @return 유저의 조직 정보
+     */
+    @Override
+    public OrganizationDto getOrganizationByUserId(String userId) {
+        OrganizationDto organizationDto = new OrganizationDto();
+        UserDto user = getUserInfo(userId);
+        if(Objects.isNull(user.getOrganization())){
+            throw new OrganizationNotFoundException(user.getId());
+        }
+        BeanUtils.copyProperties(user.getOrganization(), organizationDto);
+        return organizationDto;
     }
 }
