@@ -82,7 +82,7 @@ public class UserController {
 
     /**
      * 유저 정보를 수정하는 컨트롤러
-     * 경로 : /users/{userId}
+     * 경로 : /users
      * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
      * @return HttpStatus 200 OK
      */
