@@ -33,9 +33,9 @@ public class UserController {
      * @param userId 유저 아이디
      * @return HttpStatus 200번 OK
      */
-    @GetMapping("/{userId}")
+    @GetMapping
     @Operation(summary = "유저 정보를 가져오는 API", description = "유저의 정보를 가져옵니다.")
-    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String xUserID, @PathVariable String userId) {
+    public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.ok(userService.getUserInfo(userId));
     }
 
@@ -57,7 +57,7 @@ public class UserController {
      */
     @PostMapping
     @Operation(summary = "회원정보를 생성하는 API", description = "회원가입 페이지에서 받은 정보를 데이터베이스에 저장합니다.")
-    public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> createUser(@RequestBody UserDto userDto) {
         String createdUserId = userService.createUser(userDto);
 
         URI location = UriComponentsBuilder
@@ -65,7 +65,7 @@ public class UserController {
                 .pathSegment(createdUserId)
                 .build().toUri();
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body("Successfully registered: userId="+ createdUserId);
     }
 
     /**
@@ -73,10 +73,10 @@ public class UserController {
      * @param userId 유저 권한을 GUEST -> USER로 바꿔줄 유저의 아이디
      * @return HttpStatus 200번 OK
      */
-    @PutMapping("/{userId}/roles")
+    @PutMapping("/roles")
     @Operation(summary = "유저 권한을 수정하는 API", description = "ADMIN 유저가 승인 대기중인 유저의 권한을 GUEST에서 USER로 수정합니다.")
     @AdminOnly
-    public ResponseEntity<String> updateUserRole(@RequestHeader(X_USER_ID) String xUserID, @PathVariable("userId") String userId){
+    public ResponseEntity<String> updateUserRole(@RequestHeader(X_USER_ID) String userId){
         return ResponseEntity.ok(userService.updateUserRole(userId));
     }
 
@@ -86,9 +86,9 @@ public class UserController {
      * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
      * @return HttpStatus 200 OK
      */
-    @PutMapping("/{userId}")
+    @PutMapping
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
-    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String xUserID, @PathVariable("userId") UserDto userDto){
+    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String xUserID, @RequestBody UserDto userDto){
         return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
