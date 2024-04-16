@@ -1,11 +1,14 @@
 package live.ioteatime.apiservice.service.impl;
 
+import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
 import live.ioteatime.apiservice.dto.OrganizationDto;
+import live.ioteatime.apiservice.dto.RegisterRequest;
 import live.ioteatime.apiservice.dto.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.exception.*;
+import live.ioteatime.apiservice.repository.OrganizationRepository;
 import live.ioteatime.apiservice.repository.UserRepository;
 import live.ioteatime.apiservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final OrganizationRepository organizationRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     /**
@@ -38,26 +42,38 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * CreatedAt은 LocalDate를 통해 현재 날짜를 넣음<p>
-     * Role은 가입할때는 기본적으로 User로 설정<p>
+     * CreatedAt은 LocalDate를 통해 현재 날짜를 넣음
+     * Role은 가입할때는 기본적으로 Guest로 설정
      * Password는 인코딩 작업 후에 추가되어야 하므로 BeanUtils로 추가하지 않았음
      *
-     * @param userDto 받아온 유저 정보를 데이터베이스에 저장합니다.
+     * @param registerRequest 받아온 유저 정보를 데이터베이스에 저장합니다.
      * @return userDto request 에서 받아온 유저 정보입니다.
      */
     @Override
-    public String createUser(UserDto userDto) {
+    public String createUser(RegisterRequest registerRequest) {
 
-        if (userRepository.existsById(userDto.getId())) {
-            throw new UserAlreadyExistsException(userDto.getId());
+        if (userRepository.existsById(registerRequest.getId())) {
+            throw new UserAlreadyExistsException(registerRequest.getId());
         }
+
+        Organization organization = organizationRepository.getByName(registerRequest.getOrganizationName());
+        if(Objects.isNull(organization)){
+            throw new OrganizationNotFoundException();
+        }
+        if(! organization.getOrganizationCode().equals(registerRequest.getOrganizationCode())) {
+            throw new OrganizationCodeNotMatchesException();
+        }
+
         User user = new User();
-        BeanUtils.copyProperties(userDto, user, "createdAt", "role", "password");
-        String encodingPassword = passwordEncoder.encode(userDto.getPassword());
-        user.setPassword(encodingPassword);
+        BeanUtils.copyProperties(registerRequest, user, "password", "organizationCode");
+        String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
+        user.setPassword(encodedPassword);
         user.setCreatedAt(LocalDate.now());
         user.setRole(Role.GUEST);
+        user.setOrganization(organization);
+
         userRepository.save(user);
+
         return user.getId();
     }
 
@@ -107,7 +123,7 @@ public class UserServiceImpl implements UserService {
         OrganizationDto organizationDto = new OrganizationDto();
         UserDto user = getUserInfo(userId);
         if(Objects.isNull(user.getOrganization())){
-            throw new OrganizationNotFoundException(user.getId());
+            throw new OrganizationNotFoundException();
         }
         BeanUtils.copyProperties(user.getOrganization(), organizationDto);
         return organizationDto;
