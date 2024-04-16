@@ -1,0 +1,4 @@
+###
+GET localhost:8090/admin/sensor
+X-USER-ID: admin
+Content-Type: application/json
