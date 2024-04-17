@@ -4,9 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.domain.Sensor;
+import live.ioteatime.apiservice.dto.AddSensorRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +55,17 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getSensors());
     }
 
+
+    /**
+     * 어드민만 사용할 수 있는 명령어이며 새 센서를 추가하는 핸들러다.
+     * @return 등록 완료한 센서 아이디
+     */
+    @PostMapping("/sensor")
+    @AdminOnly
+    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody AddSensorRequest addSensorRequest){
+        int registeredSensorId = adminService.addMqttSensor(userId, addSensorRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Created. id="+registeredSensorId);
+    }
 
     /**
      * 어드민만 사용할 수 있는 명령어이며 회원가입한 유저의 권한을 GUEST에서 USER로 바꿔주는 컨트롤러다.

@@ -2,3 +2,17 @@
 GET localhost:8090/admin/sensor
 X-USER-ID: admin
 Content-Type: application/json
+
+
+### 센서 등록
+POST localhost:8090/admin/sensor
+content-type: application/json
+X-USER-ID : admin
+
+{
+  "name" : "sensor1",
+  "modelName" : "모델명",
+  "channel" : 54,
+  "ip" : "0.0.0.1",
+  "port" : "1883"
+}
