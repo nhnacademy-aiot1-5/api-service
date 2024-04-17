@@ -88,7 +88,7 @@ public class UserController {
      */
     @PutMapping
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
-    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String xUserID, @RequestBody UserDto userDto){
+    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String userId, @RequestBody UserDto userDto){
         return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
