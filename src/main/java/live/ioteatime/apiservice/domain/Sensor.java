@@ -13,9 +13,9 @@ import javax.persistence.*;
 @Setter
 public class Sensor {
     @Id
-    @Column(name = "sensor_number")
+    @Column(name = "sensor_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int sensorNumber;
+    private int sensorId;
     @Column(name = "sensor_name")
     private String sensorName;
     @Column
