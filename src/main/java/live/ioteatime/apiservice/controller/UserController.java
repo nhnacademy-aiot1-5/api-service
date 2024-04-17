@@ -3,6 +3,8 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
+import live.ioteatime.apiservice.dto.OrganizationDto;
+import live.ioteatime.apiservice.dto.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.properties.UserProperties;
 import live.ioteatime.apiservice.service.UserService;
@@ -90,6 +92,29 @@ public class UserController {
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
     public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String xUserID, @RequestBody UserDto userDto){
         return ResponseEntity.ok(userService.updateUser(userDto));
+    }
+
+    /**
+     * 유저 비밀번호만 수정하는 핸들러
+     * @param userId 유저아이디
+     * @param updatePasswordRequest
+     * @return
+     */
+    @PutMapping("/password")
+    public ResponseEntity<String> updateUserPassword(@RequestHeader(X_USER_ID) String userId, @RequestBody UpdateUserPasswordRequest updatePasswordRequest){
+        userService.updateUserPassword(userId, updatePasswordRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 유저 소속 조직 정보를 리턴합니다.
+     * @param userId 유저아이디
+     * @return HttpStatus 200 OK
+     */
+    @GetMapping("/organization")
+    public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId){
+        OrganizationDto organizationDto = userService.getOrganizationByUserId(userId);
+        return ResponseEntity.ok(organizationDto);
     }
 
 }
