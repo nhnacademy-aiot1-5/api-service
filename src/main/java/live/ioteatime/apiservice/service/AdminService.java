@@ -1,11 +1,16 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.domain.User;
+import live.ioteatime.apiservice.domain.Sensor;
+import live.ioteatime.apiservice.dto.UserDto;
 
 import java.util.List;
 
 public interface AdminService {
-    List<User> getGuestUser();
+    List<UserDto> getGuestUsers();
 
-    String updateUserRole(String userId);
+    List<UserDto> getUsers();
+
+    List<Sensor> getSensors();
+
+    UserDto updateUserRole(String userId);
 }

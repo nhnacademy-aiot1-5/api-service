@@ -1,0 +1,36 @@
+POST localhost:8090/users/
+Content-Type: application/json
+
+{
+  "id" : "user9",
+  "pw": "1111",
+  "name": "이은지"
+}
+
+###
+POST localhost:8090/users/
+Content-Type: application/json
+
+{
+  "id" : "user2",
+  "pw": "1111",
+  "name": "허시영"
+}
+
+###
+PUT localhost:8090/admin/roles/user1
+Content-Type: application/json
+X-USER-ID: admin
+
+
+###
+GET localhost:8090/admin/guest
+X-USER-ID: admin
+Content-Type: application/json
+
+
+
+###
+GET localhost:8090/admin/users?page=0
+X-USER-ID: admin
+Content-Type: application/json
