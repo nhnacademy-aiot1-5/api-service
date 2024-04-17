@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface AdminRepository extends JpaRepository<User,String> {
     List<User> findAllByRole(Role role);
+
+    List<User> findAllByOrderByRoleAsc();
 }
