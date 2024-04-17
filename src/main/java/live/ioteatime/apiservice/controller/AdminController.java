@@ -57,7 +57,7 @@ public class AdminController {
     @PutMapping("/roles")
     @AdminOnly
     @Operation(summary = "유저 권한을 수정하는 API", description = "ADMIN 유저가 승인 대기중인 유저의 권한을 GUEST에서 USER로 수정합니다.")
-    public ResponseEntity<UserDto> updateUserRole(@RequestHeader(X_USER_ID) String checkUserId, String userId){
+    public ResponseEntity<UserDto> updateUserRole(@RequestHeader(X_USER_ID) String loginUserId, String userId){
         return ResponseEntity.ok(adminService.updateUserRole(userId));
     }
 }
