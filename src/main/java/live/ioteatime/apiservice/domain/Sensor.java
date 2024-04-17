@@ -13,12 +13,23 @@ import javax.persistence.*;
 @Setter
 public class Sensor {
     @Id
-    @Column(name = "sensor_number")
+    @Column(name = "sensor_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int sensorNumber;
+    private int id;
     @Column(name = "sensor_name")
-    private String sensorName;
+    private String name;
+    @Column(name = "sensor_model_name")
+    private String modelName;
+    @Column
+    private int channel;
+    @Column
+    private String ip;
+    @Column
+    private String port;
     @Column
     @Enumerated(EnumType.STRING)
     private Alive alive;
+    @JoinColumn(name = "organization_id")
+    @ManyToOne
+    private Organization organization;
 }
