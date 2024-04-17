@@ -1,9 +1,6 @@
 package live.ioteatime.apiservice.advice;
 
-import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
-import live.ioteatime.apiservice.exception.UnauthorizedException;
-import live.ioteatime.apiservice.exception.UserAlreadyExistsException;
-import live.ioteatime.apiservice.exception.UserNotFoundException;
+import live.ioteatime.apiservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,6 +27,11 @@ public class UserControllerAdvice {
     @ExceptionHandler(OrganizationNotFoundException.class)
     public ResponseEntity<String> organizationNotFoundException(OrganizationNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(OrganizationCodeNotMatchesException.class)
+    public ResponseEntity<String> organizationCodeNotMatchesException(OrganizationCodeNotMatchesException e){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
 

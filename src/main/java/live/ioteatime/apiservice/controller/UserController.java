@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.dto.OrganizationDto;
+import live.ioteatime.apiservice.dto.RegisterRequest;
 import live.ioteatime.apiservice.dto.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.properties.UserProperties;
@@ -54,13 +55,13 @@ public class UserController {
 
     /**
      * 프론트에서 받아온 유저의 정보를 가지고 새로운 유저를 데이터베이스에 등록해주는 컨트롤러다.
-     * @param userDto 웹사이트에서 받아온 가입할 유저의 정보
+     * @param registerRequest 웹사이트에서 받아온 가입할 유저의 정보
      * @return HttpStatus 201번 Created
      */
     @PostMapping
     @Operation(summary = "회원정보를 생성하는 API", description = "회원가입 페이지에서 받은 정보를 데이터베이스에 저장합니다.")
-    public ResponseEntity<String> createUser(@RequestBody UserDto userDto) {
-        String createdUserId = userService.createUser(userDto);
+    public ResponseEntity<String> createUser(@RequestBody RegisterRequest registerRequest) {
+        String createdUserId = userService.createUser(registerRequest);
 
         URI location = UriComponentsBuilder
                 .fromUriString(userProperties.getUserDetailUri())

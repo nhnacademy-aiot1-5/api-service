@@ -16,4 +16,6 @@ public class Organization {
     private String name;
     @Column(name = "electricity_budget")
     private BigInteger electricityBudget;
+    @Column(name = "organization_code")
+    private String organizationCode;
 }
