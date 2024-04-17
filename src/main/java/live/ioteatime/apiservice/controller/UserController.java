@@ -71,18 +71,6 @@ public class UserController {
     }
 
     /**
-     * 어드민만 사용할 수 있는 명령어이며 회원가입한 유저의 권한을 GUEST에서 USER로 바꿔주는 컨트롤러다.
-     * @param userId 유저 권한을 GUEST -> USER로 바꿔줄 유저의 아이디
-     * @return HttpStatus 200번 OK
-     */
-    @PutMapping("/roles")
-    @Operation(summary = "유저 권한을 수정하는 API", description = "ADMIN 유저가 승인 대기중인 유저의 권한을 GUEST에서 USER로 수정합니다.")
-    @AdminOnly
-    public ResponseEntity<String> updateUserRole(@RequestHeader(X_USER_ID) String userId){
-        return ResponseEntity.ok(userService.updateUserRole(userId));
-    }
-
-    /**
      * 유저 정보를 수정하는 컨트롤러
      * 경로 : /users
      * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
@@ -97,10 +85,11 @@ public class UserController {
     /**
      * 유저 비밀번호만 수정하는 핸들러
      * @param userId 유저아이디
-     * @param updatePasswordRequest
-     * @return
+     * @param updatePasswordRequest 기존 비밀번호, 새 비밀번호, 새 비밀번호 확인 이 바디에 실려서 들어옴
+     * @return HttpStatus 20 OK
      */
     @PutMapping("/password")
+    @Operation(summary = "유저의 비밀번호를 변경하는 API", description = "유저 비밀번호를 변경합니다.")
     public ResponseEntity<String> updateUserPassword(@RequestHeader(X_USER_ID) String userId, @RequestBody UpdateUserPasswordRequest updatePasswordRequest){
         userService.updateUserPassword(userId, updatePasswordRequest);
         return ResponseEntity.ok().build();
@@ -112,6 +101,7 @@ public class UserController {
      * @return HttpStatus 200 OK
      */
     @GetMapping("/organization")
+    @Operation(summary = "유저가 소속된 조직의 정보를 반환하는 API", description = "유저가 소속된 조직의 정보를 반환합니다.")
     public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId){
         OrganizationDto organizationDto = userService.getOrganizationByUserId(userId);
         return ResponseEntity.ok(organizationDto);
