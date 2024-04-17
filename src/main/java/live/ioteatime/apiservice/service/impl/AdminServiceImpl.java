@@ -36,7 +36,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<UserDto> getUsers() {
-        List<User> users = adminRepository.findAllByOrderByRoleAsc();
+        List<User> users = adminRepository.findAll();
         List<UserDto> userDtos = new ArrayList<>();
         for (User user : users) {
             UserDto userDto = new UserDto();
