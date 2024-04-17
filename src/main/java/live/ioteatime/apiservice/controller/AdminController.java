@@ -1,6 +1,7 @@
 package live.ioteatime.apiservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.domain.Sensor;
 import live.ioteatime.apiservice.dto.UserDto;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+@Tag(name = "ADMIN 컨트롤러", description = "어드민만 사용할 수 있는 컨트롤러입니다.")
 public class AdminController {
     private final AdminService adminService;
     private final String X_USER_ID = "X-USER-ID";
@@ -24,6 +26,7 @@ public class AdminController {
      */
     @GetMapping("/guests")
     @AdminOnly
+    @Operation(summary = "유저의 권한이 GUEST인 유저들의 리스트를 가져오는 API", description = "유저의 권한이 GUEST인 유저들의 리스트를 가져옵니다.")
     public ResponseEntity<List<UserDto>> getGuestUsers() {
         return ResponseEntity.ok(adminService.getGuestUsers());
     }
@@ -34,6 +37,7 @@ public class AdminController {
      */
     @GetMapping("/users")
     @AdminOnly
+    @Operation(summary = "모든 유저들의 리스트를 가져오는 API", description = "모든 유저들의 리스트를 가져옵니다.")
     public ResponseEntity<List<UserDto>> getUsers(){
         return ResponseEntity.ok(adminService.getUsers());
     }
@@ -44,6 +48,7 @@ public class AdminController {
      */
     @GetMapping("/sensors")
     @AdminOnly
+    @Operation(summary = "모든 유저들의 리스트를 가져오는 API", description = "모든 유저들의 리스트를 가져옵니다.")
     public ResponseEntity<List<Sensor>> getSensors(){
         return ResponseEntity.ok(adminService.getSensors());
     }
@@ -56,7 +61,7 @@ public class AdminController {
      */
     @PutMapping("/roles")
     @AdminOnly
-    @Operation(summary = "유저 권한을 수정하는 API", description = "ADMIN 유저가 승인 대기중인 유저의 권한을 GUEST에서 USER로 수정합니다.")
+    @Operation(summary = "유저 권한을 수정하는 API", description = "ADMIN 유저가 GUEST 권한을 가진 유저의 권한을 GUEST에서 USER로 수정합니다.")
     public ResponseEntity<UserDto> updateUserRole(@RequestHeader(X_USER_ID) String loginUserId, String userId){
         return ResponseEntity.ok(adminService.updateUserRole(userId));
     }
