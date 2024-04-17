@@ -2,6 +2,7 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
+import live.ioteatime.apiservice.dto.RegisterRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.exception.UserAlreadyExistsException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
@@ -36,6 +37,7 @@ class UserServiceTest {
 
     User user;
     UserDto userDto;
+    RegisterRequest registerRequest;
 
     @BeforeEach
     void setUp() {
@@ -53,6 +55,14 @@ class UserServiceTest {
         userDto.setPassword(passwordEncoder.encode("password"));
         userDto.setName("seungjin");
         userDto.setRole(Role.GUEST);
+
+        registerRequest = new RegisterRequest();
+        registerRequest.setId("ryu");
+        registerRequest.setPassword(passwordEncoder.encode("password"));
+        registerRequest.setName("seungjin");
+        registerRequest.setOrganizationName("nhnacademy");
+        registerRequest.setOrganizationCode("1234");
+
     }
 
     @Test
@@ -82,7 +92,7 @@ class UserServiceTest {
     void createUser() {
 
         given(userRepository.save(user)).willReturn(user);
-        String saveUser = userService.createUser(userDto);
+        String saveUser = userService.createUser(registerRequest);
         assertThat(saveUser).isEqualTo("ryu");
     }
 
@@ -92,7 +102,7 @@ class UserServiceTest {
 
         given(userRepository.existsById(any())).willReturn(true);
 
-        assertThatThrownBy(() -> userService.createUser(userDto))
+        assertThatThrownBy(() -> userService.createUser(registerRequest))
                 .isInstanceOf(UserAlreadyExistsException.class);
     }
 

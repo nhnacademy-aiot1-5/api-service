@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Setter
 public class User {
     @Id
-    @Column
+    @Column(name = "user_id")
     private String id;
     @Column
     private String password;
