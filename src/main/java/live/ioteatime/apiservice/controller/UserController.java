@@ -77,7 +77,7 @@ public class UserController {
      * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
      * @return HttpStatus 200 OK
      */
-    @PutMapping
+    @PutMapping("/update-user")
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
     public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String userId, @RequestBody UserDto userDto){
         return ResponseEntity.ok(userService.updateUser(userDto));
