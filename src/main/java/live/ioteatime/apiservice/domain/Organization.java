@@ -11,6 +11,7 @@ import java.math.BigInteger;
 public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "organization_id")
     private int id;
     private String name;
     @Column(name = "electricity_budget")
