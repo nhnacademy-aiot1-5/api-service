@@ -84,12 +84,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserInfo(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        String organizationName = user.getOrganization().getName();
         UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto, "password");
+        BeanUtils.copyProperties(user, userDto, "password", "organization");
+        userDto.setOrganizationName(organizationName);
         return userDto;
     }
 
-/**
+    /**
      * @param userId 유저아이디
      * @return userId 유저아이디
      */
@@ -108,7 +110,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUser(UserDto userDto) {
         User user = userRepository.findById(userDto.getId()).orElseThrow(() -> new UserNotFoundException(userDto.getId()));
-        BeanUtils.copyProperties(userDto, user);
+        BeanUtils.copyProperties(userDto, user, "password",  "organization");
         userRepository.save(user);
         return user.getId();
     }
@@ -121,7 +123,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public OrganizationDto getOrganizationByUserId(String userId) {
         OrganizationDto organizationDto = new OrganizationDto();
-        UserDto user = getUserInfo(userId);
+        User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException(userId));
         if(Objects.isNull(user.getOrganization())){
             throw new OrganizationNotFoundException();
         }
@@ -129,6 +131,12 @@ public class UserServiceImpl implements UserService {
         return organizationDto;
     }
 
+    /**
+     * 회원 비밀번호를 변경합니다.
+     * @param userId 유저아이디
+     * @param updatePasswordRequest 비밀번호 변경 요청 폼 데이터
+     * @return 성공시, 유저아이디를 리턴합니다.
+     */
     @Override
     public String updateUserPassword(String userId, UpdateUserPasswordRequest updatePasswordRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
