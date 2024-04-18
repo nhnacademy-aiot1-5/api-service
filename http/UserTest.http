@@ -18,7 +18,7 @@ Content-Type: application/json
 }
 
 ###
-PUT localhost:8090/admin/roles/user1
+PUT localhost:8090/admin/roles/user3
 Content-Type: application/json
 X-USER-ID: admin
 
@@ -31,6 +31,6 @@ Content-Type: application/json
 
 
 ###
-GET localhost:8090/admin/users?page=0
+GET localhost:8090/admin/budget
 X-USER-ID: admin
 Content-Type: application/json

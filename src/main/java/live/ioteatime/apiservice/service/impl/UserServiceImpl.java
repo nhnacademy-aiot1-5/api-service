@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException(registerRequest.getId());
         }
 
-        Organization organization = organizationRepository.getByName(registerRequest.getOrganizationName());
+        Organization organization = organizationRepository.findByName(registerRequest.getOrganizationName());
         if(Objects.isNull(organization)){
             throw new OrganizationNotFoundException();
         }
