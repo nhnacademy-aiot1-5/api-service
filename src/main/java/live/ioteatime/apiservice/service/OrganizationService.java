@@ -5,5 +5,5 @@ import live.ioteatime.apiservice.dto.OrganizationDto;
 public interface OrganizationService {
     OrganizationDto updateBudget(String userId, Long budget);
 
-    OrganizationDto getOrganization(String userId);
+    OrganizationDto getBudget(String userId);
 }

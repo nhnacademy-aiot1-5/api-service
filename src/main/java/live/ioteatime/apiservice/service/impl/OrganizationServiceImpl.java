@@ -32,12 +32,12 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public OrganizationDto getOrganization(String userId) {
+    public OrganizationDto getBudget(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         Organization organization = user.getOrganization();
         OrganizationDto organizationDto = new OrganizationDto();
-        BeanUtils.copyProperties(organization, organizationDto);
+        BeanUtils.copyProperties(organization, organizationDto, "id", "name");
         return organizationDto;
     }
 

@@ -52,7 +52,7 @@ public class AdminController {
     @AdminOnly
     @Operation(summary = "조직의 현재 설정 금액을 가져오는 API", description = "조직의 현재 설정금액을 가져옵니다.")
     public ResponseEntity<OrganizationDto> getBudget(@RequestHeader(X_USER_ID) String userId) {
-        return ResponseEntity.ok(organizationService.getOrganization(userId));
+        return ResponseEntity.ok(organizationService.getBudget(userId));
     }
 
     /**
