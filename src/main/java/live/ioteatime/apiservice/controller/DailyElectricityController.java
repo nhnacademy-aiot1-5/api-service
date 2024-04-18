@@ -25,7 +25,7 @@ public class DailyElectricityController {
     public List<ElectricityResponseDto> getDailyElectricities(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime,
                                                               @RequestParam int organizationId) {
         ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, organizationId);
-        List<DailyElectricity> dailyElectricities = electricityService.getDailyElectricitiesByDate(requestDto);
+        List<DailyElectricity> dailyElectricities = electricityService.getElectricitiesByDate(requestDto);
         List<ElectricityResponseDto> responseDtos = new ArrayList<>();
         for (DailyElectricity d : dailyElectricities) {
             responseDtos.add(new ElectricityResponseDto(d.getPk().getTime(), d.getKwh()));

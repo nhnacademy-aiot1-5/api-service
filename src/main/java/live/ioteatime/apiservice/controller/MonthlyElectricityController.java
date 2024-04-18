@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -22,11 +24,28 @@ public class MonthlyElectricityController {
     private final ElectricityService<MonthlyElectricity> electricityService;
 
     @GetMapping("/electricity")
-    public ElectricityResponseDto getMonthlyElectricity(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime,
+    public ElectricityResponseDto getMonthlyElectricity(@RequestParam
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                        LocalDateTime localDateTime,
                                                         @RequestParam int organizationId) {
         ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, organizationId);
         MonthlyElectricity monthlyElectricity = electricityService.getElectricityByDate(requestDto);
 
         return new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh());
+    }
+
+    @GetMapping("/electricities")
+    public List<ElectricityResponseDto> getMonthlyElectricies(@RequestParam
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                              LocalDateTime localDateTime,
+                                                              @RequestParam int organizationId) {
+        ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, organizationId);
+        List<ElectricityResponseDto> responseDtos = new ArrayList<>();
+
+        List<MonthlyElectricity> monthlyElectricities = electricityService.getElectricitiesByDate(requestDto);
+        for (MonthlyElectricity monthlyElectricity : monthlyElectricities) {
+            responseDtos.add(new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh()));
+        }
+        return responseDtos;
     }
 }

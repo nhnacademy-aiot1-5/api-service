@@ -8,6 +8,7 @@ import live.ioteatime.apiservice.service.ElectricityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -23,7 +24,15 @@ public class MonthlyElectricityServiceImpl implements ElectricityService<Monthly
     }
 
     @Override
-    public List<MonthlyElectricity> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
-        return null;
+    public List<MonthlyElectricity> getElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
+        LocalDateTime endOfMonth = electricityRequestDto.getTime().withDayOfMonth(1).minusDays(1);
+
+        LocalDateTime startOfTwelveMonthsBefore = endOfMonth.minusMonths(11).withDayOfMonth(1);
+
+        return monthlyElectricityRepository.findAllByPkOrganizationIdAndPkTimeBetween(
+                electricityRequestDto.getOrganizationId(),
+                startOfTwelveMonthsBefore,
+                endOfMonth
+        );
     }
 }

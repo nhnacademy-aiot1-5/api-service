@@ -7,5 +7,5 @@ import java.util.List;
 public interface ElectricityService<T> {
     T getElectricityByDate(ElectricityRequestDto electricityRequestDto);
 
-    List<T> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto);
+    List<T> getElectricitiesByDate(ElectricityRequestDto electricityRequestDto);
 }

@@ -26,7 +26,7 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
     }
 
     @Override
-    public List<DailyElectricity> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
+    public List<DailyElectricity> getElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         LocalDateTime localDateTime = electricityRequestDto.getTime();
         LocalDateTime startOfMonth = localDateTime.withDayOfMonth(1);
         LocalDateTime endOfMonth = localDateTime.withDayOfMonth(localDateTime.toLocalDate().lengthOfMonth());
