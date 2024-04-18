@@ -1,12 +1,11 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.domain.DailyElectricity;
+import live.ioteatime.apiservice.dto.ElectricityRequestDto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface ElectricityService<T> {
-    T getElectricityByDate(LocalDate localDate);
+    T getElectricityByDate(ElectricityRequestDto electricityRequestDto);
 
-    List<DailyElectricity> getElectricitiesByDate(LocalDate localDate);
+    List<T> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto);
 }
