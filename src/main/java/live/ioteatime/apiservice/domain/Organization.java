@@ -12,7 +12,8 @@ public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "organization_id")
-    private Long id;
+    private int id;
+    @Column
     private String name;
     @Column(name = "electricity_budget")
     private Long electricityBudget;
