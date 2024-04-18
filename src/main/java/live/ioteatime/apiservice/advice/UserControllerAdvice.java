@@ -34,5 +34,9 @@ public class UserControllerAdvice {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
+    @ExceptionHandler(ElectricityNotFoundException.class)
+    public ResponseEntity<String> electricityNotFoundException(ElectricityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
 
 }
