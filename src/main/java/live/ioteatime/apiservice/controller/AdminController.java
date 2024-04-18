@@ -56,29 +56,6 @@ public class AdminController {
     }
 
     /**
-     * 어드민만 사용할 수 있는 명령어이며 연결된 센서의 리스트를 가져오는 컨트롤러다.
-     * @return 연결된 센서들의 리스트를 반환한다.
-     */
-    @GetMapping("/sensors")
-    @AdminOnly
-    @Operation(summary = "모든 유저들의 리스트를 가져오는 API", description = "모든 유저들의 리스트를 가져옵니다.")
-    public ResponseEntity<List<Sensor>> getSensors(){
-        return ResponseEntity.ok(adminService.getSensors());
-    }
-
-
-    /**
-     * 어드민만 사용할 수 있는 명령어이며 새 센서를 추가하는 핸들러다.
-     * @return 등록 완료한 센서 아이디
-     */
-    @PostMapping("/sensor")
-    @AdminOnly
-    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody AddSensorRequest addSensorRequest){
-        int registeredSensorId = adminService.addMqttSensor(userId, addSensorRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Created. id="+registeredSensorId);
-    }
-
-    /**
      * 어드민만 사용할 수 있는 명령어이며 회원가입한 유저의 권한을 GUEST에서 USER로 바꿔주는 컨트롤러다.
      * @param userId 유저 권한을 GUEST -> USER로 바꿔줄 유저의 아이디
      * @return HttpStatus 200번 OK
