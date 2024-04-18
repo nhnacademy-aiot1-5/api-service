@@ -3,14 +3,11 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
-import live.ioteatime.apiservice.domain.Sensor;
 import live.ioteatime.apiservice.dto.OrganizationDto;
-import live.ioteatime.apiservice.dto.AddSensorRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.service.AdminService;
 import live.ioteatime.apiservice.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
