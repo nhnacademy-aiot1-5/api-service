@@ -2,12 +2,12 @@ package live.ioteatime.apiservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.dto.OrganizationDto;
 import live.ioteatime.apiservice.dto.RegisterRequest;
 import live.ioteatime.apiservice.dto.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.properties.UserProperties;
+import live.ioteatime.apiservice.service.OrganizationService;
 import live.ioteatime.apiservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +28,7 @@ import java.net.URI;
 public class UserController {
     private final UserService userService;
     private final UserProperties userProperties;
+    private final OrganizationService organizationService;
     private final String X_USER_ID = "X-USER-ID";
 
     /**
@@ -106,6 +107,12 @@ public class UserController {
     public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId){
         OrganizationDto organizationDto = userService.getOrganizationByUserId(userId);
         return ResponseEntity.ok(organizationDto);
+    }
+
+    @GetMapping("/budget")
+    @Operation(summary = "조직의 현재 설정 금액을 가져오는 API", description = "조직의 현재 설정금액을 가져옵니다.")
+    public ResponseEntity<OrganizationDto> getBudget(@RequestHeader(X_USER_ID) String userId) {
+        return ResponseEntity.ok(organizationService.getBudget(userId));
     }
 
 }
