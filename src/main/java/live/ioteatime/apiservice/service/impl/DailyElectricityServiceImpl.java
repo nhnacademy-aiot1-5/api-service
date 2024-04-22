@@ -19,9 +19,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -67,7 +65,7 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
     // influxdb에서 금일 시간 별 데이터 가져오기
     private List<DailyElectricity> getHourlyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         LocalDateTime localDateTime = electricityRequestDto.getTime();
-        LocalDateTime startTimeOfDay = localDateTime.toLocalDate().atStartOfDay();
+        LocalDateTime startTimeOfDay = localDateTime.minusDays(1).plusHours(1);
         log.warn("start time : " + startTimeOfDay + ", end time : " + localDateTime);
         return fetchFromInfluxDB(electricityRequestDto.getOrganizationId(), startTimeOfDay, localDateTime);
     }
@@ -87,7 +85,7 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
                 bucket, startRFC3339, endRFC3339
         );
 
-        List<DailyElectricity> results = new ArrayList<>();
+        Map<LocalDateTime, DailyElectricity> results = new TreeMap<>();
         QueryApi queryApi = influxDBClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery, organization);
 
@@ -97,18 +95,19 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
                 LocalDateTime formattedTime = LocalDateTime
                         .parse(Objects.requireNonNull(r.getValueByKey("_time")).toString(), DateTimeFormatter.ISO_DATE_TIME)
                         .plusHours(9);
-
-                results.add(new DailyElectricity(
-                        new DailyElectricity.Pk(
-                                organizationId,
-                                formattedTime
-                        ),
+                Long value = r.getValueByKey("_value") != null ? ((Double) Objects.requireNonNull(r.getValueByKey("_value"))).longValue() : 0L;
+                results.merge(formattedTime, new DailyElectricity(
+                        new DailyElectricity.Pk(organizationId, formattedTime),
                         organizationRepository.findById(organizationId).orElse(null),
-                        r.getValueByKey("_value") != null ?
-                                ((Double) Objects.requireNonNull(r.getValueByKey("_value"))).longValue() : null
+                        value
+                ), (existing, newEntry) -> new DailyElectricity(
+                        existing.getPk(),
+                        existing.getOrganization(),
+                        existing.getKwh() + newEntry.getKwh()
                 ));
             }
         }
-        return results;
+        System.out.println(results.size());
+        return new ArrayList<>(results.values());
     }
 }
