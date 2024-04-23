@@ -7,5 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AdminRepository extends JpaRepository<User,String> {
-    List<User> findAllByRole(Role role);
+
+    List<User> findAllByRoleAndOrganization_Id(Role role, int organizationId);
+
+    List<User> findAllByOrganization_Id(int organizationId);
 }
