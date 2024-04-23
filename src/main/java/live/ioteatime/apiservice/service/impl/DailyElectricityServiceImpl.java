@@ -107,7 +107,6 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
                 ));
             }
         }
-        System.out.println(results.size());
         return new ArrayList<>(results.values());
     }
 }
