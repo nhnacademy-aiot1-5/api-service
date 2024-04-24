@@ -56,16 +56,11 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException(registerRequest.getId());
         }
 
-        Organization organization = organizationRepository.findByName(registerRequest.getOrganizationName());
-        if(Objects.isNull(organization)){
-            throw new OrganizationNotFoundException();
-        }
-        if(! organization.getOrganizationCode().equals(registerRequest.getOrganizationCode())) {
-            throw new OrganizationCodeNotMatchesException();
-        }
+        Organization organization = verifyAndRetrieveOrganization(registerRequest.getOrganizationName(), registerRequest.getOrganizationCode());
 
         User user = new User();
         BeanUtils.copyProperties(registerRequest, user, "password", "organizationCode");
+
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         user.setPassword(encodedPassword);
         user.setCreatedAt(LocalDate.now());
@@ -75,6 +70,22 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         return user.getId();
+    }
+
+    /**
+     * 회원가입시 사용자가 입력한 조직 이름과 조직 코드를 검증하는 메서드입니다.
+     * 조직이 존재하고 조직 이름과 조직 코드가 일치하는 경우, 해당 조직 엔티티를 리턴합니다.
+     * 그렇지 않으면 OrganizationCodeNameMismatchException 을 던집니다.
+     * @param orgName 사용자 입력 조직이름
+     * @param orgCode 사용자 입력 조직코드
+     * @return Organization 엔티티
+     */
+    private Organization verifyAndRetrieveOrganization(String orgName, String orgCode){
+        Organization organization = organizationRepository.findByOrganizationCode(orgCode);
+        if(Objects.isNull(organization) || (!organization.getName().equals(orgName))){
+            throw new OrganizationCodeNameMismatchException();
+        }
+        return organization;
     }
 
     /**
