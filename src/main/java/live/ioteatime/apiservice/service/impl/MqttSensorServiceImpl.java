@@ -1,17 +1,20 @@
 package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.*;
-import live.ioteatime.apiservice.dto.SensorRequest;
+import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorDto;
+import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotSupportedException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
-import live.ioteatime.apiservice.repository.AdminRepository;
-import live.ioteatime.apiservice.repository.SensorRepository;
+import live.ioteatime.apiservice.repository.MqttSensorRepository;
 import live.ioteatime.apiservice.repository.SupportedSensorRepository;
-import live.ioteatime.apiservice.service.SensorService;
+import live.ioteatime.apiservice.repository.UserRepository;
+import live.ioteatime.apiservice.service.MqttSensorService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -20,14 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Slf4j
 @Service
+@Getter @Setter
+@Slf4j
 @RequiredArgsConstructor
-public class SensorServiceImpl implements SensorService {
+public class MqttSensorServiceImpl implements MqttSensorService {
 
-    private final SensorRepository sensorRepository;
     private final SupportedSensorRepository supportedSensorRepository;
-    private final AdminRepository adminRepository;
+    private final UserRepository userRepository;
+    private final MqttSensorRepository sensorRepository;
+
 
     /**
      *
@@ -50,19 +55,19 @@ public class SensorServiceImpl implements SensorService {
     /**
      *
      * @param userId 유저아이디
-     * @return 조직이 보유한 센서 리스트를 반환합니다. 없다면 null을 리턴합니다.
+     * @return 조직이 보유한 MQTT 센서 리스트를 반환합니다. 없다면 null을 리턴합니다.
      */
     @Override
-    public List<SensorDto> getOrganizationSensorsByUserId(String userId) {
+    public List<MqttSensorDto> getOrganizationSensorsByUserId(String userId) {
 
-        User admin = adminRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
-        int organizationId = admin.getOrganization().getId();
+        User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        int organizationId = user.getOrganization().getId();
 
-        List<Sensor> sensorList = sensorRepository.findAllByOrganization_Id(organizationId);
+        List<MqttSensor> sensorList = sensorRepository.findAllByOrganization_Id(organizationId);
 
-        List<SensorDto> sensorDtoList = new ArrayList<>();
-        for(Sensor sensor : sensorList) {
-            SensorDto sensorDto = new SensorDto();
+        List<MqttSensorDto> sensorDtoList = new ArrayList<>();
+        for(MqttSensor sensor : sensorList) {
+            MqttSensorDto sensorDto = new MqttSensorDto();
             BeanUtils.copyProperties(sensor, sensorDto);
             sensorDtoList.add(sensorDto);
         }
@@ -76,9 +81,9 @@ public class SensorServiceImpl implements SensorService {
      * @return 센서 정보를 리턴합니다. 없다면 SensorNotFoundException을 던집니다.
      */
     @Override
-    public SensorDto getSensorById(int sensorId) {
-        Sensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
-        SensorDto sensorDto = new SensorDto();
+    public MqttSensorDto getSensorById(int sensorId) {
+        MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        MqttSensorDto sensorDto = new MqttSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
         return sensorDto;
     }
@@ -96,12 +101,12 @@ public class SensorServiceImpl implements SensorService {
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
             throw new SensorNotSupportedException();
         }
-        Organization organization = adminRepository.findById(userId).get().getOrganization();
+        Organization organization = userRepository.findById(userId).get().getOrganization();
         if(Objects.isNull(organization)) {
             throw new OrganizationNotFoundException();
         }
 
-        Sensor sensor = new Sensor();
+        MqttSensor sensor = new MqttSensor();
         BeanUtils.copyProperties(request, sensor);
         sensor.setAlive(Alive.DOWN);
         sensor.setOrganization(organization);
@@ -119,7 +124,7 @@ public class SensorServiceImpl implements SensorService {
      */
     @Override
     public int updateMqttSensor(int sensorId, SensorRequest sensorRequest) {
-        Sensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
 
         sensor.setName(sensorRequest.getName());
         sensor.setIp(sensorRequest.getIp());
@@ -134,6 +139,5 @@ public class SensorServiceImpl implements SensorService {
     public void deleteSensorById(int sensorId) {
         sensorRepository.deleteById(sensorId);
     }
-
 
 }

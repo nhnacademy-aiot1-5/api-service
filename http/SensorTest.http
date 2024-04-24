@@ -23,7 +23,7 @@ X-USER-ID: admin
 }
 
 ### 센서 단일 조회
-GET localhost:8090/sensors/1
+GET localhost:8090/sensors/3
 X-USER-ID: admin
 
 ### 센서 정보 수정

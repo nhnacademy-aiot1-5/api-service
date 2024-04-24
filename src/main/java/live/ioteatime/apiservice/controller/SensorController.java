@@ -3,9 +3,12 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
+import live.ioteatime.apiservice.dto.ModbusSensorDto;
+import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.dto.SensorDto;
-import live.ioteatime.apiservice.service.SensorService;
+import live.ioteatime.apiservice.service.ModbusSensorService;
+import live.ioteatime.apiservice.service.MqttSensorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +25,8 @@ import java.util.List;
 public class SensorController {
 
     private static final String X_USER_ID = "X-USER-ID";
-    private final SensorService sensorService;
+    private final ModbusSensorService modbusSensorService;
+    private final MqttSensorService mqttSensorService;
 
     /**
      * 등록 가능한 센서 모델 리스트를 반환합니다.
@@ -33,31 +37,58 @@ public class SensorController {
     @AdminOnly
     @Operation(summary = "지원하는 센서 리스트를 가져오는 API", description = "지원하는 모든 센서 리스트를 반환합니다.")
     public ResponseEntity<List<SensorDto>> getSupportedSensors(@RequestHeader(X_USER_ID) String userId) {
-        List<SensorDto> sensorList = sensorService.getAllSupportedSensors();
+        List<SensorDto> sensorList = mqttSensorService.getAllSupportedSensors();
         return ResponseEntity.ok(sensorList);
     }
 
+    // todo Get /list 구현
+
+
     /**
-     * 유저가 소속한 조직의 센서 리스트를 반환합니다.
+     * 유저가 소속한 조직의 Modbus 센서 리스트를 반환합니다.
      * @return 200 OK
      */
-    @GetMapping("/list")
-    @Operation(summary = "모든 센서들의 리스트를 가져오는 API", description = "소속 조직의 모든 센서 리스트를 반환합니다.")
-    public ResponseEntity<List<SensorDto>> getSensors(@RequestHeader(X_USER_ID) String userId){
-        return ResponseEntity.ok(sensorService.getOrganizationSensorsByUserId(userId));
+    @GetMapping("/list/modbus")
+    @Operation(summary = "모든 modbus 센서들의 리스트를 가져오는 API", description = "소속 조직의 모든 센서 리스트를 반환합니다.")
+    public ResponseEntity<List<ModbusSensorDto>> getModbusSensors(@RequestHeader(X_USER_ID) String userId){
+        return ResponseEntity.ok(modbusSensorService.getOrganizationSensorsByUserId(userId));
+    }
+
+
+    /**
+     * 유저가 소속한 조직의 Mqtt 센서 리스트를 반환합니다.
+     * @return 200 OK
+     */
+    @GetMapping("/list/mqtt")
+    @Operation(summary = "모든 mqtt 센서들의 리스트를 가져오는 API", description = "소속 조직의 모든 센서 리스트를 반환합니다.")
+    public ResponseEntity<List<MqttSensorDto>> getMqttSensors(@RequestHeader(X_USER_ID) String userId){
+        return ResponseEntity.ok(mqttSensorService.getOrganizationSensorsByUserId(userId));
     }
 
     /**
-     * 단일 센서 정보를 반환합니다.
+     * 단일 mqtt 센서 정보를 반환합니다.
      * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @return 200 OK
      */
-    @GetMapping("/{sensorId}")
-    @Operation(summary = "센서 단일 조회 API")
-    public ResponseEntity<SensorDto> getSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
-        return ResponseEntity.ok(sensorService.getSensorById(sensorId));
+    @GetMapping("/{sensorId}/mqtt")
+    @Operation(summary = "MQTT 센서 단일 조회 API")
+    public ResponseEntity<MqttSensorDto> getMqttSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
+        return ResponseEntity.ok(mqttSensorService.getSensorById(sensorId));
     }
+
+    /**
+     * 단일 modbus 센서 정보를 반환합니다.
+     * @param userId 유저아이디
+     * @param sensorId 센서아이디
+     * @return 200 OK
+     */
+    @GetMapping("/{sensorId}/modbus")
+    @Operation(summary = "MQTT 센서 단일 조회 API")
+    public ResponseEntity<ModbusSensorDto> getModbusSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
+        return ResponseEntity.ok(modbusSensorService.getSensorById(sensorId));
+    }
+
 
     /**
      * 새 MQTT 센서를 추가합니다.
@@ -67,7 +98,7 @@ public class SensorController {
     @AdminOnly
     @Operation(summary = "MQTT 센서를 추가하는 API", description = "MQTT 센서를 추가합니다.")
     public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody SensorRequest addSensorRequest){
-        int registeredSensorId = sensorService.addMqttSensor(userId, addSensorRequest);
+        int registeredSensorId = mqttSensorService.addMqttSensor(userId, addSensorRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Sensor registered. id=" + registeredSensorId);
     }
 
@@ -86,7 +117,7 @@ public class SensorController {
         if(bindingResult.hasFieldErrors()){
             return ResponseEntity.badRequest().build();
         }
-        int updatedSensorId = sensorService.updateMqttSensor(sensorId, updateSensorRequest);
+        int updatedSensorId = mqttSensorService.updateMqttSensor(sensorId, updateSensorRequest);
         return ResponseEntity.ok().body("Sensor updated. id=" + updatedSensorId);
     }
 
@@ -99,7 +130,7 @@ public class SensorController {
     @DeleteMapping("/{sensorId}")
     @AdminOnly
     public ResponseEntity<String> deleteSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
-        sensorService.deleteSensorById(sensorId);
+        mqttSensorService.deleteSensorById(sensorId);
         return ResponseEntity.noContent().build();
     }
 
