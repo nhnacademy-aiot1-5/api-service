@@ -1,14 +1,12 @@
 package live.ioteatime.apiservice.service.impl;
 
-import live.ioteatime.apiservice.domain.Alive;
-import live.ioteatime.apiservice.domain.Organization;
-import live.ioteatime.apiservice.domain.Sensor;
-import live.ioteatime.apiservice.domain.SupportedSensor;
-import live.ioteatime.apiservice.dto.AddSensorRequest;
+import live.ioteatime.apiservice.domain.*;
+import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.dto.SensorDto;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotSupportedException;
+import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.AdminRepository;
 import live.ioteatime.apiservice.repository.SensorRepository;
 import live.ioteatime.apiservice.repository.SupportedSensorRepository;
@@ -51,11 +49,15 @@ public class SensorServiceImpl implements SensorService {
 
     /**
      *
-     * @param organizationId 소속 조직 아이디
+     * @param userId 유저아이디
      * @return 조직이 보유한 센서 리스트를 반환합니다. 없다면 null을 리턴합니다.
      */
     @Override
-    public List<SensorDto> getSensorsByOrganizationId(int organizationId) {
+    public List<SensorDto> getOrganizationSensorsByUserId(String userId) {
+
+        User admin = adminRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        int organizationId = admin.getOrganization().getId();
+
         List<Sensor> sensorList = sensorRepository.findAllByOrganization_Id(organizationId);
 
         List<SensorDto> sensorDtoList = new ArrayList<>();
@@ -88,7 +90,7 @@ public class SensorServiceImpl implements SensorService {
      * @return 등록한 센서 아이디
      */
     @Override
-    public int addMqttSensor(String userId, AddSensorRequest request) {
+    public int addMqttSensor(String userId, SensorRequest request) {
 
         log.debug("Add sensor request - model_name: {}", request.getModelName());
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
@@ -116,11 +118,8 @@ public class SensorServiceImpl implements SensorService {
      * @return 수정한 센서의 아이디를 반환합니다.
      */
     @Override
-    public int updateMqttSensor(int sensorId, AddSensorRequest sensorRequest) {
+    public int updateMqttSensor(int sensorId, SensorRequest sensorRequest) {
         Sensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
-
-        // todo sensorRequest.getId != sensorId 인 경우, 400 bad request
-        // sensorRequest의 필드 중 하나라도 null인 경우, 400 bad request
 
         sensor.setName(sensorRequest.getName());
         sensor.setIp(sensorRequest.getIp());
