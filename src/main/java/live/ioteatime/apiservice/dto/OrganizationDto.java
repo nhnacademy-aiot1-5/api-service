@@ -17,4 +17,6 @@ public class OrganizationDto {
     private String name;
     @Schema(description = "조직 ADMIN이 설정한 이번 달 목표 전기 요금 값입니다.")
     private Long electricityBudget;
+    @Schema(description = "조직 코드입니다.")
+    private String organizationCode;
 }
