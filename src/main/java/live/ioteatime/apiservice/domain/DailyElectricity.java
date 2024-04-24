@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "daily_electricity_consumption")
+@AllArgsConstructor
+@NoArgsConstructor
 public class DailyElectricity {
     @EmbeddedId
     private Pk pk;

@@ -22,7 +22,9 @@ public class DailyElectricityController {
     private final ElectricityService<DailyElectricity> electricityService;
 
     @GetMapping("/electricities")
-    public List<ElectricityResponseDto> getDailyElectricities(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTime,
+    public List<ElectricityResponseDto> getDailyElectricities(@RequestParam
+                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                              LocalDateTime localDateTime,
                                                               @RequestParam int organizationId) {
         ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, organizationId);
         List<DailyElectricity> dailyElectricities = electricityService.getElectricitiesByDate(requestDto);

@@ -29,8 +29,8 @@ public class UserControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(OrganizationCodeNotMatchesException.class)
-    public ResponseEntity<String> organizationCodeNotMatchesException(OrganizationCodeNotMatchesException e){
+    @ExceptionHandler(OrganizationCodeNameMismatchException.class)
+    public ResponseEntity<String> organizationCodeNotMatchesException(OrganizationCodeNameMismatchException e){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
     }
 
