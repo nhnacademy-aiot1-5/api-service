@@ -10,9 +10,10 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Getter @Setter
 public class SensorRequest {
+    @JsonProperty("sensor_name")
     private String name;
+    @JsonProperty("sensor_model_name")
     @NotBlank private String modelName;
-    @NotBlank private int channel;
     @NotBlank private String ip;
     @NotBlank private String port;
     @NotBlank private String exchange;

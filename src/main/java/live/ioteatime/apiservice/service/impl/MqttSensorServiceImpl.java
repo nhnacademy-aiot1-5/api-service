@@ -2,7 +2,6 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.*;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
-import live.ioteatime.apiservice.dto.SensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
@@ -39,12 +38,12 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      * @return 지원하는 센서 목록을 반환합니다. 없다면 null을 리턴합니다.
      */
     @Override
-    public List<SensorDto> getAllSupportedSensors() {
+    public List<MqttSensorDto> getAllSupportedSensors() {
         List<SupportedSensor> supportedSensorList = supportedSensorRepository.findAll();
 
-        List<SensorDto> sensorDtoList = new ArrayList<>();
+        List<MqttSensorDto> sensorDtoList = new ArrayList<>();
         for(SupportedSensor supportedSensor : supportedSensorList) {
-            SensorDto sensorDto = new SensorDto();
+            MqttSensorDto sensorDto = new MqttSensorDto();
             BeanUtils.copyProperties(supportedSensor, sensorDto);
             sensorDtoList.add(sensorDto);
         }
@@ -97,7 +96,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     @Override
     public int addMqttSensor(String userId, SensorRequest request) {
 
-        log.debug("Add sensor request - model_name: {}", request.getModelName());
+        log.info("Add sensor request - model_name: {}", request.getModelName());
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
             throw new SensorNotSupportedException();
         }
