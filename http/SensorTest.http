@@ -13,12 +13,12 @@ X-USER-ID: admin
 Content-Type: application/json
 
 ### Modbus 센서 단일 조회
-GET localhost:8090/sensors/2/modbus
+GET localhost:8090/sensors/1/modbus
 X-USER-ID: admin
 Content-Type: application/json
 
 ### Mqtt 센서 단일 조회
-GET localhost:8090/sensors/2/mqtt
+GET localhost:8090/sensors/3/mqtt
 X-USER-ID: admin
 Content-Type: application/json
 
@@ -32,12 +32,11 @@ X-USER-ID: admin
   "sensor_model_name" : "test_model",
   "ip" : "0.0.0.1",
   "port" : "1883",
-  "exchange" : "test_exchange",
-  "routing_key" : "test_routing_key"
+  "place_id" : 1
 }
 
 ### 센서 정보 수정
-PUT localhost:8090/sensors/2/update
+PUT localhost:8090/sensors/3/update
 X-USER-ID: admin
 Content-Type: application/json
 
@@ -46,8 +45,7 @@ Content-Type: application/json
   "sensor_model_name" : "test_model",
   "ip" : "0.0.0.0",
   "port" : "1880",
-  "exchange" : "test_exchange",
-  "routing_key" : "test_routing_key"
+  "place_id": 1
 }
 
 ### 센서 삭제

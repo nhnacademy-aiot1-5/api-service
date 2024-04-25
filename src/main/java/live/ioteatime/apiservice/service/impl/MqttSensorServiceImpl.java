@@ -8,6 +8,7 @@ import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotSupportedException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
+import live.ioteatime.apiservice.repository.PlaceRepository;
 import live.ioteatime.apiservice.repository.SupportedSensorRepository;
 import live.ioteatime.apiservice.repository.UserRepository;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -31,7 +32,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     private final SupportedSensorRepository supportedSensorRepository;
     private final UserRepository userRepository;
     private final MqttSensorRepository sensorRepository;
-
+    private final PlaceRepository placeRepository;
 
     /**
      *
@@ -105,10 +106,18 @@ public class MqttSensorServiceImpl implements MqttSensorService {
             throw new OrganizationNotFoundException();
         }
 
+        log.error("place id={}", request.getPlaceId());
+        Place place = placeRepository.findById(request.getPlaceId()).orElseThrow(()->new RuntimeException());
+
+        if(Objects.isNull(place)){
+            throw new RuntimeException();
+        }
+
         MqttSensor sensor = new MqttSensor();
         BeanUtils.copyProperties(request, sensor);
         sensor.setAlive(Alive.DOWN);
         sensor.setOrganization(organization);
+        sensor.setPlace(place);
 
         sensorRepository.save(sensor);
 

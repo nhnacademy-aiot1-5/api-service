@@ -31,12 +31,6 @@ public class MqttSensor {
     private String port;
 
     @Column
-    private String exchange;
-
-    @Column(name = "routing_key")
-    private String routingKey;
-
-    @Column
     @Enumerated(EnumType.STRING)
     private Alive alive;
 

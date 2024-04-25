@@ -16,9 +16,5 @@ public class SensorDto {
     private int channel;
     private String ip;
     private String port;
-    private String exchange;
-    @JsonProperty("routing_key")
-    private String routingKey;
     private Alive alive;
-    private Organization organization;
 }
