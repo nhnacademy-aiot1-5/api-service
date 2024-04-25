@@ -1,6 +1,9 @@
 package live.ioteatime.apiservice.service.impl;
 
-import live.ioteatime.apiservice.domain.*;
+import live.ioteatime.apiservice.domain.Organization;
+import live.ioteatime.apiservice.domain.Role;
+import live.ioteatime.apiservice.domain.User;
+import live.ioteatime.apiservice.dto.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.OrganizationDto;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
@@ -22,7 +25,7 @@ import java.util.List;
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository adminRepository;
-    private final BudgetHistoryRepository organizationBudgetHistoryRepository;
+    private final BudgetHistoryRepository budgetHistoryRepository;
     private final OrganizationRepository organizationRepository;
 
     private List<UserDto> getUserDtos(List<User> users) {
@@ -54,10 +57,16 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<BudgetHistory> getBudgetHistory(String userId) {
+    public List<BudgetHistoryDto> getBudgetHistory(String userId) {
         User user = adminRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
-        return organizationBudgetHistoryRepository.findAllByOrganization_IdOrderByChangeTimeDesc(organization.getId());
+        log.info(organization.getName());
+        log.info(String.valueOf(organization.getId()));
+
+        List<BudgetHistoryDto> budgetHistory = budgetHistoryRepository.findAllByOrganization_IdOrderByChangeTimeDesc(organization.getId());
+        log.info(String.valueOf(budgetHistory.size()));
+
+        return budgetHistory;
     }
 
     @Override

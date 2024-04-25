@@ -3,8 +3,8 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
-import live.ioteatime.apiservice.domain.BudgetHistory;
 import live.ioteatime.apiservice.domain.Organization;
+import live.ioteatime.apiservice.dto.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.OrganizationDto;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.service.AdminService;
@@ -62,7 +62,7 @@ public class AdminController {
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져오는 API",
             description = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져옵니다.")
-    public ResponseEntity<List<BudgetHistory>> getBudgetHistory(@RequestHeader(X_USER_ID) String userId) {
+    public ResponseEntity<List<BudgetHistoryDto>> getBudgetHistory(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.ok(adminService.getBudgetHistory(userId));
     }
 
