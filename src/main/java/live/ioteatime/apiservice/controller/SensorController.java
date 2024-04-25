@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sensors")
-@Tag(name = "센서 컨트롤러", description = "센서 및 토픽 관리에 사용하는 컨트롤러입니다.")
+@Tag(name = "센서 컨트롤러", description = "센서 관리에 사용하는 컨트롤러입니다.")
 @RequiredArgsConstructor
 public class SensorController {
 
