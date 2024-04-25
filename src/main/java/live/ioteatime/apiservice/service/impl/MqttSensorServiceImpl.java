@@ -1,6 +1,8 @@
 package live.ioteatime.apiservice.service.impl;
 
+import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
+import live.ioteatime.apiservice.dto.AddBrokerRequest;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,12 +30,14 @@ import java.util.Objects;
 @Getter @Setter
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class MqttSensorServiceImpl implements MqttSensorService {
 
     private final SupportedSensorRepository supportedSensorRepository;
     private final UserRepository userRepository;
     private final MqttSensorRepository sensorRepository;
     private final PlaceRepository placeRepository;
+    private final SensorAdaptor sensorAdaptor;
 
     /**
      *
@@ -97,7 +102,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     @Override
     public int addMqttSensor(String userId, SensorRequest request) {
 
-        log.info("Add sensor request - model_name: {}", request.getModelName());
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
             throw new SensorNotSupportedException();
         }
@@ -105,13 +109,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         if(Objects.isNull(organization)) {
             throw new OrganizationNotFoundException();
         }
-
-        log.error("place id={}", request.getPlaceId());
         Place place = placeRepository.findById(request.getPlaceId()).orElseThrow(()->new RuntimeException());
-
-        if(Objects.isNull(place)){
-            throw new RuntimeException();
-        }
 
         MqttSensor sensor = new MqttSensor();
         BeanUtils.copyProperties(request, sensor);
@@ -119,9 +117,17 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         sensor.setOrganization(organization);
         sensor.setPlace(place);
 
-        sensorRepository.save(sensor);
+        MqttSensor savedSensor = sensorRepository.save(sensor);
 
-        return sensor.getId();
+        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
+        String mqttHost = "tcp://" + request.getIp() + ":" + request.getPort();
+        String mqttId = "mqtt" +  savedSensor.getId();
+        addBrokerRequest.setMqttHost(mqttHost);
+        addBrokerRequest.setMqttId(mqttId);
+
+        sensorAdaptor.addBrokers(addBrokerRequest);
+
+        return savedSensor.getId();
     }
 
     /**
