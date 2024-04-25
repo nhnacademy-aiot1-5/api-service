@@ -30,6 +30,7 @@ public class PlaceController {
     }
 
     @GetMapping("/places")
+    @Operation(summary = "organization id 별로 place 리스트 가져오기")
     public ResponseEntity<List<PlaceResponseDto>> getPlaces(@RequestParam(name = "organization_id") int organizationId) {
         List<Place> places = placeService.getPlaces(organizationId);
         List<PlaceResponseDto> placeResponseDtos = new ArrayList<>();
@@ -40,6 +41,7 @@ public class PlaceController {
     }
 
     @PostMapping("/place")
+    @Operation(summary = "구역 저장하기")
     public PlaceResponseDto registerPlace(@RequestBody PlaceRequestDto placeRequestDto) {
         Place place = placeService.savePlace(placeRequestDto);
 
