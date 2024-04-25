@@ -42,7 +42,7 @@ public class ModbusSensor {
     private Alive alive;
 
     @JoinColumn(name = "organization_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 
 }

@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,10 +41,10 @@ public class MqttSensor {
     private Alive alive;
 
     @JoinColumn(name = "organization_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 
     @JoinColumn(name = "place_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Place place;
 }

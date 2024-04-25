@@ -19,11 +19,11 @@ public class Channel {
     private int id;
 
     @JoinColumn(name = "sensor_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ModbusSensor sensor;
 
     @JoinColumn(name = "place_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Place place;
 
     @Column(name = "channel_name")

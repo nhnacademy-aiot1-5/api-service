@@ -20,7 +20,7 @@ public class Topic {
     @Column
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sensor_id")
     private MqttSensor mqttSensor;
 

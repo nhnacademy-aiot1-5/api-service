@@ -26,6 +26,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     @JoinColumn(name = "organization_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
 }
