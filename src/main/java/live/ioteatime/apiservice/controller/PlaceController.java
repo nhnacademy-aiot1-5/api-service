@@ -47,4 +47,5 @@ public class PlaceController {
 
         return new PlaceResponseDto(place.getId(), place.getPlaceName());
     }
+
 }
