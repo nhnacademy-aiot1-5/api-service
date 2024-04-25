@@ -50,6 +50,11 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
         return sensorDtoList;
     }
 
+    /**
+     * modbus 센서를 단일 조회합니다.
+     * @param sensorId 센서아이디
+     * @return 센서 정보
+     */
     @Override
     public ModbusSensorDto getSensorById(int sensorId){
         ModbusSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
