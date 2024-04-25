@@ -7,7 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "supported_sensors")
+@Table(name = "supported_mqtt_sensors")
 @Getter @Setter @NoArgsConstructor
 public class SupportedSensor {
     @Id
@@ -18,6 +18,4 @@ public class SupportedSensor {
     @Column(name = "sensor_model_name")
     private String modelName;
 
-    @Column
-    private int channel;
 }

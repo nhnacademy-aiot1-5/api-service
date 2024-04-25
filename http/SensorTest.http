@@ -1,18 +1,55 @@
-###
-GET localhost:8090/admin/sensor
+### 지원 가능한 센서 모델 리스트 조회
+GET localhost:8090/sensors/supported
+X-USER-ID: admin
+
+### 조직 modbus 센서 리스트 조회
+GET localhost:8090/sensors/list/modbus
 X-USER-ID: admin
 Content-Type: application/json
 
+### 조직 mqtt 센서 리스트 조회
+GET localhost:8090/sensors/list/mqtt
+X-USER-ID: admin
+Content-Type: application/json
 
-### 센서 등록
-POST localhost:8090/admin/sensor
-content-type: application/json
-X-USER-ID : admin
+### Modbus 센서 단일 조회
+GET localhost:8090/sensors/2/modbus
+X-USER-ID: admin
+Content-Type: application/json
+
+### Mqtt 센서 단일 조회
+GET localhost:8090/sensors/2/mqtt
+X-USER-ID: admin
+Content-Type: application/json
+
+### Mqtt센서 등록
+POST localhost:8090/sensors
+Content-type: application/json
+X-USER-ID: admin
 
 {
-  "name" : "sensor1",
-  "modelName" : "모델명",
-  "channel" : 54,
+  "sensor_name" : "모키토",
+  "sensor_model_name" : "test_model",
   "ip" : "0.0.0.1",
-  "port" : "1883"
+  "port" : "1883",
+  "exchange" : "test_exchange",
+  "routing_key" : "test_routing_key"
 }
+
+### 센서 정보 수정
+PUT localhost:8090/sensors/2/update
+X-USER-ID: admin
+Content-Type: application/json
+
+{
+  "sensor_name" : "모키토",
+  "sensor_model_name" : "test_model",
+  "ip" : "0.0.0.0",
+  "port" : "1880",
+  "exchange" : "test_exchange",
+  "routing_key" : "test_routing_key"
+}
+
+### 센서 삭제
+DELETE localhost:8090/sensors/2
+X-USER-ID: admin
