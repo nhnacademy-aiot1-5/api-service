@@ -18,6 +18,9 @@ public class Channel {
     @Column(name = "channel_id")
     private int id;
 
+    @Column(name = "channel_name")
+    private String channelName;
+
     @JoinColumn(name = "sensor_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private ModbusSensor sensor;
@@ -25,7 +28,4 @@ public class Channel {
     @JoinColumn(name = "place_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Place place;
-
-    @Column(name = "channel_name")
-    private String channelName;
 }

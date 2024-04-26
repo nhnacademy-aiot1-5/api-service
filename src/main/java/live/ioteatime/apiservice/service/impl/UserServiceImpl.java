@@ -95,10 +95,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserInfo(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        String organizationName = user.getOrganization().getName();
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto, "password", "organization");
-        userDto.setOrganizationName(organizationName);
         return userDto;
     }
 
