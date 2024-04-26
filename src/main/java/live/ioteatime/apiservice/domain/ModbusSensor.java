@@ -32,12 +32,6 @@ public class ModbusSensor {
     private int channelCount;
 
     @Column
-    private String exchange;
-
-    @Column(name = "routing_key")
-    private String routingKey;
-
-    @Column
     @Enumerated(EnumType.STRING)
     private Alive alive;
 

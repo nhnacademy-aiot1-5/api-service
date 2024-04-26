@@ -6,9 +6,7 @@ import lombok.Setter;
 
 @Getter @Setter
 @NoArgsConstructor
-public class TopicDto {
-    private int topicId;
-    private String topic;
-    private String description;
-    private int sensorId;
+public class TopicRequest {
+    String topic;
+    String description;
 }
