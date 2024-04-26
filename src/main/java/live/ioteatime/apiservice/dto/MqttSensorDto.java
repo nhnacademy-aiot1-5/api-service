@@ -18,10 +18,5 @@ public class MqttSensorDto {
     private String modelName;
     private String ip;
     private String port;
-    @JsonProperty("rabbitmqExchange")
-    private String exchange;
-    @JsonProperty("rabbitmqRoutingKey")
-    private String routingKey;
     private Alive alive;
-    private Organization organization;
 }

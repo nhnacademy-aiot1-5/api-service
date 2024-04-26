@@ -2,7 +2,6 @@ package live.ioteatime.apiservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import live.ioteatime.apiservice.domain.Alive;
-import live.ioteatime.apiservice.domain.Organization;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,9 +18,5 @@ public class ModbusSensorDto {
     private String ip;
     private String port;
     private int channelCount;
-    private String exchange;
-    @JsonProperty("routing_key")
-    private String routingKey;
     private Alive alive;
-    private Organization organization;
 }
