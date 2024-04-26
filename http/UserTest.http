@@ -24,7 +24,7 @@ X-USER-ID: admin
 
 
 ###
-GET localhost:8090/admin/guest
+GET localhost:8090/admin/guests
 X-USER-ID: admin
 Content-Type: application/json
 

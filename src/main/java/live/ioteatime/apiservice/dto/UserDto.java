@@ -31,6 +31,4 @@ public class UserDto {
 
     @Schema(description = "유저의 소속 조직입니다.")
     private OrganizationDto organization;
-
-    private String organizationName;
 }
