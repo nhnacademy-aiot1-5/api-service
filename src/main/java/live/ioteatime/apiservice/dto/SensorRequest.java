@@ -16,4 +16,6 @@ public class SensorRequest {
     private String port;
     @JsonProperty("place_id")
     private int placeId;
+    @JsonProperty("channel_count")
+    private int channelCount;
 }

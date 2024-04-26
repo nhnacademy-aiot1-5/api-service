@@ -75,7 +75,7 @@ public class TopicServiceImpl implements TopicService {
 
     @Override
     public List<TopicDto> getTopicsBySensorId(int sensorId) {
-        List<Topic> topicList = topicRepository.findBySensorId(sensorId);
+        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensorId);
         List<TopicDto> topicDtoList = new ArrayList<>();
         for(Topic topic : topicList){
             TopicDto topicDto = new TopicDto();

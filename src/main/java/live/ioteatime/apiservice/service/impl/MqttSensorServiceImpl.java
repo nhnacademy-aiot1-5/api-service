@@ -5,10 +5,7 @@ import live.ioteatime.apiservice.domain.*;
 import live.ioteatime.apiservice.dto.AddBrokerRequest;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
-import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
-import live.ioteatime.apiservice.exception.SensorNotFoundException;
-import live.ioteatime.apiservice.exception.SensorNotSupportedException;
-import live.ioteatime.apiservice.exception.UserNotFoundException;
+import live.ioteatime.apiservice.exception.*;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
 import live.ioteatime.apiservice.repository.PlaceRepository;
 import live.ioteatime.apiservice.repository.SupportedSensorRepository;
@@ -45,7 +42,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      */
     @Override
     public List<MqttSensorDto> getAllSupportedSensors() {
-        List<SupportedSensor> supportedSensorList = supportedSensorRepository.findAll();
+        List<SupportedSensor> supportedSensorList = supportedSensorRepository.findAllByProtocol(Protocol.MQTT);
 
         List<MqttSensorDto> sensorDtoList = new ArrayList<>();
         for(SupportedSensor supportedSensor : supportedSensorList) {
@@ -131,7 +128,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     }
 
     /**
-     * 센서 정보를 수정합니다. sensor_name, ip, port만 수정 가능합니다.
+     * 센서 정보를 수정합니다. sensor_name, ip, port, place 만 수정 가능합니다.
      * @param sensorId 센서아이디
      * @param sensorRequest 센서 수정 요청
      * @return 수정한 센서의 아이디를 반환합니다.
@@ -143,6 +140,9 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         sensor.setName(sensorRequest.getName());
         sensor.setIp(sensorRequest.getIp());
         sensor.setPort(sensorRequest.getPort());
+
+        Place place = placeRepository.findById(sensorRequest.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
+        sensor.setPlace(place);
 
         sensorRepository.save(sensor);
 
