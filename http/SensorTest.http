@@ -1,29 +1,33 @@
-### 지원 가능한 센서 모델 리스트 조회
-GET localhost:8090/sensors/supported
+### 지원 가능한 modbus 센서 모델 리스트 조회
+GET localhost:8090/sensors/modbus/supported
+X-USER-ID: admin
+
+### 지원 가능한 mqtt 센서 모델 리스트 조회
+GET localhost:8090/sensors/mqtt/supported
 X-USER-ID: admin
 
 ### 조직 modbus 센서 리스트 조회
-GET localhost:8090/sensors/list/modbus
+GET localhost:8090/sensors/modbus/list
 X-USER-ID: admin
 Content-Type: application/json
 
 ### 조직 mqtt 센서 리스트 조회
-GET localhost:8090/sensors/list/mqtt
+GET localhost:8090/sensors/mqtt/list
 X-USER-ID: admin
 Content-Type: application/json
 
 ### Modbus 센서 단일 조회
-GET localhost:8090/sensors/2/modbus
+GET localhost:8090/sensors/modbus/2
 X-USER-ID: admin
 Content-Type: application/json
 
 ### Mqtt 센서 단일 조회
-GET localhost:8090/sensors/2/mqtt
+GET localhost:8090/sensors/mqtt/5
 X-USER-ID: admin
 Content-Type: application/json
 
 ### Mqtt센서 등록
-POST localhost:8090/sensors
+POST localhost:8090/sensors/mqtt
 Content-type: application/json
 X-USER-ID: admin
 
@@ -32,12 +36,25 @@ X-USER-ID: admin
   "sensor_model_name" : "test_model",
   "ip" : "0.0.0.1",
   "port" : "1883",
-  "exchange" : "test_exchange",
-  "routing_key" : "test_routing_key"
+  "place_id" : 1
+}
+
+### Modbus센서 등록
+POST localhost:8090/sensors/modbus
+Content-type: application/json
+X-USER-ID: admin
+
+{
+  "sensor_name" : "젬스2",
+  "sensor_model_name" : "GEMS-3500",
+  "ip" : "0.0.0.1",
+  "port" : "1883",
+  "place_id" : 1,
+  "channel_count": 30
 }
 
 ### 센서 정보 수정
-PUT localhost:8090/sensors/2/update
+PUT localhost:8090/sensors/mqtt/5/update
 X-USER-ID: admin
 Content-Type: application/json
 
@@ -46,8 +63,7 @@ Content-Type: application/json
   "sensor_model_name" : "test_model",
   "ip" : "0.0.0.0",
   "port" : "1880",
-  "exchange" : "test_exchange",
-  "routing_key" : "test_routing_key"
+  "place_id": 1
 }
 
 ### 센서 삭제

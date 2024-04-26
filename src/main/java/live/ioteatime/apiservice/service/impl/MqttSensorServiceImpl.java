@@ -1,13 +1,13 @@
 package live.ioteatime.apiservice.service.impl;
 
+import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
+import live.ioteatime.apiservice.dto.AddBrokerRequest;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
-import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
-import live.ioteatime.apiservice.exception.SensorNotFoundException;
-import live.ioteatime.apiservice.exception.SensorNotSupportedException;
-import live.ioteatime.apiservice.exception.UserNotFoundException;
+import live.ioteatime.apiservice.exception.*;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
+import live.ioteatime.apiservice.repository.PlaceRepository;
 import live.ioteatime.apiservice.repository.SupportedSensorRepository;
 import live.ioteatime.apiservice.repository.UserRepository;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,12 +27,14 @@ import java.util.Objects;
 @Getter @Setter
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class MqttSensorServiceImpl implements MqttSensorService {
 
     private final SupportedSensorRepository supportedSensorRepository;
     private final UserRepository userRepository;
     private final MqttSensorRepository sensorRepository;
-
+    private final PlaceRepository placeRepository;
+    private final SensorAdaptor sensorAdaptor;
 
     /**
      *
@@ -39,7 +42,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      */
     @Override
     public List<MqttSensorDto> getAllSupportedSensors() {
-        List<SupportedSensor> supportedSensorList = supportedSensorRepository.findAll();
+        List<SupportedSensor> supportedSensorList = supportedSensorRepository.findAllByProtocol(Protocol.MQTT);
 
         List<MqttSensorDto> sensorDtoList = new ArrayList<>();
         for(SupportedSensor supportedSensor : supportedSensorList) {
@@ -96,7 +99,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     @Override
     public int addMqttSensor(String userId, SensorRequest request) {
 
-        log.info("Add sensor request - model_name: {}", request.getModelName());
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
             throw new SensorNotSupportedException();
         }
@@ -104,19 +106,29 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         if(Objects.isNull(organization)) {
             throw new OrganizationNotFoundException();
         }
+        Place place = placeRepository.findById(request.getPlaceId()).orElseThrow(()->new RuntimeException());
 
         MqttSensor sensor = new MqttSensor();
         BeanUtils.copyProperties(request, sensor);
         sensor.setAlive(Alive.DOWN);
         sensor.setOrganization(organization);
+        sensor.setPlace(place);
 
-        sensorRepository.save(sensor);
+        MqttSensor savedSensor = sensorRepository.save(sensor);
 
-        return sensor.getId();
+        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
+        String mqttHost = "tcp://" + request.getIp() + ":" + request.getPort();
+        String mqttId = "mqtt" +  savedSensor.getId();
+        addBrokerRequest.setMqttHost(mqttHost);
+        addBrokerRequest.setMqttId(mqttId);
+
+        sensorAdaptor.addBrokers(addBrokerRequest);
+
+        return savedSensor.getId();
     }
 
     /**
-     * 센서 정보를 수정합니다. sensor_name, ip, port만 수정 가능합니다.
+     * 센서 정보를 수정합니다. sensor_name, ip, port, place 만 수정 가능합니다.
      * @param sensorId 센서아이디
      * @param sensorRequest 센서 수정 요청
      * @return 수정한 센서의 아이디를 반환합니다.
@@ -128,6 +140,9 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         sensor.setName(sensorRequest.getName());
         sensor.setIp(sensorRequest.getIp());
         sensor.setPort(sensorRequest.getPort());
+
+        Place place = placeRepository.findById(sensorRequest.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
+        sensor.setPlace(place);
 
         sensorRepository.save(sensor);
 

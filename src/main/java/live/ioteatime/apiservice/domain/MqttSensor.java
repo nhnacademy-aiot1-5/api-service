@@ -1,6 +1,5 @@
 package live.ioteatime.apiservice.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,12 +28,6 @@ public class MqttSensor {
 
     @Column
     private String port;
-
-    @Column
-    private String exchange;
-
-    @Column(name = "routing_key")
-    private String routingKey;
 
     @Column
     @Enumerated(EnumType.STRING)
