@@ -10,31 +10,28 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@Table(name = "daily_electricity_consumption")
-@AllArgsConstructor
-@NoArgsConstructor
-public class DailyElectricity {
+@Table(name = "hourly_electricity_consumption")
+public class HourlyElectricity {
     @EmbeddedId
     private Pk pk;
 
     @MapsId("channelId")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "channel_id")
-    @ManyToOne
     private Channel channel;
-    private Long kwh;
-    private Long bill;
+
+    private long kwh;
+    private long bill;
 
     @Embeddable
     @AllArgsConstructor
     @NoArgsConstructor
-    @Getter
     @Setter
+    @Getter
     public static class Pk implements Serializable {
-        @Column(name = "channel_id")
-        private int channelId;
-        @Column(name = "time")
         private LocalDateTime time;
+
+        @Column(name = "channel_id")
+        private String channelId;
     }
 }

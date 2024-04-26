@@ -23,6 +23,7 @@ public class MonthlyElectricity {
     private Organization organization;
 
     private Long kwh;
+    private Long bill;
 
     @Embeddable
     @AllArgsConstructor
