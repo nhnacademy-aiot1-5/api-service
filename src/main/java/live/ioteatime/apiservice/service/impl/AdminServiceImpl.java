@@ -60,11 +60,8 @@ public class AdminServiceImpl implements AdminService {
     public List<BudgetHistoryDto> getBudgetHistory(String userId) {
         User user = adminRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
-        log.info(organization.getName());
-        log.info(String.valueOf(organization.getId()));
 
         List<BudgetHistoryDto> budgetHistory = budgetHistoryRepository.findAllByOrganization_IdOrderByChangeTimeDesc(organization.getId());
-        log.info(String.valueOf(budgetHistory.size()));
 
         return budgetHistory;
     }

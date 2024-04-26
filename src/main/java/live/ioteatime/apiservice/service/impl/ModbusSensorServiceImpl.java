@@ -8,6 +8,7 @@ import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.ModbusSensorRepository;
 import live.ioteatime.apiservice.repository.SupportedSensorRepository;
 import live.ioteatime.apiservice.repository.UserRepository;
+import live.ioteatime.apiservice.service.ChannelService;
 import live.ioteatime.apiservice.service.ModbusSensorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
     private final ModbusSensorRepository sensorRepository;
     private final UserRepository userRepository;
     private final SupportedSensorRepository supportedSensorRepository;
-//    private final ChannelService channelService;
+    private final ChannelService channelService;
 
 
     /**
