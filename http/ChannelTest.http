@@ -1,1 +1,2 @@
-###
+### 시간별 전력량 가져오기
+GET localhost:8090/channels/by_place?placeId=1

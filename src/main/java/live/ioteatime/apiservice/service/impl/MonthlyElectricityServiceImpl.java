@@ -18,7 +18,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService<Monthly
 
     @Override
     public MonthlyElectricity getElectricityByDate(ElectricityRequestDto electricityRequestDto) {
-        MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(electricityRequestDto.getOrganizationId(), electricityRequestDto.getTime());
+        MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(electricityRequestDto.getChannelId(), electricityRequestDto.getTime());
         return monthlyElectricityRepository.findMonthlyElectricityByPk(pk)
                 .orElseThrow(() -> new ElectricityNotFoundException("monthly Electricity not found."));
     }
@@ -29,8 +29,8 @@ public class MonthlyElectricityServiceImpl implements ElectricityService<Monthly
 
         LocalDateTime startOfTwelveMonthsBefore = endOfMonth.minusMonths(11).withDayOfMonth(1);
 
-        return monthlyElectricityRepository.findAllByPkOrganizationIdAndPkTimeBetween(
-                electricityRequestDto.getOrganizationId(),
+        return monthlyElectricityRepository.findAllByPkChannelIdAndPkTimeBetween(
+                electricityRequestDto.getChannelId(),
                 startOfTwelveMonthsBefore,
                 endOfMonth
         );

@@ -10,4 +10,6 @@ public interface ChannelService {
     int updatePlace(int sensorId, int placeId);
 
     List<Channel> getChannelList(int sensorId);
+
+    List<Channel> getChannelListByPlace(int placeId);
 }

@@ -31,7 +31,7 @@ public class ChannelServiceImpl implements ChannelService {
         for (int i = 1; i <= sensor.getChannelCount(); i++) {
             Channel channel = new Channel();
             channel.setSensor(sensor);
-            channel.setChannelName(sensor.getName()+i);
+            channel.setChannelName(sensor.getName() + i);
             ChannelDto channelDto = new ChannelDto();
             BeanUtils.copyProperties(channel, channelDto);
             channelList.add(channelDto);
@@ -44,7 +44,7 @@ public class ChannelServiceImpl implements ChannelService {
     public int updatePlace(int sensorId, int placeId) {
         Place place = placeRepository.findById(placeId).orElseThrow(PlaceNotFoundException::new);
         List<Channel> channelList = channelRepository.findALLBySensor_Id(sensorId);
-        for(int i = 0; i < channelList.size(); i++) {
+        for (int i = 0; i < channelList.size(); i++) {
             channelList.get(i).setPlace(place);
             channelRepository.save(channelList.get(i));
         }
@@ -54,5 +54,10 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public List<Channel> getChannelList(int sensorId) {
         return channelRepository.findALLBySensor_Id(sensorId);
+    }
+
+    @Override
+    public List<Channel> getChannelListByPlace(int placeId) {
+        return channelRepository.findAllByPlace_Id(placeId);
     }
 }
