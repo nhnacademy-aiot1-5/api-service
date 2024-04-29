@@ -63,7 +63,7 @@ public class UserController {
         String createdUserId = userService.createUser(registerRequest);
 
         URI location = UriComponentsBuilder
-                .fromUriString("https://ioteatime.live/mypage")
+                .fromUriString("https://www.ioteatime.live/mypage")
                 .build().toUri();
 
         return ResponseEntity.created(location).body("Successfully registered: userId="+ createdUserId);

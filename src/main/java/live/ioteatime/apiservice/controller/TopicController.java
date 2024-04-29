@@ -68,7 +68,7 @@ public class TopicController {
         int addedTopicId = topicService.addTopic(sensorId, topicDto);
 
         URI location = UriComponentsBuilder
-                .fromUriString("https://ioteatime.live/sensors/" + sensorId + "/topics/" + addedTopicId)
+                .fromUriString("https://www.ioteatime.live/sensors/" + sensorId + "/topics/" + addedTopicId)
                 .build().toUri();
         return ResponseEntity.created(location).build();
     }
@@ -87,7 +87,7 @@ public class TopicController {
     public ResponseEntity<String> updateTopic(@RequestHeader(X_USER_ID) String userId,
                                               @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId,
                                               @RequestBody TopicRequest topicRequest){
-        topicService.updateTopic(topicId, topicRequest);
+        topicService.updateTopic(sensorId, topicId, topicRequest);
         return ResponseEntity.ok().body("Updated topic. id="+topicId);
     }
 
