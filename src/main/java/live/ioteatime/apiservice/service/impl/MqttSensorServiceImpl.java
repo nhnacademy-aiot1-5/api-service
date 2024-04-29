@@ -3,13 +3,11 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
 import live.ioteatime.apiservice.dto.AddBrokerRequest;
+import live.ioteatime.apiservice.dto.AddMqttSensorRequest;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.exception.*;
-import live.ioteatime.apiservice.repository.MqttSensorRepository;
-import live.ioteatime.apiservice.repository.PlaceRepository;
-import live.ioteatime.apiservice.repository.SupportedSensorRepository;
-import live.ioteatime.apiservice.repository.UserRepository;
+import live.ioteatime.apiservice.repository.*;
 import live.ioteatime.apiservice.service.MqttSensorService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +33,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     private final MqttSensorRepository sensorRepository;
     private final PlaceRepository placeRepository;
     private final SensorAdaptor sensorAdaptor;
+    private final TopicRepository topicRepository;
 
     /**
      *
@@ -95,7 +94,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      * @return 등록한 센서 아이디
      */
     @Override
-    public int addMqttSensor(String userId, SensorRequest request) {
+    public int addMqttSensor(String userId, AddMqttSensorRequest request) {
 
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
             throw new SensorNotSupportedException();
@@ -120,11 +119,21 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         MqttSensor savedSensor = sensorRepository.save(sensor);
 
+        if (Objects.isNull(request.getTopic())){
+            throw new IllegalArgumentException();
+        }
+        Topic topic = new Topic();
+        topic.setTopic(request.getTopic());
+        topic.setDescription(request.getDescription());
+        topic.setMqttSensor(savedSensor);
+        topicRepository.save(topic);
+
         AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
         String mqttHost = "tcp://" + request.getIp() + ":" + request.getPort();
         String mqttId = "mqtt" +  savedSensor.getId();
         addBrokerRequest.setMqttHost(mqttHost);
         addBrokerRequest.setMqttId(mqttId);
+        addBrokerRequest.setMqttTopic(request.getTopic());
 
         sensorAdaptor.addBrokers(addBrokerRequest);
 

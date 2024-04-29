@@ -9,7 +9,6 @@ import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.TopicNotFoundException;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
 import live.ioteatime.apiservice.repository.TopicRepository;
-import live.ioteatime.apiservice.repository.UserRepository;
 import live.ioteatime.apiservice.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,6 @@ public class TopicServiceImpl implements TopicService {
     private final MqttSensorRepository mqttSensorRepository;
     private final TopicRepository topicRepository;
     private final SensorAdaptor sensorAdaptor;
-    private final UserRepository userRepository;
 
     /**
      * 센서의 토픽 리스트를 모두 반환합니다.

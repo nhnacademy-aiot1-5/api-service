@@ -4,6 +4,7 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
+import live.ioteatime.apiservice.dto.AddMqttSensorRequest;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -68,7 +69,7 @@ public class MqttSensorController {
     @AdminOnly
     @Transactional
     @Operation(summary = "MQTT 센서를 추가하는 API", description = "MQTT 센서를 추가합니다.")
-    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody SensorRequest addSensorRequest){
+    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody AddMqttSensorRequest addSensorRequest){
         int registeredSensorId = mqttSensorService.addMqttSensor(userId, addSensorRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Sensor registered. id=" + registeredSensorId);
     }
