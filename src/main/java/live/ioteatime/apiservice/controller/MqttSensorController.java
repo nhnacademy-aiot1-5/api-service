@@ -4,6 +4,7 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
+import live.ioteatime.apiservice.dto.AddMqttSensorRequest;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -57,7 +57,7 @@ public class MqttSensorController {
     @GetMapping("/{sensorId}")
     @Operation(summary = "MQTT 센서 단일 조회 API")
     public ResponseEntity<MqttSensorDto> getMqttSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
-        return ResponseEntity.ok(mqttSensorService.getSensorById(sensorId));
+        return ResponseEntity.ok(mqttSensorService.getSensorById(userId, sensorId));
     }
 
     /**
@@ -66,9 +66,8 @@ public class MqttSensorController {
      */
     @PostMapping
     @AdminOnly
-    @Transactional
     @Operation(summary = "MQTT 센서를 추가하는 API", description = "MQTT 센서를 추가합니다.")
-    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody SensorRequest addSensorRequest){
+    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody AddMqttSensorRequest addSensorRequest){
         int registeredSensorId = mqttSensorService.addMqttSensor(userId, addSensorRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Sensor registered. id=" + registeredSensorId);
     }
@@ -82,10 +81,11 @@ public class MqttSensorController {
      */
     @PutMapping("/{sensorId}/update")
     @AdminOnly
+    @Operation(summary = "MQTT 센서 정보를 수정하는 API", description = "MQTT 센서 정보를 수정합니다.")
     public ResponseEntity<String> updateMqttSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId,
                                                    @RequestBody SensorRequest updateSensorRequest) {
 
-        int updatedSensorId = mqttSensorService.updateMqttSensor(sensorId, updateSensorRequest);
+        int updatedSensorId = mqttSensorService.updateMqttSensor(userId, sensorId, updateSensorRequest);
         return ResponseEntity.ok().body("Sensor updated. id=" + updatedSensorId);
     }
 
@@ -98,7 +98,7 @@ public class MqttSensorController {
     @DeleteMapping("/{sensorId}")
     @AdminOnly
     public ResponseEntity<String> deleteMqttSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
-        mqttSensorService.deleteSensorById(sensorId);
+        mqttSensorService.deleteSensorById(userId, sensorId);
         return ResponseEntity.noContent().build();
     }
 

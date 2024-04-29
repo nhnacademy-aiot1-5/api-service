@@ -20,11 +20,6 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
-ioteatime:
-  user:
-    userDetailUri:
-      http://ioteatime.live/mypage
-
 springdoc:
   packages-to-scan: live.ioteatime.apiservice
   default-consumes-media-type: application/json;charset=UTF-8

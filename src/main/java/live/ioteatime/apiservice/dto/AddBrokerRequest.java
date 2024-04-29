@@ -9,4 +9,5 @@ import lombok.Setter;
 public class AddBrokerRequest {
     private String mqttHost;
     private String mqttId;
+    private String mqttTopic;
 }

@@ -25,4 +25,9 @@ public class SensorControllerAdvice {
     public ResponseEntity<String> topicNotFound(){
         return ResponseEntity.notFound().build();
     }
+
+    @ExceptionHandler(IllegalAccessException.class)
+    public ResponseEntity<String> illegalAccess(){
+        return ResponseEntity.badRequest().build();
+    }
 }
