@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -67,7 +66,6 @@ public class MqttSensorController {
      */
     @PostMapping
     @AdminOnly
-    @Transactional
     @Operation(summary = "MQTT 센서를 추가하는 API", description = "MQTT 센서를 추가합니다.")
     public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody AddMqttSensorRequest addSensorRequest){
         int registeredSensorId = mqttSensorService.addMqttSensor(userId, addSensorRequest);
