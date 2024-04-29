@@ -3,6 +3,7 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.MqttSensor;
 import live.ioteatime.apiservice.domain.Topic;
+import live.ioteatime.apiservice.dto.AddBrokerRequest;
 import live.ioteatime.apiservice.dto.TopicDto;
 import live.ioteatime.apiservice.dto.TopicRequest;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
@@ -16,10 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -79,11 +77,7 @@ public class TopicServiceImpl implements TopicService {
 
         Topic savedTopic = topicRepository.save(topic);
 
-        String mqttBrokerId = "mqtt" + sensor.getId();
-        Map<String, String> topicRequest = new HashMap<>();
-        topicRequest.put("mqttTopic", topic.getTopic());
-
-        sensorAdaptor.addTopics(mqttBrokerId, topicRequest);
+        requestAddBrokerToRuleEngine(sensor);
 
         return savedTopic.getId();
     }
@@ -94,11 +88,15 @@ public class TopicServiceImpl implements TopicService {
      * @param topicRequest 수정 요청
      */
     @Override
-    public void updateTopic(int topicId, TopicRequest topicRequest) {
+    public void updateTopic(int sensorId, int topicId, TopicRequest topicRequest) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
         topic.setTopic(topicRequest.getTopic());
         topic.setDescription(topicRequest.getDescription());
         topicRepository.save(topic);
+
+        MqttSensor sensor = mqttSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        requestAddBrokerToRuleEngine(sensor);
+
     }
 
     /**
@@ -108,16 +106,33 @@ public class TopicServiceImpl implements TopicService {
      */
     @Override
     public void deleteTopic(int sensorId, int topicId) {
-
-        Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
-
-        String mqttBrokerId = "mqtt" + sensorId;
-        Map<String, String> topicRequest = new HashMap<>();
-        topicRequest.put("mqttTopic", topic.getTopic());
-
         topicRepository.deleteById(topicId);
-        sensorAdaptor.deleteTopics(mqttBrokerId, topicRequest);
 
+        MqttSensor sensor = mqttSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        requestAddBrokerToRuleEngine(sensor);
+    }
+
+    /**
+     * 토픽을 추가, 수정, 삭제할 경우
+     * 룰엔진에 토픽 추가, 수정, 삭제 요청을 만들어 보냅니다.
+     * @param sensor 센서 엔티티
+     */
+    private void requestAddBrokerToRuleEngine(MqttSensor sensor) {
+
+        String mqttHost = "tcp://" + sensor.getIp() + ":" + sensor.getPort();
+        String mqttId = "mqtt" +  sensor.getId();
+        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensor.getId());
+        List<String> topicValueList = new ArrayList<>();
+        for(Topic topicEntity : topicList){
+            topicValueList.add(topicEntity.getTopic());
+        }
+
+        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
+        addBrokerRequest.setMqttHost(mqttHost);
+        addBrokerRequest.setMqttId(mqttId);
+        addBrokerRequest.setMqttTopic(topicValueList);
+
+        sensorAdaptor.addBrokers(addBrokerRequest);
     }
 
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -133,10 +134,9 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         String mqttId = "mqtt" +  savedSensor.getId();
         addBrokerRequest.setMqttHost(mqttHost);
         addBrokerRequest.setMqttId(mqttId);
-        addBrokerRequest.setMqttTopic(request.getTopic());
+        addBrokerRequest.setMqttTopic(Arrays.asList(request.getTopic()));
 
         sensorAdaptor.addBrokers(addBrokerRequest);
-
         return savedSensor.getId();
     }
 
