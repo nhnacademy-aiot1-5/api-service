@@ -8,7 +8,7 @@ import java.util.List;
 public interface TopicService {
     List<TopicDto> getTopicsBySensorId(int sensorId);
     TopicDto getTopicByTopicId(int topicId);
-    String addTopic(int sensorId, TopicDto topicDto);
+    int addTopic(int sensorId, TopicDto topicDto);
     void updateTopic(int topicId, TopicRequest topicRequest);
     void deleteTopic(int sensorId, int topicId);
 }

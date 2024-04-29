@@ -10,7 +10,9 @@ import live.ioteatime.apiservice.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -55,7 +57,7 @@ public class TopicController {
      * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @param topicDto 토픽과 설명
-     * @return 200 Ok
+     * @return 201 Created
      */
     @PostMapping("/{sensorId}/topics")
     @AdminOnly @ValidOrganization
@@ -63,9 +65,12 @@ public class TopicController {
     public ResponseEntity<String> addTopic(@RequestHeader(X_USER_ID) String userId,
                                            @PathVariable("sensorId") int sensorId, @RequestBody TopicDto topicDto) {
 
-        String addedTopic = topicService.addTopic(sensorId, topicDto);
+        int addedTopicId = topicService.addTopic(sensorId, topicDto);
 
-        return ResponseEntity.ok(addedTopic);
+        URI location = UriComponentsBuilder
+                .fromUriString("https://ioteatime.live/sensors/" + sensorId + "/topics/" + addedTopicId)
+                .build().toUri();
+        return ResponseEntity.created(location).build();
     }
 
     /**
@@ -78,6 +83,7 @@ public class TopicController {
      */
     @PutMapping("/{sensorId}/topics/{topicId}/update")
     @AdminOnly @ValidOrganization
+    @Operation(summary = "토픽을 수정하는 API입니다.", description = "토픽과 토픽에 대한 설명을 수정 가능합니다.")
     public ResponseEntity<String> updateTopic(@RequestHeader(X_USER_ID) String userId,
                                               @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId,
                                               @RequestBody TopicRequest topicRequest){
@@ -94,6 +100,7 @@ public class TopicController {
      */
     @DeleteMapping("/{sensorId}/topics/{topicId}")
     @AdminOnly @ValidOrganization
+    @Operation(summary = "토픽을 삭제하는 API입니다.")
     public ResponseEntity<String> deleteTopic(@RequestHeader(X_USER_ID) String userId,
                                               @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId){
 

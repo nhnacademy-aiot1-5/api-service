@@ -57,7 +57,7 @@ public class TopicServiceImpl implements TopicService {
     public TopicDto getTopicByTopicId(int topicId) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
         TopicDto topicDto = new TopicDto();
-        BeanUtils.copyProperties(topic, topicDto);
+        BeanUtils.copyProperties(topic,topicDto);
         return topicDto;
     }
 
@@ -68,12 +68,13 @@ public class TopicServiceImpl implements TopicService {
      * @return 추가한 토픽
      */
     @Override
-    public String addTopic(int sensorId, TopicDto topicDto) {
+    public int addTopic(int sensorId, TopicDto topicDto) {
 
         MqttSensor sensor = mqttSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
 
         Topic topic = new Topic();
-        BeanUtils.copyProperties(topicDto, topic);
+        topic.setTopic(topicDto.getTopic());
+        topic.setDescription(topicDto.getDescription());
         topic.setMqttSensor(sensor);
 
         Topic savedTopic = topicRepository.save(topic);
@@ -84,7 +85,7 @@ public class TopicServiceImpl implements TopicService {
 
         sensorAdaptor.addTopics(mqttBrokerId, topicRequest);
 
-        return savedTopic.getTopic();
+        return savedTopic.getId();
     }
 
     /**
@@ -114,7 +115,7 @@ public class TopicServiceImpl implements TopicService {
         Map<String, String> topicRequest = new HashMap<>();
         topicRequest.put("mqttTopic", topic.getTopic());
 
-        mqttSensorRepository.deleteById(topicId);
+        topicRepository.deleteById(topicId);
         sensorAdaptor.deleteTopics(mqttBrokerId, topicRequest);
 
     }
