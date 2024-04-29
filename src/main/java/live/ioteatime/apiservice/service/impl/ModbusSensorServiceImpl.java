@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,13 +39,13 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
     @Override
     public List<ModbusSensorDto> getOrganizationSensorsByUserId(String userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         int organizationId = user.getOrganization().getId();
 
         List<ModbusSensor> sensorList = sensorRepository.findAllByOrganization_Id(organizationId);
 
         List<ModbusSensorDto> sensorDtoList = new ArrayList<>();
-        for(ModbusSensor sensor : sensorList) {
+        for (ModbusSensor sensor : sensorList) {
             ModbusSensorDto sensorDto = new ModbusSensorDto();
             BeanUtils.copyProperties(sensor, sensorDto);
             sensorDtoList.add(sensorDto);
@@ -60,7 +60,7 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
      * @return 센서 정보
      */
     @Override
-    public ModbusSensorDto getSensorById(int sensorId){
+    public ModbusSensorDto getSensorById(int sensorId) {
         ModbusSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
         ModbusSensorDto sensorDto = new ModbusSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
@@ -76,7 +76,7 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
         List<SupportedSensor> supportedSensorList = supportedSensorRepository.findAllByProtocol(Protocol.MODBUS);
 
         List<ModbusSensorDto> sensorDtoList = new ArrayList<>();
-        for(SupportedSensor supportedSensor : supportedSensorList) {
+        for (SupportedSensor supportedSensor : supportedSensorList) {
             ModbusSensorDto sensorDto = new ModbusSensorDto();
             BeanUtils.copyProperties(supportedSensor, sensorDto);
             sensorDtoList.add(sensorDto);
@@ -119,8 +119,30 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
         modbusSensor.setOrganization(organization);
 
         ModbusSensor savedSensor = sensorRepository.save(modbusSensor);
-//        channelService.addChannels(savedSensor);
 
         return savedSensor.getId();
+    }
+
+    @Override
+    public int addSensorWithChannels(String userId, SensorRequest addSensorRequest) {
+        try {
+            int sensorId = addModbusSensor(userId, addSensorRequest);
+            channelService.createChannel(sensorId);
+            return 1;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    @Override
+    public int updateWork(int sensorId) {
+        ModbusSensor modbusSensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        if ((modbusSensor.getAlive().equals(Alive.UP))) {
+            modbusSensor.setAlive(Alive.DOWN);
+        } else {
+            modbusSensor.setAlive(Alive.UP);
+        }
+        sensorRepository.save(modbusSensor);
+        return sensorId;
     }
 }

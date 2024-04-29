@@ -17,4 +17,8 @@ public interface ModbusSensorService {
     void deleteSensorById(int sensorId);
 
     int addModbusSensor(String userId, SensorRequest addSensorRequest);
+
+    int addSensorWithChannels(String userId, SensorRequest addSensorRequest);
+
+    int updateWork(int sensorId);
 }

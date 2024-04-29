@@ -50,7 +50,7 @@ X-USER-ID: admin
   "ip" : "0.0.0.1",
   "port" : "1883",
   "place_id" : 1,
-  "channel_count": 30
+  "channel_count": 6
 }
 
 ### 센서 정보 수정
