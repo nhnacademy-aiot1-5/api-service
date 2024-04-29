@@ -8,6 +8,4 @@ import java.util.List;
 
 public interface ChannelRepository extends JpaRepository<Channel, Integer> {
     List<Channel> findALLBySensor_Id(Integer sensorId);
-
-    List<ChannelDto> findAllById(int channelId);
 }
