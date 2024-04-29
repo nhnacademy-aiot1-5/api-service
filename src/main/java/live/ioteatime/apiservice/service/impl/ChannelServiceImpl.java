@@ -4,6 +4,9 @@ import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.ModbusSensor;
 import live.ioteatime.apiservice.domain.Place;
 import live.ioteatime.apiservice.dto.ChannelDto;
+import live.ioteatime.apiservice.dto.UpdateChannelNameRequest;
+import live.ioteatime.apiservice.dto.UpdatePlaceRequest;
+import live.ioteatime.apiservice.exception.ChannelNotFoundException;
 import live.ioteatime.apiservice.exception.PlaceNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.repository.ChannelRepository;
@@ -31,7 +34,7 @@ public class ChannelServiceImpl implements ChannelService {
         for (int i = 1; i <= sensor.getChannelCount(); i++) {
             Channel channel = new Channel();
             channel.setSensor(sensor);
-            channel.setChannelName(sensor.getName()+i);
+            channel.setChannelName(sensor.getName() + "_" + i);
             ChannelDto channelDto = new ChannelDto();
             BeanUtils.copyProperties(channel, channelDto);
             channelList.add(channelDto);
@@ -41,10 +44,10 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public int updatePlace(int sensorId, int placeId) {
-        Place place = placeRepository.findById(placeId).orElseThrow(PlaceNotFoundException::new);
-        List<Channel> channelList = channelRepository.findALLBySensor_Id(sensorId);
-        for(int i = 0; i < channelList.size(); i++) {
+    public int updatePlace(UpdatePlaceRequest updatePlaceRequest) {
+        Place place = placeRepository.findById(updatePlaceRequest.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
+        List<Channel> channelList = channelRepository.findALLBySensor_Id(updatePlaceRequest.getSensorId());
+        for (int i = 0; i < channelList.size(); i++) {
             channelList.get(i).setPlace(place);
             channelRepository.save(channelList.get(i));
         }
@@ -52,7 +55,22 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<Channel> getChannelList(int sensorId) {
-        return channelRepository.findALLBySensor_Id(sensorId);
+    public List<ChannelDto> getChannelList(int sensorId) {
+        List<Channel> channelList = channelRepository.findALLBySensor_Id(sensorId);
+        List<ChannelDto> channelDtoList = new ArrayList<>();
+        for (Channel channel : channelList) {
+            ChannelDto channelDto = new ChannelDto();
+            BeanUtils.copyProperties(channel, channelDto);
+            channelDtoList.add(channelDto);
+        }
+        return channelDtoList;
+    }
+
+    @Override
+    public int updateChannelName(UpdateChannelNameRequest updateChannelNameRequest) {
+        Channel channel = channelRepository.findById(updateChannelNameRequest.getId()).orElseThrow(ChannelNotFoundException::new);
+        channel.setChannelName(updateChannelNameRequest.getChannelName());
+        channelRepository.save(channel);
+        return channel.getId();
     }
 }
