@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface MonthlyElectricityRepository extends JpaRepository<MonthlyElectricity, MonthlyElectricity.Pk> {
     Optional<MonthlyElectricity> findMonthlyElectricityByPk(MonthlyElectricity.Pk pk);
 
-    List<MonthlyElectricity> findAllByPkOrganizationIdAndPkTimeBetween(int organizationId, LocalDateTime start, LocalDateTime end);
+    List<MonthlyElectricity> findAllByPkChannelIdAndPkTimeBetween(int organizationId, LocalDateTime start, LocalDateTime end);
 }

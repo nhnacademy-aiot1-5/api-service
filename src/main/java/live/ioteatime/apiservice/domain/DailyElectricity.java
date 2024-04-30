@@ -19,11 +19,12 @@ public class DailyElectricity {
     @EmbeddedId
     private Pk pk;
 
-    @MapsId("organizationId")
-    @JoinColumn(name = "organization_id")
+    @MapsId("channelId")
+    @JoinColumn(name = "channel_id")
     @ManyToOne
-    private Organization organization;
+    private Channel channel;
     private Long kwh;
+    private Long bill;
 
     @Embeddable
     @AllArgsConstructor
@@ -31,8 +32,8 @@ public class DailyElectricity {
     @Getter
     @Setter
     public static class Pk implements Serializable {
-        @Column(name = "organization_id")
-        private int organizationId;
+        @Column(name = "channel_id")
+        private int channelId;
         @Column(name = "time")
         private LocalDateTime time;
     }

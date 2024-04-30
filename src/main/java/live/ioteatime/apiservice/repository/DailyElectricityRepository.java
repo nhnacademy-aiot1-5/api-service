@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface DailyElectricityRepository extends JpaRepository<DailyElectricity, DailyElectricity.Pk> {
     Optional<DailyElectricity> findByPk(DailyElectricity.Pk pk);
 
-    List<DailyElectricity> findAllByPkOrganizationIdAndPkTimeBetween(int organizationId, LocalDateTime start, LocalDateTime end);
+    List<DailyElectricity> findAllByPkChannelIdAndPkTimeBetween(int channelId, LocalDateTime start, LocalDateTime end);
 }
+

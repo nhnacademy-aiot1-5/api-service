@@ -27,8 +27,8 @@ public class MonthlyElectricityController {
     public ElectricityResponseDto getMonthlyElectricity(@RequestParam
                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                         LocalDateTime localDateTime,
-                                                        @RequestParam int organizationId) {
-        ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, organizationId);
+                                                        @RequestParam int channelId) {
+        ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, channelId);
         MonthlyElectricity monthlyElectricity = electricityService.getElectricityByDate(requestDto);
 
         return new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh());
@@ -38,14 +38,7 @@ public class MonthlyElectricityController {
     public List<ElectricityResponseDto> getMonthlyElectricies(@RequestParam
                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                               LocalDateTime localDateTime,
-                                                              @RequestParam int organizationId) {
-        ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, organizationId);
-        List<ElectricityResponseDto> responseDtos = new ArrayList<>();
-
-        List<MonthlyElectricity> monthlyElectricities = electricityService.getElectricitiesByDate(requestDto);
-        for (MonthlyElectricity monthlyElectricity : monthlyElectricities) {
-            responseDtos.add(new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh()));
-        }
-        return responseDtos;
+                                                              @RequestParam int channelId) {
+        return electricityService.getElectricitiesByDate(new ElectricityRequestDto(localDateTime, channelId));
     }
 }

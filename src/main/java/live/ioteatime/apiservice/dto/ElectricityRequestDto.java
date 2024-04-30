@@ -11,5 +11,5 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ElectricityRequestDto {
     private LocalDateTime time;
-    private int organizationId;
+    private int channelId;
 }
