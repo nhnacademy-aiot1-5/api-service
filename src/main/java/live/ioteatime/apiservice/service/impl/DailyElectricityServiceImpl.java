@@ -8,6 +8,7 @@ import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.DailyElectricity;
 import live.ioteatime.apiservice.domain.Place;
 import live.ioteatime.apiservice.dto.ElectricityRequestDto;
+import live.ioteatime.apiservice.dto.ElectricityResponseDto;
 import live.ioteatime.apiservice.exception.ElectricityNotFoundException;
 import live.ioteatime.apiservice.repository.ChannelRepository;
 import live.ioteatime.apiservice.repository.DailyElectricityRepository;
@@ -17,9 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -48,7 +49,7 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
 
     @Override
     @Transactional
-    public List<DailyElectricity> getElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
+    public List<ElectricityResponseDto> getElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         if (electricityRequestDto.getTime().toLocalTime().equals(LocalTime.MIDNIGHT)) {
             return getDailyElectricitiesByDate(electricityRequestDto);
         } else {
@@ -57,46 +58,56 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
     }
 
     // mysql에서 한달 치 일별 데이터 가져오기
-    private List<DailyElectricity> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
+    private List<ElectricityResponseDto> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         LocalDateTime localDateTime = electricityRequestDto.getTime();
         LocalDateTime startOfMonth = localDateTime.withDayOfMonth(1);
         LocalDateTime endOfMonth = localDateTime.withDayOfMonth(localDateTime.toLocalDate().lengthOfMonth());
-        log.warn("start month : " + startOfMonth + ", end month : " + endOfMonth);
-        return dailyElectricityRepository.findAllByPkChannelIdAndPkTimeBetween(
+
+        List<DailyElectricity> dailyElectricities = dailyElectricityRepository.findAllByPkChannelIdAndPkTimeBetween(
                 electricityRequestDto.getChannelId(),
                 startOfMonth,
                 endOfMonth
         );
+        List<ElectricityResponseDto> electricityResponseDtos = new ArrayList<>();
+
+        for (DailyElectricity dailyElectricity : dailyElectricities) {
+            electricityResponseDtos.add(
+                    new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh())
+            );
+        }
+        return electricityResponseDtos;
     }
 
     // influxdb에서 금일 시간 별 데이터 가져오기
-    public List<DailyElectricity> getHourlyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
+    public List<ElectricityResponseDto> getHourlyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         LocalDateTime localDateTime = electricityRequestDto.getTime();
-        LocalDateTime startTimeOfDay = localDateTime.minusDays(1).plusHours(1);
-        log.warn("start time : " + startTimeOfDay + ", end time : " + localDateTime);
 
         Channel channel = channelRepository.findById(electricityRequestDto.getChannelId())
                 .orElseThrow(EntityNotFoundException::new);
-
         Place place = placeRepository.findById(channel.getPlace().getId())
                 .orElseThrow(EntityNotFoundException::new);
 
-        String placeName = place.getPlaceName();
-        String type = channel.getChannelName();
+        List<DailyElectricity> dailyElectricities = fetchFromInfluxDB(
+                place.getPlaceName(),
+                channel.getChannelName(),
+                place.getOrganization().getId(),
+                channel.getId(),
+                localDateTime.minusDays(1).plusHours(1),
+                localDateTime
+        );
+        List<ElectricityResponseDto> electricityResponseDtos = new ArrayList<>();
 
-        return fetchFromInfluxDB(placeName, type, electricityRequestDto.getChannelId(), startTimeOfDay, localDateTime);
+        for (DailyElectricity dailyElectricity : dailyElectricities) {
+            electricityResponseDtos.add(
+                    new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh())
+            );
+        }
+        return electricityResponseDtos;
     }
 
-    /*
-    place | type
-    전체   | 전체 -> office, classA 합한 전력량
-    classa| ac
-    office| ac
-    classa| temperature
-     */
-    private List<DailyElectricity> fetchFromInfluxDB(String place, String type, int channelId, LocalDateTime start,
-                                                     LocalDateTime end) {
-        String fluxQuery = getQuery(place, type, channelId, start, end);
+    private List<DailyElectricity> fetchFromInfluxDB(String place, String type, int organizationId, int channelId,
+                                                     LocalDateTime start, LocalDateTime end) {
+        String fluxQuery = getQuery(place, type, organizationId, start, end);
 
         Map<LocalDateTime, DailyElectricity> results = new TreeMap<>();
         QueryApi queryApi = influxDBClient.getQueryApi();
@@ -104,16 +115,16 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
 
         for (FluxTable table : tables) {
             for (FluxRecord r : table.getRecords()) {
-
                 LocalDateTime formattedTime = LocalDateTime
                         .parse(Objects.requireNonNull(r.getValueByKey("_time")).toString(), DateTimeFormatter.ISO_DATE_TIME)
                         .plusHours(9);
-                Long value = r.getValueByKey("_value") != null ? ((Double) Objects.requireNonNull(r.getValueByKey("_value"))).longValue() : 0L;
+                Long value = r.getValueByKey("_value") != null ?
+                        ((Double) Objects.requireNonNull(r.getValueByKey("_value"))).longValue() : 0L;
                 results.merge(formattedTime, new DailyElectricity(
                         new DailyElectricity.Pk(channelId, formattedTime),
                         channelRepository.findById(channelId).orElse(null),
                         value,
-                        0L
+                        0L //todo : 요금 가져오는 로직 필요
                 ), (existing, newEntry) -> new DailyElectricity(
                         existing.getPk(),
                         existing.getChannel(),
@@ -147,7 +158,12 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
             }
         } else {
             fluxQuery.append("r[\"place\"] == \"")
-                    .append(places.stream().findFirst().orElseThrow(EntityNotFoundException::new).getPlaceName())
+                    .append(places.stream()
+                            .filter(p -> place.equals(p.getPlaceName()))
+                            .findFirst()
+                            .orElseThrow(EntityNotFoundException::new)
+                            .getPlaceName()
+                    )
                     .append("\"");
         }
         fluxQuery.append(")\n")
@@ -158,6 +174,7 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
                 .append("  |> filter(fn: (r) => r[\"description\"] == \"w\")\n")
                 .append("  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n")
                 .append("  |> yield(name: \"mean\")");
+
         return fluxQuery.toString();
     }
 }

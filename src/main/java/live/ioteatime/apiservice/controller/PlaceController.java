@@ -23,7 +23,7 @@ public class PlaceController {
 
     @GetMapping("/place")
     @Operation(summary = "id 별로 place 가져오기")
-    public ResponseEntity<PlaceResponseDto> getPlace(@RequestParam(name = "place_id") int placeId) {
+    public ResponseEntity<PlaceResponseDto> getPlace(@RequestParam int placeId) {
         Place place = placeService.getPlace(placeId);
         PlaceResponseDto placeResponseDto = new PlaceResponseDto(place.getId(), place.getPlaceName());
         return ResponseEntity.ok(placeResponseDto);
@@ -31,7 +31,7 @@ public class PlaceController {
 
     @GetMapping("/places")
     @Operation(summary = "organization id 별로 place 리스트 가져오기")
-    public ResponseEntity<List<PlaceResponseDto>> getPlaces(@RequestParam(name = "organization_id") int organizationId) {
+    public ResponseEntity<List<PlaceResponseDto>> getPlaces(@RequestParam int organizationId) {
         List<Place> places = placeService.getPlaces(organizationId);
         List<PlaceResponseDto> placeResponseDtos = new ArrayList<>();
         for (Place p : places) {

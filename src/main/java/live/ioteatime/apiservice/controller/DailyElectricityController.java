@@ -26,13 +26,6 @@ public class DailyElectricityController {
                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                               LocalDateTime localDateTime,
                                                               @RequestParam int channelId) {
-        ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, channelId);
-        List<DailyElectricity> dailyElectricities = electricityService.getElectricitiesByDate(requestDto);
-        List<ElectricityResponseDto> responseDtos = new ArrayList<>();
-
-        for (DailyElectricity d : dailyElectricities) {
-            responseDtos.add(new ElectricityResponseDto(d.getPk().getTime(), d.getKwh()));
-        }
-        return responseDtos;
+        return electricityService.getElectricitiesByDate(new ElectricityRequestDto(localDateTime, channelId));
     }
 }
