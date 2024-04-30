@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/sensor/modbus/channels")
+@RequestMapping("/sensors/modbus/channels")
 public class ChannelController {
     private final ChannelService channelService;
     private final String X_USER_ID = "X-USER-ID";
