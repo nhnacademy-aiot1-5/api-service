@@ -62,12 +62,16 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         int organizationId = user.getOrganization().getId();
-        List<MqttSensor> sensorList = sensorRepository.findAllByOrganization_Id(organizationId);
+        List<MqttSensor> sensorList = sensorRepository.findAllByOrganizationIdWithPlace(organizationId);
 
         List<MqttSensorDto> sensorDtoList = new ArrayList<>();
         for(MqttSensor sensor : sensorList) {
             MqttSensorDto sensorDto = new MqttSensorDto();
+            sensorDto.setPlace(new MqttSensorDto.Place());
+
             BeanUtils.copyProperties(sensor, sensorDto);
+            BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
+
             sensorDtoList.add(sensorDto);
         }
 
