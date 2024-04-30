@@ -4,7 +4,6 @@ import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
 import live.ioteatime.apiservice.dto.UserDto;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
-import live.ioteatime.apiservice.properties.UserProperties;
 import live.ioteatime.apiservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,8 +32,6 @@ class UserControllerTest {
 
     @MockBean
     UserServiceImpl userService;
-    @MockBean
-    UserProperties userProperties;
 
     User testUser;
     UserDto testUserDto;
@@ -110,14 +107,13 @@ class UserControllerTest {
     @DisplayName("createUser 성공")
     void createUser() throws Exception {
         Mockito.when(userService.createUser(any())).thenReturn(testUser.getId());
-        Mockito.when(userProperties.getUserDetailUri()).thenReturn("http://localhost:8080/users");
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\":\"testId\",\"password\":\"12345\",\"name\":\"testName\",\"role\":\"USER\"}"))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().string(HttpHeaders.LOCATION, "http://localhost:8080/users/testId"))
+                .andExpect(header().string(HttpHeaders.LOCATION, "https://www.ioteatime.live/mypage"))
                 .andExpect(content().string(""))
                 .andReturn();
     }

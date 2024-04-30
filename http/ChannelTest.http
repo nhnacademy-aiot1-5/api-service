@@ -1,2 +1,21 @@
+###
+PUT localhost:8090/channels
+Content-Type: application/json
+X-USER-ID: admin
+
+{
+  "sensor_id": 1,
+  "place_id": 1
+}
+
+###
+PUT localhost:8090/channels/changename
+Content-Type: application/json
+X-USER-ID: admin
+
+{
+  "id": 3,
+  "channel_name": "정수기"
+}
 ### 시간별 전력량 가져오기
 GET localhost:8090/channels/by_place?placeId=1

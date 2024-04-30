@@ -6,7 +6,6 @@ import live.ioteatime.apiservice.dto.OrganizationDto;
 import live.ioteatime.apiservice.dto.RegisterRequest;
 import live.ioteatime.apiservice.dto.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.UserDto;
-import live.ioteatime.apiservice.properties.UserProperties;
 import live.ioteatime.apiservice.service.OrganizationService;
 import live.ioteatime.apiservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,6 @@ import java.net.URI;
 @Tag(name = "USER 컨트롤러", description = "유저정보와 관련된 정보를 처리하는 컨트롤러입니다.")
 public class UserController {
     private final UserService userService;
-    private final UserProperties userProperties;
     private final OrganizationService organizationService;
     private final String X_USER_ID = "X-USER-ID";
 
@@ -65,8 +63,7 @@ public class UserController {
         String createdUserId = userService.createUser(registerRequest);
 
         URI location = UriComponentsBuilder
-                .fromUriString(userProperties.getUserDetailUri())
-                .pathSegment(createdUserId)
+                .fromUriString("https://www.ioteatime.live/mypage")
                 .build().toUri();
 
         return ResponseEntity.created(location).body("Successfully registered: userId="+ createdUserId);

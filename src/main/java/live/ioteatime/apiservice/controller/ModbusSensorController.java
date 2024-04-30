@@ -67,8 +67,8 @@ public class ModbusSensorController {
     @AdminOnly
     @Operation(summary = "Modbus 센서를 추가하는 API", description = "Modbus 센서를 추가합니다.")
     public ResponseEntity<String> addModbusSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody SensorRequest addSensorRequest){
-        int registeredSensorId = modbusSensorService.addModbusSensor(userId, addSensorRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Sensor registered. id=" + registeredSensorId);
+        int registeredSensorId = modbusSensorService.addSensorWithChannels(userId, addSensorRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Sensor registered.");
     }
 
     /**
@@ -85,6 +85,13 @@ public class ModbusSensorController {
 
         int updatedSensorId = modbusSensorService.updateMobusSensor(sensorId, updateSensorRequest);
         return ResponseEntity.ok().body("Sensor updated. id=" + updatedSensorId);
+    }
+
+    @PutMapping("/work")
+    @AdminOnly
+    public ResponseEntity<String> updateWork(int sensorId){
+        int updateSensorId = modbusSensorService.updateWork(sensorId);
+        return ResponseEntity.ok().body("Sensor work changed" + updateSensorId);
     }
 
     /**
