@@ -3,9 +3,7 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.ModbusSensor;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.ChannelDto;
-import live.ioteatime.apiservice.dto.UpdateChannelNameRequest;
-import live.ioteatime.apiservice.dto.UpdatePlaceRequest;
+import live.ioteatime.apiservice.dto.*;
 import live.ioteatime.apiservice.exception.ChannelNotFoundException;
 import live.ioteatime.apiservice.exception.PlaceNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
@@ -46,7 +44,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public int updatePlace(UpdatePlaceRequest updatePlaceRequest) {
         Place place = placeRepository.findById(updatePlaceRequest.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
-        List<Channel> channelList = channelRepository.findALLBySensor_Id(updatePlaceRequest.getSensorId());
+        List<Channel> channelList = channelRepository.findAllBySensor_Id(updatePlaceRequest.getSensorId());
         for (int i = 0; i < channelList.size(); i++) {
             channelList.get(i).setPlace(place);
             channelRepository.save(channelList.get(i));
@@ -56,11 +54,20 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public List<ChannelDto> getChannelList(int sensorId) {
-        List<Channel> channelList = channelRepository.findALLBySensor_Id(sensorId);
+        List<Channel> channelList = channelRepository.findAllBySensor_Id(sensorId);
         List<ChannelDto> channelDtoList = new ArrayList<>();
         for (Channel channel : channelList) {
             ChannelDto channelDto = new ChannelDto();
             BeanUtils.copyProperties(channel, channelDto);
+
+            ModbusSensorDto sensorDto = new ModbusSensorDto();
+            BeanUtils.copyProperties(channel.getSensor(), sensorDto);
+            channelDto.setSensor(sensorDto);
+
+            PlaceWithoutOrganizationDto placeDto = new PlaceWithoutOrganizationDto();
+            BeanUtils.copyProperties(channel.getPlace(), placeDto);
+            channelDto.setPlace(placeDto);
+
             channelDtoList.add(channelDto);
         }
         return channelDtoList;

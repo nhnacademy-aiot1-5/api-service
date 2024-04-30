@@ -17,6 +17,7 @@ public class ModbusSensorDto {
     private String modelName;
     private String ip;
     private String port;
+    @JsonProperty("channel_count")
     private int channelCount;
     private Alive alive;
 }
