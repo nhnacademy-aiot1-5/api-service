@@ -3,15 +3,15 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.PlaceResponseDto;
 import live.ioteatime.apiservice.dto.PlaceRequestDto;
+import live.ioteatime.apiservice.dto.PlaceResponseDto;
+import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
 import live.ioteatime.apiservice.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -31,13 +31,8 @@ public class PlaceController {
 
     @GetMapping("/places")
     @Operation(summary = "organization id 별로 place 리스트 가져오기")
-    public ResponseEntity<List<PlaceResponseDto>> getPlaces(@RequestParam(name = "organization_id") int organizationId) {
-        List<Place> places = placeService.getPlaces(organizationId);
-        List<PlaceResponseDto> placeResponseDtos = new ArrayList<>();
-        for (Place p : places) {
-            placeResponseDtos.add(new PlaceResponseDto(p.getId(), p.getPlaceName()));
-        }
-        return ResponseEntity.ok(placeResponseDtos);
+    public ResponseEntity<List<PlaceWithoutOrganizationDto>> getPlaces(int organizationId) {
+        return ResponseEntity.ok(placeService.getPlaces(organizationId));
     }
 
     @PostMapping("/place")
