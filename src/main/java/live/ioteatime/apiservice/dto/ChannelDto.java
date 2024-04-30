@@ -14,5 +14,5 @@ public class ChannelDto {
     @JsonProperty("channel_name")
     private String channelName;
     private ModbusSensorDto sensor;
-    private PlaceDto place;
+    private PlaceWithoutOrganizationDto place;
 }

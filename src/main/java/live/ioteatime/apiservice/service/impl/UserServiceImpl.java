@@ -96,7 +96,10 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserInfo(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto, "password", "organization");
+        BeanUtils.copyProperties(user, userDto, "password");
+        OrganizationDto organizationDto = new OrganizationDto();
+        BeanUtils.copyProperties(user.getOrganization(), organizationDto);
+        userDto.setOrganization(organizationDto);
         return userDto;
     }
 
