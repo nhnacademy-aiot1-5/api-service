@@ -106,6 +106,11 @@ public class TopicServiceImpl implements TopicService {
      */
     @Override
     public void deleteTopic(int sensorId, int topicId) {
+
+        if(topicRepository.countAllByMqttSensor_Id(sensorId) <= 1) {
+            throw new IllegalStateException("토픽 삭제 실패. 토픽은 최소 1개 이상 등록하여야 합니다.");
+        }
+
         topicRepository.deleteById(topicId);
 
         MqttSensor sensor = mqttSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);

@@ -2,10 +2,7 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
-import live.ioteatime.apiservice.dto.AddBrokerRequest;
-import live.ioteatime.apiservice.dto.AddMqttSensorRequest;
-import live.ioteatime.apiservice.dto.MqttSensorDto;
-import live.ioteatime.apiservice.dto.SensorRequest;
+import live.ioteatime.apiservice.dto.*;
 import live.ioteatime.apiservice.exception.*;
 import live.ioteatime.apiservice.repository.*;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,12 +58,16 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         int organizationId = user.getOrganization().getId();
-        List<MqttSensor> sensorList = sensorRepository.findAllByOrganization_Id(organizationId);
+        List<MqttSensor> sensorList = sensorRepository.findAllByOrganizationIdWithPlace(organizationId);
 
         List<MqttSensorDto> sensorDtoList = new ArrayList<>();
         for(MqttSensor sensor : sensorList) {
             MqttSensorDto sensorDto = new MqttSensorDto();
+            sensorDto.setPlace(new PlaceWithoutOrganizationDto());
+
             BeanUtils.copyProperties(sensor, sensorDto);
+            BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
+
             sensorDtoList.add(sensorDto);
         }
 
@@ -85,6 +85,11 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         MqttSensorDto sensorDto = new MqttSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
+
+        PlaceWithoutOrganizationDto placeDto = new PlaceWithoutOrganizationDto();
+        BeanUtils.copyProperties(sensor.getPlace(), placeDto);
+        sensorDto.setPlace(placeDto);
+
         return sensorDto;
     }
 
@@ -129,14 +134,8 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         topic.setMqttSensor(savedSensor);
         topicRepository.save(topic);
 
-        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
-        String mqttHost = "tcp://" + request.getIp() + ":" + request.getPort();
-        String mqttId = "mqtt" +  savedSensor.getId();
-        addBrokerRequest.setMqttHost(mqttHost);
-        addBrokerRequest.setMqttId(mqttId);
-        addBrokerRequest.setMqttTopic(Arrays.asList(request.getTopic()));
+        sendRequestToRuleEngine(savedSensor);
 
-        sensorAdaptor.addBrokers(addBrokerRequest);
         return savedSensor.getId();
     }
 
@@ -156,7 +155,9 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         sensor.setPort(sensorRequest.getPort());
         sensor.setPlace(place);
 
-        sensorRepository.save(sensor);
+        MqttSensor savedSensor = sensorRepository.save(sensor);
+
+        sendRequestToRuleEngine(savedSensor);
 
         return sensor.getId();
     }
@@ -165,7 +166,33 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     public void deleteSensorById(String userId, int sensorId) {
         fetchSensorWithOrgValidation(userId, sensorId);
 
+        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensorId);
+        for(Topic topic : topicList){
+            topicRepository.deleteById(topic.getId());
+        }
+
         sensorRepository.deleteById(sensorId);
+    }
+
+    /**
+     * 센서 등록, 수정, 토픽 등록, 수정, 삭제시 룰엔진에 요청을 보냅니다.
+     * @param sensor 센서 엔티티
+     */
+    private void sendRequestToRuleEngine(MqttSensor sensor){
+        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
+        String mqttHost = "tcp://" + sensor.getIp() + ":" + sensor.getPort();
+        String mqttId = "mqtt" +  sensor.getId();
+        addBrokerRequest.setMqttHost(mqttHost);
+        addBrokerRequest.setMqttId(mqttId);
+
+        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensor.getId());
+        List<String> topicValueList = new ArrayList<>();
+        for(Topic topic : topicList) {
+            topicValueList.add(topic.getTopic());
+        }
+        addBrokerRequest.setMqttTopic(topicValueList);
+
+        sensorAdaptor.addBrokers(addBrokerRequest);
     }
 
     /**
@@ -178,7 +205,10 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      */
     private MqttSensor fetchSensorWithOrgValidation(String userId, int sensorId) {
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException(userId));
-        MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        MqttSensor sensor = sensorRepository.findByIdWithPlace(sensorId);
+        if (Objects.isNull(sensor)) throw new SensorNotFoundException();
+
+
         if(user.getOrganization().getId() != sensor.getOrganization().getId()){
             throw new UnauthorizedException();
         }

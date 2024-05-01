@@ -30,4 +30,9 @@ public class SensorControllerAdvice {
     public ResponseEntity<String> illegalAccess(){
         return ResponseEntity.badRequest().build();
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> illegalState(IllegalStateException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }
