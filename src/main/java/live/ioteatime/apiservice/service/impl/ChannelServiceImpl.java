@@ -80,4 +80,9 @@ public class ChannelServiceImpl implements ChannelService {
         channelRepository.save(channel);
         return channel.getId();
     }
+
+    @Override
+    public List<Channel> getChannelListByPlace(int placeId) {
+        return channelRepository.findAllByPlace_Id(placeId);
+    }
 }

@@ -15,4 +15,6 @@ public interface ChannelService {
     List<ChannelDto> getChannelList(int sensorId);
 
     int updateChannelName(UpdateChannelNameRequest updateChannelNameRequest);
+
+    List<Channel> getChannelListByPlace(int placeId);
 }
