@@ -1,7 +1,8 @@
 package live.ioteatime.apiservice.service;
 
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.PlaceRequestDto;
+import live.ioteatime.apiservice.dto.PlaceRequest;
+import live.ioteatime.apiservice.dto.PlaceResponseDto;
 import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
 
 import java.util.List;
@@ -11,5 +12,9 @@ public interface PlaceService {
 
     List<PlaceWithoutOrganizationDto> getPlaces(int organizationId);
 
-    Place savePlace(PlaceRequestDto placeRequestDto);
+    Place savePlace(PlaceRequest placeRequestDto);
+
+    PlaceResponseDto updatePlace(int placeId, String placeName);
+
+    void deletePlace(int placeId);
 }
