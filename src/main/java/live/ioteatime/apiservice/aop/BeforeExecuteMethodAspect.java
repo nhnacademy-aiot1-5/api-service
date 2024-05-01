@@ -48,7 +48,7 @@ public class BeforeExecuteMethodAspect {
      * 일치하지 않으면 UnAuthorizedException을 던집니다.
      * @param sensorId 센서아이디
      */
-    @Before("@annotation(live.ioteatime.apiservice.annotation.ValidOrganization) && args(*,sensorId,*)")
+    @Before("@annotation(live.ioteatime.apiservice.annotation.VerifyOrganization) && args(*,sensorId,*)")
     public void checkOrganizationMatch(int sensorId){
 
         HttpServletRequest httpServletRequest =

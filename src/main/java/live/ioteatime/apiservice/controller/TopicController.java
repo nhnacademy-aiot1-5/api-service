@@ -3,7 +3,7 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
-import live.ioteatime.apiservice.annotation.ValidOrganization;
+import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.TopicDto;
 import live.ioteatime.apiservice.dto.TopicRequest;
 import live.ioteatime.apiservice.service.TopicService;
@@ -30,7 +30,7 @@ public class TopicController {
      * @return 200 OK
      */
     @GetMapping("/{sensorId}/topics")
-    @ValidOrganization
+    @VerifyOrganization
     public ResponseEntity<List<TopicDto>> getTopicsBySensorId(@RequestHeader(X_USER_ID) String userId,
                                                               @PathVariable("sensorId") int sensorId) {
         List<TopicDto> topicDtoList = topicService.getTopicsBySensorId(sensorId);
@@ -45,7 +45,7 @@ public class TopicController {
      * @return 성공 - 200 OK, 실패- 404 NOT FOUND
      */
     @GetMapping("/{sensorId}/topics/{topicId}")
-    @ValidOrganization
+    @VerifyOrganization
     public ResponseEntity<TopicDto> getTopicByTopicId(@RequestHeader(X_USER_ID) String userId,
                                                       @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId){
         TopicDto topicDto = topicService.getTopicByTopicId(topicId);
@@ -60,7 +60,7 @@ public class TopicController {
      * @return 201 Created
      */
     @PostMapping("/{sensorId}/topics")
-    @AdminOnly @ValidOrganization
+    @AdminOnly @VerifyOrganization
     @Operation(summary = "토픽 추가 API",description = "MQTT 센서의 토픽을 추가하는 API입니다.")
     public ResponseEntity<String> addTopic(@RequestHeader(X_USER_ID) String userId,
                                            @PathVariable("sensorId") int sensorId, @RequestBody TopicDto topicDto) {
@@ -82,7 +82,7 @@ public class TopicController {
      * @return 200 Ok
      */
     @PutMapping("/{sensorId}/topics/{topicId}/update")
-    @AdminOnly @ValidOrganization
+    @AdminOnly @VerifyOrganization
     @Operation(summary = "토픽을 수정하는 API입니다.", description = "토픽과 토픽에 대한 설명을 수정 가능합니다.")
     public ResponseEntity<String> updateTopic(@RequestHeader(X_USER_ID) String userId,
                                               @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId,
@@ -99,7 +99,7 @@ public class TopicController {
      * @return 204 No Content
      */
     @DeleteMapping("/{sensorId}/topics/{topicId}")
-    @AdminOnly @ValidOrganization
+    @AdminOnly @VerifyOrganization
     @Operation(summary = "토픽을 삭제하는 API입니다.")
     public ResponseEntity<String> deleteTopic(@RequestHeader(X_USER_ID) String userId,
                                               @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId){
