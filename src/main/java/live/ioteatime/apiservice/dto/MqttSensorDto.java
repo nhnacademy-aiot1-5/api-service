@@ -18,12 +18,5 @@ public class MqttSensorDto {
     private String ip;
     private String port;
     private Alive alive;
-    private Place place;
-
-    @Getter @Setter @NoArgsConstructor
-    public static class Place {
-        int id;
-        @JsonProperty("place_name")
-        String placeName;
-    }
+    private PlaceWithoutOrganizationDto place;
 }

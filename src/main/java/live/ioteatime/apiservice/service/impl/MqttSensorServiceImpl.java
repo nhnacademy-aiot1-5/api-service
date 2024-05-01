@@ -2,10 +2,7 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
-import live.ioteatime.apiservice.dto.AddBrokerRequest;
-import live.ioteatime.apiservice.dto.AddMqttSensorRequest;
-import live.ioteatime.apiservice.dto.MqttSensorDto;
-import live.ioteatime.apiservice.dto.SensorRequest;
+import live.ioteatime.apiservice.dto.*;
 import live.ioteatime.apiservice.exception.*;
 import live.ioteatime.apiservice.repository.*;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -67,7 +64,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         List<MqttSensorDto> sensorDtoList = new ArrayList<>();
         for(MqttSensor sensor : sensorList) {
             MqttSensorDto sensorDto = new MqttSensorDto();
-            sensorDto.setPlace(new MqttSensorDto.Place());
+            sensorDto.setPlace(new PlaceWithoutOrganizationDto());
 
             BeanUtils.copyProperties(sensor, sensorDto);
             BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
@@ -90,10 +87,9 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         MqttSensorDto sensorDto = new MqttSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
 
-        MqttSensorDto.Place place = new MqttSensorDto.Place();
-        BeanUtils.copyProperties(sensor.getPlace(), place);
-        sensorDto.setPlace(place);
-
+        PlaceWithoutOrganizationDto placeDto = new PlaceWithoutOrganizationDto();
+        BeanUtils.copyProperties(sensor.getPlace(), placeDto);
+        sensorDto.setPlace(placeDto);
 
         return sensorDto;
     }
@@ -188,7 +184,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      */
     private MqttSensor fetchSensorWithOrgValidation(String userId, int sensorId) {
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException(userId));
-//        MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
         MqttSensor sensor = sensorRepository.findByIdWithPlace(sensorId);
         if (Objects.isNull(sensor)) throw new SensorNotFoundException();
 
