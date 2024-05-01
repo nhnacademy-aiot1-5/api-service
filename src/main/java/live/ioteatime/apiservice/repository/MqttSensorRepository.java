@@ -12,4 +12,6 @@ public interface MqttSensorRepository extends JpaRepository<MqttSensor, Integer>
     @Query("select s from MqttSensor s join fetch s.place where s.organization.id=?1")
     List<MqttSensor> findAllByOrganizationIdWithPlace(int organizationId);
 
+    @Query("select s from MqttSensor s join fetch s.place where s.id=?1")
+    MqttSensor findByIdWithPlace(int sensorId);
 }

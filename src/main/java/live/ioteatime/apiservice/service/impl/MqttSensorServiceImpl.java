@@ -89,6 +89,12 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         MqttSensorDto sensorDto = new MqttSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
+
+        MqttSensorDto.Place place = new MqttSensorDto.Place();
+        BeanUtils.copyProperties(sensor.getPlace(), place);
+        sensorDto.setPlace(place);
+
+
         return sensorDto;
     }
 
@@ -182,7 +188,11 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      */
     private MqttSensor fetchSensorWithOrgValidation(String userId, int sensorId) {
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException(userId));
-        MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+//        MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        MqttSensor sensor = sensorRepository.findByIdWithPlace(sensorId);
+        if (Objects.isNull(sensor)) throw new SensorNotFoundException();
+
+
         if(user.getOrganization().getId() != sensor.getOrganization().getId()){
             throw new UnauthorizedException();
         }

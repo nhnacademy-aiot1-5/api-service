@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/sensors")
+@RequestMapping("/sensors/mqtt")
 @Tag(name = "토픽 컨트롤러", description = "토픽 관리에 사용하는 컨트롤러입니다.")
 public class TopicController {
     private final TopicService topicService;
