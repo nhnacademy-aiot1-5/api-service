@@ -57,12 +57,11 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
         }
     }
 
-    // mysql에서 한달 치 일별 데이터 가져오기
+    // mysql에서 2달 치 일별 데이터 가져오기 이유는 월 초에는 최근 1주일치를 가져올 수 없음
     private List<ElectricityResponseDto> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         LocalDateTime localDateTime = electricityRequestDto.getTime();
-        LocalDateTime startOfMonth = localDateTime.withDayOfMonth(1);
+        LocalDateTime startOfMonth = localDateTime.withDayOfMonth(1).minusDays(1).withDayOfMonth(1);
         LocalDateTime endOfMonth = localDateTime.withDayOfMonth(localDateTime.toLocalDate().lengthOfMonth());
-
         List<DailyElectricity> dailyElectricities = dailyElectricityRepository.findAllByPkChannelIdAndPkTimeBetween(
                 electricityRequestDto.getChannelId(),
                 startOfMonth,
@@ -81,7 +80,6 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
     // influxdb에서 금일 시간 별 데이터 가져오기
     public List<ElectricityResponseDto> getHourlyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         LocalDateTime localDateTime = electricityRequestDto.getTime();
-
         Channel channel = channelRepository.findById(electricityRequestDto.getChannelId())
                 .orElseThrow(EntityNotFoundException::new);
         Place place = placeRepository.findById(channel.getPlace().getId())
