@@ -135,14 +135,8 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         topic.setMqttSensor(savedSensor);
         topicRepository.save(topic);
 
-        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
-        String mqttHost = "tcp://" + request.getIp() + ":" + request.getPort();
-        String mqttId = "mqtt" +  savedSensor.getId();
-        addBrokerRequest.setMqttHost(mqttHost);
-        addBrokerRequest.setMqttId(mqttId);
-        addBrokerRequest.setMqttTopic(Arrays.asList(request.getTopic()));
+        sendRequestToRuleEngine(savedSensor);
 
-        sensorAdaptor.addBrokers(addBrokerRequest);
         return savedSensor.getId();
     }
 
@@ -162,7 +156,9 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         sensor.setPort(sensorRequest.getPort());
         sensor.setPlace(place);
 
-        sensorRepository.save(sensor);
+        MqttSensor savedSensor = sensorRepository.save(sensor);
+
+        sendRequestToRuleEngine(savedSensor);
 
         return sensor.getId();
     }
@@ -171,7 +167,33 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     public void deleteSensorById(String userId, int sensorId) {
         fetchSensorWithOrgValidation(userId, sensorId);
 
+        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensorId);
+        for(Topic topic : topicList){
+            topicRepository.deleteById(topic.getId());
+        }
+
         sensorRepository.deleteById(sensorId);
+    }
+
+    /**
+     * 센서 등록, 수정, 토픽 등록, 수정, 삭제시 룰엔진에 요청을 보냅니다.
+     * @param sensor 센서 엔티티
+     */
+    private void sendRequestToRuleEngine(MqttSensor sensor){
+        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
+        String mqttHost = "tcp://" + sensor.getIp() + ":" + sensor.getPort();
+        String mqttId = "mqtt" +  sensor.getId();
+        addBrokerRequest.setMqttHost(mqttHost);
+        addBrokerRequest.setMqttId(mqttId);
+
+        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensor.getId());
+        List<String> topicValueList = new ArrayList<>();
+        for(Topic topic : topicList) {
+            topicValueList.add(topic.getTopic());
+        }
+        addBrokerRequest.setMqttTopic(topicValueList);
+
+        sensorAdaptor.addBrokers(addBrokerRequest);
     }
 
     /**
