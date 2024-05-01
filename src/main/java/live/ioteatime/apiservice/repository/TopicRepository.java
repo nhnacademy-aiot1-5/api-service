@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TopicRepository extends JpaRepository<Topic, Integer> {
     List<Topic> findByMqttSensor_Id(int sensorId);
+
+    int countAllByMqttSensor_Id(int sensorId);
 }
