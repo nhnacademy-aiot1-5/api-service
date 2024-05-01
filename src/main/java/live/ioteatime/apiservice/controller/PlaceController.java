@@ -3,7 +3,7 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.PlaceRequestDto;
+import live.ioteatime.apiservice.dto.PlaceRequest;
 import live.ioteatime.apiservice.dto.PlaceResponseDto;
 import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
 import live.ioteatime.apiservice.service.PlaceService;
@@ -37,10 +37,18 @@ public class PlaceController {
 
     @PostMapping("/place")
     @Operation(summary = "구역 저장하기")
-    public PlaceResponseDto registerPlace(@RequestBody PlaceRequestDto placeRequestDto) {
+    public PlaceResponseDto registerPlace(@RequestBody PlaceRequest placeRequestDto) {
         Place place = placeService.savePlace(placeRequestDto);
-
         return new PlaceResponseDto(place.getId(), place.getPlaceName());
     }
 
+    @PutMapping("/place/update")
+    public ResponseEntity<PlaceResponseDto> updatePlace(int placeId, String placeName) {
+        return ResponseEntity.ok(placeService.updatePlace(placeId, placeName));
+    }
+    @DeleteMapping("/place/delete")
+    public ResponseEntity<String> deletePlace(int placeId) {
+        placeService.deletePlace(placeId);
+        return ResponseEntity.noContent().build();
+    }
 }

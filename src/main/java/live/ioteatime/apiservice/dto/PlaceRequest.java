@@ -1,14 +1,12 @@
 package live.ioteatime.apiservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-public class PlaceRequestDto {
+public class PlaceRequest {
     @JsonProperty("place_name")
     private String placeName;
     @JsonProperty("organization_id")

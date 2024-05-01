@@ -2,7 +2,8 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.PlaceRequestDto;
+import live.ioteatime.apiservice.dto.PlaceRequest;
+import live.ioteatime.apiservice.dto.PlaceResponseDto;
 import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.PlaceNotFoundException;
@@ -31,7 +32,7 @@ public class PlaceServiceImpl implements PlaceService {
     public List<PlaceWithoutOrganizationDto> getPlaces(int organizationId) {
         List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
         List<PlaceWithoutOrganizationDto> dtoList = new ArrayList<>();
-        for (Place place: placeList) {
+        for (Place place : placeList) {
             PlaceWithoutOrganizationDto dto = new PlaceWithoutOrganizationDto();
             BeanUtils.copyProperties(place, dto);
             dtoList.add(dto);
@@ -40,7 +41,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public Place savePlace(PlaceRequestDto placeRequestDto) {
+    public Place savePlace(PlaceRequest placeRequestDto) {
         Organization organization = organizationRepository.findById(placeRequestDto.getOrganizationId())
                 .orElseThrow(OrganizationNotFoundException::new);
         Place place = new Place(0,
@@ -48,5 +49,22 @@ public class PlaceServiceImpl implements PlaceService {
                 organization);
 
         return placeRepository.save(place);
+    }
+
+    @Override
+    public PlaceResponseDto updatePlace(int placeId, String placeName) {
+        Place place = placeRepository.findById(placeId).orElseThrow(PlaceNotFoundException::new);
+        place.setPlaceName(placeName);
+        placeRepository.save(place);
+        PlaceResponseDto placeResponseDto = new PlaceResponseDto();
+        BeanUtils.copyProperties(place, placeResponseDto);
+
+        return placeResponseDto;
+    }
+
+    @Override
+    public void deletePlace(int placeId) {
+        Place place = placeRepository.findById(placeId).orElseThrow(PlaceNotFoundException::new);
+        placeRepository.delete(place);
     }
 }
