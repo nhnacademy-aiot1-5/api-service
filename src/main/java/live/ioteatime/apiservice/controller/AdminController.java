@@ -40,6 +40,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getGuestUsers(userId));
     }
 
+
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 조직에 속한 모든 유저의 리스트를 가져옵니다.
      * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
