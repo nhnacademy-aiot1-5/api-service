@@ -9,8 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdatePlaceRequest {
-    @JsonProperty("sensor_id")
-    private int sensorId;
     @JsonProperty("place_id")
     private int placeId;
 }

@@ -1,10 +1,7 @@
 package live.ioteatime.apiservice.controller;
 
 import live.ioteatime.apiservice.annotation.AdminOnly;
-import live.ioteatime.apiservice.dto.ChannelDto;
-import live.ioteatime.apiservice.dto.ChannelResponseDto;
-import live.ioteatime.apiservice.dto.UpdateChannelNameRequest;
-import live.ioteatime.apiservice.dto.UpdatePlaceRequest;
+import live.ioteatime.apiservice.dto.channel.ChannelDto;
 import live.ioteatime.apiservice.service.ChannelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,32 +34,33 @@ public class ChannelController {
      * @return 채널 리스트
      */
     @GetMapping("/channels/by-place")
-    public ResponseEntity<List<ChannelResponseDto>> getChannelsFromPlace(@RequestParam int placeId) {
+    public ResponseEntity<List<ChannelDto>> getChannelsFromPlace(@RequestParam int placeId) {
         return ResponseEntity.ok(channelService.getChannelListByPlace(placeId));
     }
 
     /**
-     * 해당하는 modbus센서의 장소를 해당하는 장소의 아이디로 변경합니다.
-     * @param updatePlaceRequest placeId와 Modbus센서의 sensorId가 있는 리퀘스트 입니다.
-     * @return 변경된 리스트의 숫자를 반환합니다.
+     * sensorId에 해당하는 채널의 장소를 placeId로 변경합니다.
+     * @param sensorId 장소를 변경할 sensor의 ID입니다.
+     * @param placeId  센서의 장소를 가리키는 ID입니다.
+     * @return 변경된 리스트의 개수를 반환합니다.
      */
-    @PutMapping("/{sensorId}/channels")
+    @PutMapping("/{sensorId}/place/{placeId}")
     @AdminOnly
     public ResponseEntity<Integer> updatePlace(@PathVariable("sensorId") int sensorId,
-                                               @RequestBody UpdatePlaceRequest updatePlaceRequest) {
-        return ResponseEntity.ok(channelService.updatePlace(updatePlaceRequest));
+                                               @PathVariable("placeId") int placeId) {
+        return ResponseEntity.ok(channelService.updatePlace(sensorId, placeId));
     }
 
     /**
      * 센서 아이디에 해당하는 센서의 채널명을 변경합니다.
-     * @param updateChannelNameRequest sensorId와 변경할 이름의 channelName이 있는 리퀘스트 입니다.
+     * @param channelDto sensorId와 변경할 이름의 channel-Name이 있는 리퀘스트 입니다.
      * @return 변경된 채널의 아이디를 반환합니다.
      */
-    @PutMapping("/{sensorId}/channels/changename")
+    @PutMapping("/{sensorId}/channels/change-name")
     @AdminOnly
     public ResponseEntity<Integer> updateChannelName(@PathVariable("sensorId") int sensorId,
-                                                     @RequestBody UpdateChannelNameRequest updateChannelNameRequest){
-        return ResponseEntity.ok(channelService.updateChannelName(updateChannelNameRequest));
+                                                     @RequestBody ChannelDto channelDto) {
+        return ResponseEntity.ok(channelService.updateChannelName(sensorId, channelDto));
     }
 
 }

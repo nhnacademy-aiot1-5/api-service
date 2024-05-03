@@ -45,7 +45,7 @@ public class ModbusSensorController {
     }
 
     /**
-     * 단일 modbus 센서 정보를 반환합니다.
+     * 단일 modbus 센서 정보를 반환하며 조직이 소유한 센서가 아닌경우 UnauthorizedException을 반환합니다.
      * @param sensorId 센서아이디
      * @return 성공 - 200 OK, 실패 - 404 NOT FOUND
      */
@@ -53,7 +53,7 @@ public class ModbusSensorController {
     @VerifyOrganization
     @Operation(summary = "Modbus 센서 단일 조회 API")
     public ResponseEntity<ModbusSensorDto> getModbusSensor(@PathVariable("sensorId") int sensorId) {
-        return ResponseEntity.ok(modbusSensorService.getSensorById(sensorId));
+        return ResponseEntity.status(HttpStatus.OK).body(modbusSensorService.getSensorById(sensorId));
     }
 
     /**
@@ -65,8 +65,7 @@ public class ModbusSensorController {
     @Operation(summary = "Modbus 센서를 추가하는 API", description = "Modbus 센서를 추가합니다.")
     public ResponseEntity<String> addModbusSensor(@RequestHeader(X_USER_ID) String userId,
                                                   @RequestBody SensorRequest addSensorRequest){
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Sensor registered:" + modbusSensorService.addSensorWithChannels(userId, addSensorRequest));
     }
 
@@ -81,13 +80,13 @@ public class ModbusSensorController {
     public ResponseEntity<String> updateModbusSensor(@PathVariable("sensorId") int sensorId,
                                                      @RequestBody SensorRequest updateSensorRequest) {
         return ResponseEntity.ok()
-                .body("Sensor updated. id=" + modbusSensorService.updateMobusSensor(sensorId, updateSensorRequest));
+                .body("Sensor updated. id=" + modbusSensorService.updateModbusSensor(sensorId, updateSensorRequest));
     }
 
     @PutMapping("/health")
     @AdminOnly
-    public ResponseEntity<String> updateWork(int sensorId){
-        return ResponseEntity.ok().body("Sensor health changed" + modbusSensorService.updateWork(sensorId));
+    public ResponseEntity<String> updateHealth(int sensorId){
+        return ResponseEntity.ok().body("Sensor health changed" + modbusSensorService.updateHealth(sensorId));
     }
 
     /**

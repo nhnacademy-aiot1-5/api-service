@@ -10,12 +10,17 @@ import lombok.Setter;
 public class SensorRequest {
     @JsonProperty("sensor_name")
     private String name;
+
     @JsonProperty("sensor_model_name")
     private String modelName;
+
     private String ip;
+
     private String port;
+
     @JsonProperty("place_id")
     private int placeId;
+
     @JsonProperty("channel_count")
     private int channelCount;
 }

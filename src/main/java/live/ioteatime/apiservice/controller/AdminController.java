@@ -29,8 +29,8 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 GUEST 권한을 가진 유저의 리스트를 가져옵니다.
-     * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
-     * @return GUEST 권한을 가진 유러의 리스트를 반환합니다. HttpStatus 200번 OK
+     * @param userId 어드민의 아이디를 가져와 권한을 체크하는 동시에 어드민이 소속된 조직을 불러오는데 사용합니다.
+     * @return GUEST 권한을 가진 유저의 리스트를 반환합니다. HttpStatus 200번 OK
      */
     @GetMapping("/guests")
     @AdminOnly
@@ -68,7 +68,7 @@ public class AdminController {
     }
 
     /**
-     * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 요금 변경 내역 리스트를 가져옵니다.
+     * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 조직 이름과 조직 코드를 가져옵니다.
      * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
      * @return 조직이름과 조직 코드를 반환합니다.
      */
