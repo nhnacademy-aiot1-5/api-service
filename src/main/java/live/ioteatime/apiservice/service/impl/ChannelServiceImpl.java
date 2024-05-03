@@ -3,8 +3,8 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.ModbusSensor;
 import live.ioteatime.apiservice.domain.Place;
+import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
 import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
-import live.ioteatime.apiservice.dto.place.PlaceWithoutOrganizationDto;
 import live.ioteatime.apiservice.dto.channel.ChannelDto;
 import live.ioteatime.apiservice.exception.ChannelNotFoundException;
 import live.ioteatime.apiservice.exception.PlaceNotFoundException;
@@ -45,7 +45,7 @@ public class ChannelServiceImpl implements ChannelService {
             BeanUtils.copyProperties(channel.getSensor(), sensorDto);
             channelDto.setSensor(sensorDto);
 
-            PlaceWithoutOrganizationDto placeDto = new PlaceWithoutOrganizationDto();
+            PlaceResponseDto placeDto = new PlaceResponseDto();
             BeanUtils.copyProperties(channel.getPlace(), placeDto);
             channelDto.setPlace(placeDto);
 
@@ -67,7 +67,7 @@ public class ChannelServiceImpl implements ChannelService {
             ChannelDto channelDto = new ChannelDto();
             BeanUtils.copyProperties(channel, channelDto);
 
-            PlaceWithoutOrganizationDto placeDto = new PlaceWithoutOrganizationDto();
+            PlaceResponseDto placeDto = new PlaceResponseDto();
             BeanUtils.copyProperties(channel.getPlace(), placeDto);
             channelDto.setPlace(placeDto);
 

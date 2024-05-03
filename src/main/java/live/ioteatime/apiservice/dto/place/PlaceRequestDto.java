@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @Getter
 @Setter
-public class UpdatePlaceRequest {
-    @JsonProperty("place_id")
-    private int placeId;
+@NoArgsConstructor
+public class PlaceRequestDto {
+    @JsonProperty("place_name")
+    private String placeName;
+    @JsonProperty("organization_id")
+    private int organizationId;
 }

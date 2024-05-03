@@ -25,6 +25,7 @@ public class UserDto {
     @Schema(description = "유저의 이름입니다.")
     private String name;
     @Schema(description = "유저의 생성일입니다.")
+    @JsonProperty("created_at")
     private LocalDate createdAt;
     @Schema(description = "유저의 권한입니다.")
     private Role role;

@@ -13,6 +13,8 @@ public class RegisterRequest {
     @JsonProperty("pw")
     private String password;
     private String name;
+    @JsonProperty("organization_name")
     private String organizationName;
+    @JsonProperty("organization_code")
     private String organizationCode;
 }

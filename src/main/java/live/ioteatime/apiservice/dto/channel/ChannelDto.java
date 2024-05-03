@@ -1,8 +1,8 @@
 package live.ioteatime.apiservice.dto.channel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
 import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
-import live.ioteatime.apiservice.dto.place.PlaceWithoutOrganizationDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +19,8 @@ public class ChannelDto {
     private String channelName;
     private int address;
     private int quantity;
-    @JsonProperty("channel_name")
+    @JsonProperty("function_code")
     private int functionCode;
     private ModbusSensorDto sensor;
-    private PlaceWithoutOrganizationDto place;
+    private PlaceResponseDto place;
 }

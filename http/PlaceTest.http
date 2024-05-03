@@ -2,7 +2,7 @@
 GET localhost:8090/place?place_id=1
 
 ### 전체 구역 가져오기
-GET localhost:8090/places?organization_id=1
+GET localhost:8090/places?organizationId=1
 
 ### 구역 저장하기
 POST localhost:8090/place

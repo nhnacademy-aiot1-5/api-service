@@ -5,7 +5,6 @@ import live.ioteatime.apiservice.domain.MqttSensor;
 import live.ioteatime.apiservice.domain.Topic;
 import live.ioteatime.apiservice.dto.AddBrokerRequest;
 import live.ioteatime.apiservice.dto.topic.TopicDto;
-import live.ioteatime.apiservice.dto.topic.TopicRequest;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.TopicNotFoundException;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
@@ -37,7 +36,7 @@ public class TopicServiceImpl implements TopicService {
      */
     @Override
     public List<TopicDto> getTopicsBySensorId(int sensorId) {
-        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensorId);
+        List<Topic> topicList = topicRepository.findAllByMqttSensor_Id(sensorId);
         List<TopicDto> topicDtoList = new ArrayList<>();
         for(Topic topic : topicList){
             TopicDto topicDto = new TopicDto();
@@ -89,7 +88,7 @@ public class TopicServiceImpl implements TopicService {
      * @param topicRequest 수정 요청
      */
     @Override
-    public void updateTopic(int sensorId, int topicId, TopicRequest topicRequest) {
+    public void updateTopic(int sensorId, int topicId, TopicDto topicRequest) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
         topic.setTopic(topicRequest.getTopic());
         topic.setDescription(topicRequest.getDescription());
@@ -127,7 +126,7 @@ public class TopicServiceImpl implements TopicService {
 
         String mqttHost = "tcp://" + sensor.getIp() + ":" + sensor.getPort();
         String mqttId = "mqtt" +  sensor.getId();
-        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensor.getId());
+        List<Topic> topicList = topicRepository.findAllByMqttSensor_Id(sensor.getId());
         List<String> topicValueList = new ArrayList<>();
         for(Topic topicEntity : topicList){
             topicValueList.add(topicEntity.getTopic());

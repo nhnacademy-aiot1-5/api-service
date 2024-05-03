@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.topic.TopicDto;
-import live.ioteatime.apiservice.dto.topic.TopicRequest;
 import live.ioteatime.apiservice.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -76,7 +75,7 @@ public class TopicController {
     @Operation(summary = "토픽을 수정하는 API입니다.", description = "토픽과 토픽에 대한 설명을 수정 가능합니다.")
     public ResponseEntity<String> updateTopic(@PathVariable("sensorId") int sensorId,
                                               @PathVariable("topicId") int topicId,
-                                              @RequestBody TopicRequest topicRequest){
+                                              @RequestBody TopicDto topicRequest){
         topicService.updateTopic(sensorId, topicId, topicRequest);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
