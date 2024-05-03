@@ -33,7 +33,7 @@ public class MqttSensorController {
     @AdminOnly
     @Operation(summary = "지원하는 MQTT 센서 리스트를 가져오는 API", description = "지원하는 모든 MQTT 센서 리스트를 반환합니다.")
     public ResponseEntity<List<MqttSensorDto>> getSupportedMqttSensors() {
-        return ResponseEntity.ok(mqttSensorService.getAllSupportedSensors());
+        return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getAllSupportedSensors());
     }
 
     /**
@@ -43,7 +43,7 @@ public class MqttSensorController {
     @GetMapping("/list")
     @Operation(summary = "모든 mqtt 센서들의 리스트를 가져오는 API", description = "소속 조직의 모든 mqtt 센서 리스트를 반환합니다.")
     public ResponseEntity<List<MqttSensorDto>> getMqttSensors(@RequestHeader(X_USER_ID) String userId){
-        return ResponseEntity.ok(mqttSensorService.getOrganizationSensorsByUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getOrganizationSensorsByUserId(userId));
     }
 
     /**
@@ -56,7 +56,7 @@ public class MqttSensorController {
     @Operation(summary = "MQTT 센서 단일 조회 API")
     public ResponseEntity<MqttSensorDto> getMqttSensor(@RequestHeader(X_USER_ID) String userId,
                                                        @PathVariable("sensorId") int sensorId) {
-        return ResponseEntity.ok(mqttSensorService.getSensorById(userId, sensorId));
+        return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getSensorById(userId, sensorId));
     }
 
     /**
@@ -100,7 +100,7 @@ public class MqttSensorController {
     public ResponseEntity<String> deleteMqttSensor(@RequestHeader(X_USER_ID) String userId,
                                                    @PathVariable("sensorId") int sensorId) {
         mqttSensorService.deleteSensorById(userId, sensorId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 
