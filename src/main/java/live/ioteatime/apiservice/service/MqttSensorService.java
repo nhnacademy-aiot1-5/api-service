@@ -11,11 +11,11 @@ public interface MqttSensorService {
 
     List<MqttSensorDto> getOrganizationSensorsByUserId(String userId);
 
-    MqttSensorDto getSensorById(String userId, int sensorId);
+    MqttSensorDto getSensorById(int sensorId);
 
     int addMqttSensor(String userId, AddMqttSensorRequest request);
 
-    int updateMqttSensor(String userId, int sensorId, SensorRequest sensorRequest);
+    int updateMqttSensor(int sensorId, SensorRequest sensorRequest);
 
-    void deleteSensorById(String userId, int sensorId);
+    void deleteSensorById(int sensorId);
 }

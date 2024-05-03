@@ -1,6 +1,7 @@
 package live.ioteatime.apiservice.controller;
 
 import live.ioteatime.apiservice.annotation.AdminOnly;
+import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.ChannelDto;
 import live.ioteatime.apiservice.dto.ChannelResponseDto;
 import live.ioteatime.apiservice.dto.UpdateChannelNameRequest;
@@ -27,6 +28,7 @@ public class ChannelController {
      * @return 조건에 해당하는 채널 리스트를 반환합니다.
      */
     @GetMapping("/{sensorId}/channels")
+    @VerifyOrganization
     public ResponseEntity<List<ChannelDto>> getChannels(@PathVariable("sensorId") int sensorId) {
         return ResponseEntity.ok(channelService.getChannelList(sensorId));
     }
@@ -37,6 +39,7 @@ public class ChannelController {
      * @return 채널 리스트
      */
     @GetMapping("/channels/by-place")
+    @VerifyOrganization
     public ResponseEntity<List<ChannelResponseDto>> getChannelsFromPlace(@RequestParam int placeId) {
         return ResponseEntity.ok(channelService.getChannelListByPlace(placeId));
     }
@@ -47,7 +50,7 @@ public class ChannelController {
      * @return 변경된 리스트의 숫자를 반환합니다.
      */
     @PutMapping("/{sensorId}/channels")
-    @AdminOnly
+    @AdminOnly @VerifyOrganization
     public ResponseEntity<Integer> updatePlace(@PathVariable("sensorId") int sensorId,
                                                @RequestBody UpdatePlaceRequest updatePlaceRequest) {
         return ResponseEntity.ok(channelService.updatePlace(updatePlaceRequest));
@@ -59,7 +62,7 @@ public class ChannelController {
      * @return 변경된 채널의 아이디를 반환합니다.
      */
     @PutMapping("/{sensorId}/channels/changename")
-    @AdminOnly
+    @AdminOnly @VerifyOrganization
     public ResponseEntity<Integer> updateChannelName(@PathVariable("sensorId") int sensorId,
                                                      @RequestBody UpdateChannelNameRequest updateChannelNameRequest){
         return ResponseEntity.ok(channelService.updateChannelName(updateChannelNameRequest));
