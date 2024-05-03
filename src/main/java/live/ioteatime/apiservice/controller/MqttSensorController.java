@@ -4,6 +4,7 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
+import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.AddMqttSensorRequest;
 import live.ioteatime.apiservice.dto.MqttSensorDto;
 import live.ioteatime.apiservice.dto.SensorRequest;
@@ -48,15 +49,14 @@ public class MqttSensorController {
 
     /**
      * 단일 mqtt 센서 정보를 반환합니다.
-     * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @return 성공 - 200 OK, 실패 - 404 NOT FOUND
      */
     @GetMapping("/{sensorId}")
+    @VerifyOrganization
     @Operation(summary = "MQTT 센서 단일 조회 API")
-    public ResponseEntity<MqttSensorDto> getMqttSensor(@RequestHeader(X_USER_ID) String userId,
-                                                       @PathVariable("sensorId") int sensorId) {
-        return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getSensorById(userId, sensorId));
+    public ResponseEntity<MqttSensorDto> getMqttSensor(@PathVariable("sensorId") int sensorId) {
+        return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getSensorById(sensorId));
     }
 
     /**
@@ -74,34 +74,29 @@ public class MqttSensorController {
 
     /**
      * MQTT 센서 정보를 수정합니다.
-     * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @param updateSensorRequest 센서 수정 요청
      * @return 200 OK
      */
     @PutMapping("/{sensorId}")
-    @AdminOnly
+    @AdminOnly @VerifyOrganization
     @Operation(summary = "MQTT 센서 정보를 수정하는 API", description = "MQTT 센서 정보를 수정합니다.")
-    public ResponseEntity<String> updateMqttSensor(@RequestHeader(X_USER_ID) String userId,
-                                                   @PathVariable("sensorId") int sensorId,
+    public ResponseEntity<String> updateMqttSensor(@PathVariable("sensorId") int sensorId,
                                                    @RequestBody SensorRequest updateSensorRequest) {
         return ResponseEntity.ok().body("Sensor updated. id=" +
-                mqttSensorService.updateMqttSensor(userId, sensorId, updateSensorRequest));
+                mqttSensorService.updateMqttSensor(sensorId, updateSensorRequest));
     }
 
     /**
      * Mqtt 센서를 데이터베이스에서 삭제합니다.
-     * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @return 204 NO CONTENT
      */
     @DeleteMapping("/{sensorId}")
-    @AdminOnly
-    public ResponseEntity<String> deleteMqttSensor(@RequestHeader(X_USER_ID) String userId,
-                                                   @PathVariable("sensorId") int sensorId) {
-        mqttSensorService.deleteSensorById(userId, sensorId);
+    @AdminOnly @VerifyOrganization
+    public ResponseEntity<String> deleteMqttSensor(@PathVariable("sensorId") int sensorId) {
+        mqttSensorService.deleteSensorById(sensorId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 
 }
