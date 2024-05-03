@@ -8,6 +8,7 @@ import live.ioteatime.apiservice.dto.TopicDto;
 import live.ioteatime.apiservice.dto.TopicRequest;
 import live.ioteatime.apiservice.service.TopicService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,7 +22,6 @@ import java.util.List;
 @Tag(name = "토픽 컨트롤러", description = "토픽 관리에 사용하는 컨트롤러입니다.")
 public class TopicController {
     private final TopicService topicService;
-    private static final String X_USER_ID = "X-USER-ID";
 
     /**
      * 센서별 토픽리스트를 조회합니다.
@@ -31,7 +31,7 @@ public class TopicController {
     @GetMapping("/{sensorId}/topics")
     @VerifyOrganization
     public ResponseEntity<List<TopicDto>> getTopicsBySensorId(@PathVariable("sensorId") int sensorId) {
-        return ResponseEntity.ok(topicService.getTopicsBySensorId(sensorId));
+        return ResponseEntity.status(HttpStatus.OK).body(topicService.getTopicsBySensorId(sensorId));
     }
 
     /**
@@ -42,7 +42,7 @@ public class TopicController {
     @GetMapping("/{sensorId}/topics/{topicId}")
     @VerifyOrganization
     public ResponseEntity<TopicDto> getTopicByTopicId(@PathVariable("topicId") int topicId){
-        return ResponseEntity.ok(topicService.getTopicByTopicId(topicId));
+        return ResponseEntity.status(HttpStatus.OK).body(topicService.getTopicByTopicId(topicId));
     }
 
     /**
@@ -77,7 +77,8 @@ public class TopicController {
     public ResponseEntity<String> updateTopic(@PathVariable("sensorId") int sensorId,
                                               @PathVariable("topicId") int topicId,
                                               @RequestBody TopicRequest topicRequest){
-        return ResponseEntity.ok().body("Updated topic. id="+updateTopic(sensorId, topicId, topicRequest));
+        topicService.updateTopic(sensorId, topicId, topicRequest);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**
@@ -94,7 +95,7 @@ public class TopicController {
 
         topicService.deleteTopic(sensorId, topicId);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

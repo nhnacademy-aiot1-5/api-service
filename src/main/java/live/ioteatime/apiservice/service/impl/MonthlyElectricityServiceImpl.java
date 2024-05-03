@@ -13,16 +13,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("monthlyElectricityService")
 @RequiredArgsConstructor
-public class MonthlyElectricityServiceImpl implements ElectricityService<MonthlyElectricity> {
+public class MonthlyElectricityServiceImpl implements ElectricityService {
     private final MonthlyElectricityRepository monthlyElectricityRepository;
 
     @Override
-    public MonthlyElectricity getElectricityByDate(ElectricityRequestDto electricityRequestDto) {
+    public ElectricityResponseDto getElectricityByDate(ElectricityRequestDto electricityRequestDto) {
         MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(electricityRequestDto.getChannelId(), electricityRequestDto.getTime());
-        return monthlyElectricityRepository.findMonthlyElectricityByPk(pk)
+        MonthlyElectricity monthlyElectricity = monthlyElectricityRepository.findMonthlyElectricityByPk(pk)
                 .orElseThrow(() -> new ElectricityNotFoundException("monthly Electricity not found."));
+        return new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh());
     }
 
     @Override

@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
@@ -30,7 +32,7 @@ public class ModbusSensorController {
     @AdminOnly
     @Operation(summary = "지원하는 Modbus 센서 리스트를 가져오는 API", description = "지원하는 모든 Modbus 센서 리스트를 반환합니다.")
     public ResponseEntity<List<ModbusSensorDto>> getSupportedModbusSensors() {
-        return ResponseEntity.ok(modbusSensorService.getAllSupportedSensors());
+        return ResponseEntity.status(HttpStatus.OK).body(modbusSensorService.getAllSupportedSensors());
     }
 
 
@@ -41,11 +43,11 @@ public class ModbusSensorController {
     @GetMapping("/list")
     @Operation(summary = "모든 modbus 센서들의 리스트를 가져오는 API", description = "소속 조직의 모든 modbus 센서 리스트를 반환합니다.")
     public ResponseEntity<List<ModbusSensorDto>> getModbusSensors(@RequestHeader(X_USER_ID) String userId){
-        return ResponseEntity.ok(modbusSensorService.getOrganizationSensorsByUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(modbusSensorService.getOrganizationSensorsByUserId(userId));
     }
 
     /**
-     * 단일 modbus 센서 정보를 반환하며 조직이 소유한 센서가 아닌경우 UnauthorizedException을 반환합니다.
+     * 단일 modbus 센서 정보를 반환합니다.
      * @param sensorId 센서아이디
      * @return 성공 - 200 OK, 실패 - 404 NOT FOUND
      */
@@ -64,8 +66,9 @@ public class ModbusSensorController {
     @AdminOnly
     @Operation(summary = "Modbus 센서를 추가하는 API", description = "Modbus 센서를 추가합니다.")
     public ResponseEntity<String> addModbusSensor(@RequestHeader(X_USER_ID) String userId,
-                                                  @RequestBody SensorRequest addSensorRequest){
-        return ResponseEntity.status(HttpStatus.CREATED)
+                                                  @RequestBody SensorRequest addSensorRequest) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body("Sensor registered:" + modbusSensorService.addSensorWithChannels(userId, addSensorRequest));
     }
 
@@ -76,17 +79,17 @@ public class ModbusSensorController {
      * @return 200 OK
      */
     @PutMapping("/{sensorId}")
-    @AdminOnly
+    @AdminOnly @VerifyOrganization
     public ResponseEntity<String> updateModbusSensor(@PathVariable("sensorId") int sensorId,
                                                      @RequestBody SensorRequest updateSensorRequest) {
-        return ResponseEntity.ok()
-                .body("Sensor updated. id=" + modbusSensorService.updateModbusSensor(sensorId, updateSensorRequest));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Sensor updated. id=" + modbusSensorService.updateMobusSensor(sensorId, updateSensorRequest));
     }
 
     @PutMapping("/health")
-    @AdminOnly
-    public ResponseEntity<String> updateHealth(int sensorId){
-        return ResponseEntity.ok().body("Sensor health changed" + modbusSensorService.updateHealth(sensorId));
+    @AdminOnly @VerifyOrganization
+    public ResponseEntity<String> updateWork(int sensorId){
+        return ResponseEntity.status(HttpStatus.OK).body("Sensor health changed" + modbusSensorService.updateWork(sensorId));
     }
 
     /**
@@ -95,10 +98,10 @@ public class ModbusSensorController {
      * @return 204 NO CONTENT
      */
     @DeleteMapping("/{sensorId}")
-    @AdminOnly
+    @AdminOnly @VerifyOrganization
     public ResponseEntity<String> deleteModbusSensor(@PathVariable("sensorId") int sensorId) {
         modbusSensorService.deleteSensorById(sensorId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
