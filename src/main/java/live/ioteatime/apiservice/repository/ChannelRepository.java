@@ -1,7 +1,6 @@
 package live.ioteatime.apiservice.repository;
 
 import live.ioteatime.apiservice.domain.Channel;
-import live.ioteatime.apiservice.dto.channel.ChannelDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

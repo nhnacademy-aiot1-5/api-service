@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
@@ -82,14 +80,14 @@ public class ModbusSensorController {
     @AdminOnly @VerifyOrganization
     public ResponseEntity<String> updateModbusSensor(@PathVariable("sensorId") int sensorId,
                                                      @RequestBody SensorRequest updateSensorRequest) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Sensor updated. id=" + modbusSensorService.updateMobusSensor(sensorId, updateSensorRequest));
+        return ResponseEntity.ok()
+                .body("Sensor updated. id=" + modbusSensorService.updateModbusSensor(sensorId, updateSensorRequest));
     }
 
     @PutMapping("/health")
     @AdminOnly @VerifyOrganization
-    public ResponseEntity<String> updateWork(int sensorId){
-        return ResponseEntity.status(HttpStatus.OK).body("Sensor health changed" + modbusSensorService.updateWork(sensorId));
+    public ResponseEntity<String> updateHealth(int sensorId){
+        return ResponseEntity.ok().body("Sensor health changed" + modbusSensorService.updateHealth(sensorId));
     }
 
     /**
