@@ -1,8 +1,8 @@
 package live.ioteatime.apiservice.dto.channel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import live.ioteatime.apiservice.dto.ModbusSensorDto;
-import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
+import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
+import live.ioteatime.apiservice.dto.place.PlaceWithoutOrganizationDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

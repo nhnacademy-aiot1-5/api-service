@@ -2,9 +2,9 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.PlaceRequest;
-import live.ioteatime.apiservice.dto.PlaceResponseDto;
-import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
+import live.ioteatime.apiservice.dto.place.PlaceRequest;
+import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
+import live.ioteatime.apiservice.dto.place.PlaceWithoutOrganizationDto;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.PlaceNotFoundException;
 import live.ioteatime.apiservice.repository.OrganizationRepository;

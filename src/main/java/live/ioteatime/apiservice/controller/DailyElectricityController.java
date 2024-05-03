@@ -1,7 +1,7 @@
 package live.ioteatime.apiservice.controller;
 
-import live.ioteatime.apiservice.dto.ElectricityRequestDto;
-import live.ioteatime.apiservice.dto.ElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.ElectricityService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;

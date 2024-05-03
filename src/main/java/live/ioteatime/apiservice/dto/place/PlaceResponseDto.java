@@ -1,4 +1,4 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.place;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

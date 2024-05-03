@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.service;
 
 import live.ioteatime.apiservice.dto.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.OrganizationDto;
-import live.ioteatime.apiservice.dto.UserDto;
+import live.ioteatime.apiservice.dto.user.UserDto;
 
 import java.util.List;
 

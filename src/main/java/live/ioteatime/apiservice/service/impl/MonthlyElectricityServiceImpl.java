@@ -1,8 +1,8 @@
 package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.MonthlyElectricity;
-import live.ioteatime.apiservice.dto.ElectricityRequestDto;
-import live.ioteatime.apiservice.dto.ElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.exception.ElectricityNotFoundException;
 import live.ioteatime.apiservice.repository.MonthlyElectricityRepository;
 import live.ioteatime.apiservice.service.ElectricityService;

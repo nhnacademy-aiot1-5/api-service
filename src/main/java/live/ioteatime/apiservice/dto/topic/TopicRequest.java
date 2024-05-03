@@ -1,4 +1,4 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.topic;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

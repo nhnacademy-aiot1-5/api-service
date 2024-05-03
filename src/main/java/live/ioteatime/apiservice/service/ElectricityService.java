@@ -1,7 +1,7 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.dto.ElectricityRequestDto;
-import live.ioteatime.apiservice.dto.ElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 
 import java.util.List;
 

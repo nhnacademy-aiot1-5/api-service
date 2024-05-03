@@ -1,8 +1,8 @@
 package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.*;
-import live.ioteatime.apiservice.dto.ModbusSensorDto;
-import live.ioteatime.apiservice.dto.SensorRequest;
+import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
+import live.ioteatime.apiservice.dto.sensor.SensorRequest;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.ModbusSensorRepository;

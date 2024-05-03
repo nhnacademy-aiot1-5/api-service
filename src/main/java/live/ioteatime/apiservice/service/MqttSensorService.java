@@ -1,8 +1,8 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.dto.AddMqttSensorRequest;
-import live.ioteatime.apiservice.dto.MqttSensorDto;
-import live.ioteatime.apiservice.dto.SensorRequest;
+import live.ioteatime.apiservice.dto.sensor.AddMqttSensorRequest;
+import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
+import live.ioteatime.apiservice.dto.sensor.SensorRequest;
 
 import java.util.List;
 

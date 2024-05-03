@@ -1,7 +1,7 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.dto.TopicDto;
-import live.ioteatime.apiservice.dto.TopicRequest;
+import live.ioteatime.apiservice.dto.topic.TopicDto;
+import live.ioteatime.apiservice.dto.topic.TopicRequest;
 
 import java.util.List;
 

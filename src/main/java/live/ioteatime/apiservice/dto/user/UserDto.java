@@ -1,8 +1,9 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import live.ioteatime.apiservice.domain.Role;
+import live.ioteatime.apiservice.dto.OrganizationDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
