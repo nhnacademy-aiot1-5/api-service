@@ -7,13 +7,13 @@ import live.ioteatime.apiservice.service.ElectricityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -23,22 +23,33 @@ import java.util.List;
 public class MonthlyElectricityController {
     private final ElectricityService<MonthlyElectricity> electricityService;
 
+    /**
+     * 지정된 날짜와 채널 ID에 해당하는 월별 전력 사용량을 조회합니다.
+     * @param localDateTime 조회하고자 하는 날짜와 시간. ISO 날짜-시간 형식을 따릅니다.
+     * @param channelId 조회하고자 하는 채널의 ID.
+     * @return 조회된 월별 전력 사용량을 {@link ElectricityResponseDto} 객체로 반환합니다.
+     */
     @GetMapping("/electricity")
-    public ElectricityResponseDto getMonthlyElectricity(@RequestParam
-                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                        LocalDateTime localDateTime,
-                                                        @RequestParam int channelId) {
+    public ResponseEntity<ElectricityResponseDto> getMonthlyElectricity(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                                        @RequestParam LocalDateTime localDateTime,
+                                                                        @RequestParam int channelId) {
         ElectricityRequestDto requestDto = new ElectricityRequestDto(localDateTime, channelId);
         MonthlyElectricity monthlyElectricity = electricityService.getElectricityByDate(requestDto);
 
-        return new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh());
+        return ResponseEntity.ok(new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh()));
     }
 
+    /**
+     * 지정된 날짜와 채널 ID에 해당하는 모든 월별 전력 사용량 데이터를 조회합니다.
+     * @param localDateTime 조회하고자 하는 날짜와 시간. ISO 날짜-시간 형식을 따릅니다.
+     * @param channelId 조회하고자 하는 채널의 ID.
+     * @return 조회된 모든 월별 전력 사용량 데이터를 {@link ElectricityResponseDto} 객체의 리스트로 반환합니다.
+     */
     @GetMapping("/electricities")
-    public List<ElectricityResponseDto> getMonthlyElectricies(@RequestParam
-                                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                                              LocalDateTime localDateTime,
-                                                              @RequestParam int channelId) {
-        return electricityService.getElectricitiesByDate(new ElectricityRequestDto(localDateTime, channelId));
+    public ResponseEntity<List<ElectricityResponseDto>> getMonthlyElectricies(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                                              @RequestParam LocalDateTime localDateTime,
+                                                                              @RequestParam int channelId) {
+        return ResponseEntity.ok(electricityService.getElectricitiesByDate(
+                new ElectricityRequestDto(localDateTime, channelId)));
     }
 }

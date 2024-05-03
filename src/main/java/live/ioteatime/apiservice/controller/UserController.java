@@ -27,7 +27,7 @@ import java.net.URI;
 public class UserController {
     private final UserService userService;
     private final OrganizationService organizationService;
-    private final String X_USER_ID = "X-USER-ID";
+    private static final String X_USER_ID = "X-USER-ID";
 
     /**
      * 유저 아이디에 해당하는 유저의 정보를 반환하는 함수
@@ -74,6 +74,7 @@ public class UserController {
      * 경로 : /users
      * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
      * @return HttpStatus 200 OK
+     * 게이트웨이에서 엔드포인트를 확인할 때 필터에 따른 부득이한 이유로 update-user가 붙게 되었습니다.
      */
     @PutMapping("/update-user")
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
@@ -85,11 +86,12 @@ public class UserController {
      * 유저 비밀번호만 수정하는 핸들러
      * @param userId 유저아이디
      * @param updatePasswordRequest 기존 비밀번호, 새 비밀번호, 새 비밀번호 확인 이 바디에 실려서 들어옴
-     * @return HttpStatus 20 OK
+     * @return HttpStatus 200 OK
      */
     @PutMapping("/password")
     @Operation(summary = "유저의 비밀번호를 변경하는 API", description = "유저 비밀번호를 변경합니다.")
-    public ResponseEntity<String> updateUserPassword(@RequestHeader(X_USER_ID) String userId, @RequestBody UpdateUserPasswordRequest updatePasswordRequest){
+    public ResponseEntity<String> updateUserPassword(@RequestHeader(X_USER_ID) String userId,
+                                                     @RequestBody UpdateUserPasswordRequest updatePasswordRequest){
         userService.updateUserPassword(userId, updatePasswordRequest);
         return ResponseEntity.ok().build();
     }
@@ -106,6 +108,11 @@ public class UserController {
         return ResponseEntity.ok(organizationDto);
     }
 
+    /**
+     * 유저 정보 조직의 예산을 리턴합니다.
+     * @param userId
+     * @return HttpStatus 200 Ok
+     */
     @GetMapping("/budget")
     @Operation(summary = "조직의 현재 설정 금액을 가져오는 API", description = "조직의 현재 설정금액을 가져옵니다.")
     public ResponseEntity<OrganizationDto> getBudget(@RequestHeader(X_USER_ID) String userId) {

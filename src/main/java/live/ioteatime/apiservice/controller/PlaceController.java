@@ -42,11 +42,11 @@ public class PlaceController {
         return new PlaceResponseDto(place.getId(), place.getPlaceName());
     }
 
-    @PutMapping("/place/update")
+    @PutMapping("/place")
     public ResponseEntity<PlaceResponseDto> updatePlace(int placeId, String placeName) {
         return ResponseEntity.ok(placeService.updatePlace(placeId, placeName));
     }
-    @DeleteMapping("/place/delete")
+    @DeleteMapping("/place")
     public ResponseEntity<String> deletePlace(int placeId) {
         placeService.deletePlace(placeId);
         return ResponseEntity.noContent().build();

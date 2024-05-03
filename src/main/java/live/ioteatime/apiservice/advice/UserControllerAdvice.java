@@ -16,7 +16,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<String> userAlreadyExistsException(UserAlreadyExistsException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -31,7 +31,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(OrganizationCodeNameMismatchException.class)
     public ResponseEntity<String> organizationCodeNotMatchesException(OrganizationCodeNameMismatchException e){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
     @ExceptionHandler(ElectricityNotFoundException.class)

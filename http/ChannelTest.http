@@ -18,4 +18,7 @@ X-USER-ID: admin
   "channel_name": "정수기"
 }
 ### 시간별 전력량 가져오기
-GET localhost:8090/channels/by_place?placeId=1
+GET localhost:8090/sensors/modbus/channels/by-place?placeId=2
+
+###
+GET localhost:8090/sensors/modbus/1/channels

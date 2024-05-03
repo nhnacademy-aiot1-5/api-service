@@ -25,36 +25,28 @@ public class TopicController {
 
     /**
      * 센서별 토픽리스트를 조회합니다.
-     * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @return 200 OK
      */
     @GetMapping("/{sensorId}/topics")
     @VerifyOrganization
-    public ResponseEntity<List<TopicDto>> getTopicsBySensorId(@RequestHeader(X_USER_ID) String userId,
-                                                              @PathVariable("sensorId") int sensorId) {
-        List<TopicDto> topicDtoList = topicService.getTopicsBySensorId(sensorId);
-        return ResponseEntity.ok(topicDtoList);
+    public ResponseEntity<List<TopicDto>> getTopicsBySensorId(@PathVariable("sensorId") int sensorId) {
+        return ResponseEntity.ok(topicService.getTopicsBySensorId(sensorId));
     }
 
     /**
      * 토픽을 단일 조회합니다.
-     * @param userId 유저아이디
-     * @param sensorId 센서아이디
      * @param topicId 토픽아이디
      * @return 성공 - 200 OK, 실패- 404 NOT FOUND
      */
     @GetMapping("/{sensorId}/topics/{topicId}")
     @VerifyOrganization
-    public ResponseEntity<TopicDto> getTopicByTopicId(@RequestHeader(X_USER_ID) String userId,
-                                                      @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId){
-        TopicDto topicDto = topicService.getTopicByTopicId(topicId);
-        return ResponseEntity.ok(topicDto);
+    public ResponseEntity<TopicDto> getTopicByTopicId(@PathVariable("topicId") int topicId){
+        return ResponseEntity.ok(topicService.getTopicByTopicId(topicId));
     }
 
     /**
      * mqtt 센서의 토픽을 추가합니다.
-     * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @param topicDto 토픽과 설명
      * @return 201 Created
@@ -62,8 +54,7 @@ public class TopicController {
     @PostMapping("/{sensorId}/topics")
     @AdminOnly @VerifyOrganization
     @Operation(summary = "토픽 추가 API",description = "MQTT 센서의 토픽을 추가하는 API입니다.")
-    public ResponseEntity<String> addTopic(@RequestHeader(X_USER_ID) String userId,
-                                           @PathVariable("sensorId") int sensorId, @RequestBody TopicDto topicDto) {
+    public ResponseEntity<String> addTopic(@PathVariable("sensorId") int sensorId, @RequestBody TopicDto topicDto) {
 
         int addedTopicId = topicService.addTopic(sensorId, topicDto);
 
@@ -75,7 +66,6 @@ public class TopicController {
 
     /**
      * 토픽을 수정합니다.
-     * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @param topicId 토픽아이디
      * @param topicRequest 토픽 수정 요청
@@ -84,16 +74,14 @@ public class TopicController {
     @PutMapping("/{sensorId}/topics/{topicId}/update")
     @AdminOnly @VerifyOrganization
     @Operation(summary = "토픽을 수정하는 API입니다.", description = "토픽과 토픽에 대한 설명을 수정 가능합니다.")
-    public ResponseEntity<String> updateTopic(@RequestHeader(X_USER_ID) String userId,
-                                              @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId,
+    public ResponseEntity<String> updateTopic(@PathVariable("sensorId") int sensorId,
+                                              @PathVariable("topicId") int topicId,
                                               @RequestBody TopicRequest topicRequest){
-        topicService.updateTopic(sensorId, topicId, topicRequest);
-        return ResponseEntity.ok().body("Updated topic. id="+topicId);
+        return ResponseEntity.ok().body("Updated topic. id="+updateTopic(sensorId, topicId, topicRequest));
     }
 
     /**
      * mqtt 센서의 토픽을 삭제합니다.
-     * @param userId 유저아이디
      * @param sensorId 센서아이디
      * @param topicId 삭제할 토픽아이디
      * @return 204 No Content
@@ -101,8 +89,8 @@ public class TopicController {
     @DeleteMapping("/{sensorId}/topics/{topicId}")
     @AdminOnly @VerifyOrganization
     @Operation(summary = "토픽을 삭제하는 API입니다.")
-    public ResponseEntity<String> deleteTopic(@RequestHeader(X_USER_ID) String userId,
-                                              @PathVariable("sensorId") int sensorId, @PathVariable("topicId") int topicId){
+    public ResponseEntity<String> deleteTopic(@PathVariable("sensorId") int sensorId,
+                                              @PathVariable("topicId") int topicId){
 
         topicService.deleteTopic(sensorId, topicId);
 

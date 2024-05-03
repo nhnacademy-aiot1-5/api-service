@@ -27,15 +27,13 @@ public class MqttSensorController {
 
     /**
      * 등록 가능한 MQTT 센서 모델 리스트를 반환합니다.
-     * @param userId 요청을 보내는 ADMIN 유저의 아이디
      * @return 200 OK
      */
     @GetMapping("/supported")
     @AdminOnly
     @Operation(summary = "지원하는 MQTT 센서 리스트를 가져오는 API", description = "지원하는 모든 MQTT 센서 리스트를 반환합니다.")
-    public ResponseEntity<List<MqttSensorDto>> getSupportedMqttSensors(@RequestHeader(X_USER_ID) String userId) {
-        List<MqttSensorDto> sensorList = mqttSensorService.getAllSupportedSensors();
-        return ResponseEntity.ok(sensorList);
+    public ResponseEntity<List<MqttSensorDto>> getSupportedMqttSensors() {
+        return ResponseEntity.ok(mqttSensorService.getAllSupportedSensors());
     }
 
     /**
@@ -56,7 +54,8 @@ public class MqttSensorController {
      */
     @GetMapping("/{sensorId}")
     @Operation(summary = "MQTT 센서 단일 조회 API")
-    public ResponseEntity<MqttSensorDto> getMqttSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
+    public ResponseEntity<MqttSensorDto> getMqttSensor(@RequestHeader(X_USER_ID) String userId,
+                                                       @PathVariable("sensorId") int sensorId) {
         return ResponseEntity.ok(mqttSensorService.getSensorById(userId, sensorId));
     }
 
@@ -67,9 +66,10 @@ public class MqttSensorController {
     @PostMapping
     @AdminOnly
     @Operation(summary = "MQTT 센서를 추가하는 API", description = "MQTT 센서를 추가합니다.")
-    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId, @RequestBody AddMqttSensorRequest addSensorRequest){
-        int registeredSensorId = mqttSensorService.addMqttSensor(userId, addSensorRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Sensor registered. id=" + registeredSensorId);
+    public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId,
+                                                @RequestBody AddMqttSensorRequest addSensorRequest){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body("Sensor registered. id=" + mqttSensorService.addMqttSensor(userId, addSensorRequest));
     }
 
     /**
@@ -79,14 +79,14 @@ public class MqttSensorController {
      * @param updateSensorRequest 센서 수정 요청
      * @return 200 OK
      */
-    @PutMapping("/{sensorId}/update")
+    @PutMapping("/{sensorId}")
     @AdminOnly
     @Operation(summary = "MQTT 센서 정보를 수정하는 API", description = "MQTT 센서 정보를 수정합니다.")
-    public ResponseEntity<String> updateMqttSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId,
+    public ResponseEntity<String> updateMqttSensor(@RequestHeader(X_USER_ID) String userId,
+                                                   @PathVariable("sensorId") int sensorId,
                                                    @RequestBody SensorRequest updateSensorRequest) {
-
-        int updatedSensorId = mqttSensorService.updateMqttSensor(userId, sensorId, updateSensorRequest);
-        return ResponseEntity.ok().body("Sensor updated. id=" + updatedSensorId);
+        return ResponseEntity.ok().body("Sensor updated. id=" +
+                mqttSensorService.updateMqttSensor(userId, sensorId, updateSensorRequest));
     }
 
     /**
@@ -97,7 +97,8 @@ public class MqttSensorController {
      */
     @DeleteMapping("/{sensorId}")
     @AdminOnly
-    public ResponseEntity<String> deleteMqttSensor(@RequestHeader(X_USER_ID) String userId, @PathVariable("sensorId") int sensorId) {
+    public ResponseEntity<String> deleteMqttSensor(@RequestHeader(X_USER_ID) String userId,
+                                                   @PathVariable("sensorId") int sensorId) {
         mqttSensorService.deleteSensorById(userId, sensorId);
         return ResponseEntity.noContent().build();
     }

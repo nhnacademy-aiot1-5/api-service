@@ -1,11 +1,12 @@
 package live.ioteatime.apiservice.aop;
 
+import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
+import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.UnauthorizedException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
-import live.ioteatime.apiservice.repository.AdminRepository;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
 import live.ioteatime.apiservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,6 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class BeforeExecuteMethodAspect {
-    private final AdminRepository adminRepository;
     private final UserRepository userRepository;
     private final MqttSensorRepository mqttSensorRepository;
 
@@ -34,7 +34,7 @@ public class BeforeExecuteMethodAspect {
                 ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         String userId = httpServletRequest.getHeader("X-USER-ID");
-        User user = adminRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         Role role = user.getRole();
 
@@ -56,8 +56,17 @@ public class BeforeExecuteMethodAspect {
 
         String userId = httpServletRequest.getHeader("X-USER-ID");
 
-        int userOrgId = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)).getOrganization().getId();
-        int sensorOrgId = mqttSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new).getOrganization().getId();
+        Organization userOrganization = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)).getOrganization();
+        if(Objects.isNull(userOrganization)){
+            throw new OrganizationNotFoundException();
+        }
+        int userOrgId = userOrganization.getId();
+
+        Organization sensorOrganization = mqttSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new).getOrganization();
+        if(Objects.isNull(sensorOrganization)){
+            throw new OrganizationNotFoundException();
+        }
+        int sensorOrgId = sensorOrganization.getId();
 
         if (userOrgId != sensorOrgId) {
             throw new UnauthorizedException();

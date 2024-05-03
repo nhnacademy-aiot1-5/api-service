@@ -1,6 +1,8 @@
 package live.ioteatime.apiservice.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
