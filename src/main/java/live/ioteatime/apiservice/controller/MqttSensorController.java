@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.annotation.VerifyOrganization;
-import live.ioteatime.apiservice.dto.sensor.AddMqttSensorRequest;
+import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
-import live.ioteatime.apiservice.dto.sensor.SensorRequest;
 import live.ioteatime.apiservice.service.MqttSensorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -67,7 +66,7 @@ public class MqttSensorController {
     @AdminOnly
     @Operation(summary = "MQTT 센서를 추가하는 API", description = "MQTT 센서를 추가합니다.")
     public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId,
-                                                @RequestBody AddMqttSensorRequest addSensorRequest){
+                                                @RequestBody MqttSensorRequest addSensorRequest){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body("Sensor registered. id=" + mqttSensorService.addMqttSensor(userId, addSensorRequest));
     }
@@ -82,7 +81,7 @@ public class MqttSensorController {
     @AdminOnly @VerifyOrganization
     @Operation(summary = "MQTT 센서 정보를 수정하는 API", description = "MQTT 센서 정보를 수정합니다.")
     public ResponseEntity<String> updateMqttSensor(@PathVariable("sensorId") int sensorId,
-                                                   @RequestBody SensorRequest updateSensorRequest) {
+                                                   @RequestBody MqttSensorRequest updateSensorRequest) {
         return ResponseEntity.ok().body("Sensor updated. id=" +
                 mqttSensorService.updateMqttSensor(sensorId, updateSensorRequest));
     }

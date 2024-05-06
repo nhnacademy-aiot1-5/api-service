@@ -1,8 +1,7 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.dto.sensor.AddMqttSensorRequest;
+import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
-import live.ioteatime.apiservice.dto.sensor.SensorRequest;
 
 import java.util.List;
 
@@ -13,9 +12,9 @@ public interface MqttSensorService {
 
     MqttSensorDto getSensorById(int sensorId);
 
-    int addMqttSensor(String userId, AddMqttSensorRequest request);
+    int addMqttSensor(String userId, MqttSensorRequest request);
 
-    int updateMqttSensor(int sensorId, SensorRequest sensorRequest);
+    int updateMqttSensor(int sensorId, MqttSensorRequest request);
 
     void deleteSensorById(int sensorId);
 }

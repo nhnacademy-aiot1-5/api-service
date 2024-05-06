@@ -4,12 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import live.ioteatime.apiservice.domain.Alive;
 import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter
 public class MqttSensorDto {
     private int id;
     @JsonProperty("sensor_name")

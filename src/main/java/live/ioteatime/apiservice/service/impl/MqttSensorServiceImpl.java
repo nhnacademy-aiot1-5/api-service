@@ -4,9 +4,8 @@ import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
 import live.ioteatime.apiservice.dto.*;
 import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
-import live.ioteatime.apiservice.dto.sensor.AddMqttSensorRequest;
+import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
-import live.ioteatime.apiservice.dto.sensor.SensorRequest;
 import live.ioteatime.apiservice.exception.*;
 import live.ioteatime.apiservice.repository.*;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -60,7 +59,8 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     @Override
     public List<MqttSensorDto> getOrganizationSensorsByUserId(String userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
         if(Objects.isNull(organization)){
             throw new OrganizationNotFoundException();
@@ -71,7 +71,10 @@ public class MqttSensorServiceImpl implements MqttSensorService {
                 .map(sensor -> {
                     MqttSensorDto sensorDto = new MqttSensorDto();
                     BeanUtils.copyProperties(sensor, sensorDto);
-                    sensorDto.setPlace(new PlaceResponseDto(sensor.getPlace().getId(), sensor.getPlace().getPlaceName()));
+                    sensorDto.setPlace(new PlaceResponseDto(
+                            sensor.getPlace().getId(),
+                            sensor.getPlace().getPlaceName())
+                    );
                     return sensorDto;
                 })
                 .collect(Collectors.toList());
@@ -81,11 +84,12 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     /**
      *
      * @param sensorId 센서 아이디
-     * @return 센서 정보를 리턴합니다. 없다면 SensorNotFoundException을 던집니다.
+     * @return 센서 정보를 리턴합니다. 없다면 SensorNotFoundException 을 던집니다.
      */
     @Override
     public MqttSensorDto getSensorById(int sensorId) {
-        MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        MqttSensor sensor = sensorRepository.findById(sensorId)
+                .orElseThrow(SensorNotFoundException::new);
 
         MqttSensorDto sensorDto = new MqttSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
@@ -106,7 +110,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      * @return 등록한 센서 아이디
      */
     @Override
-    public int addMqttSensor(String userId, AddMqttSensorRequest request) {
+    public int addMqttSensor(String userId, MqttSensorRequest request) {
 
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
             throw new SensorNotSupportedException();
@@ -114,9 +118,10 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         User user = userRepository.findById(userId).orElseThrow(()->new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
-        if(Objects.isNull(organization)) {
+        if(organization == null){
             throw new OrganizationNotFoundException();
         }
+
         Place place = placeRepository.findById(request.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
 
         if(place.getOrganization().getId() != organization.getId()){
@@ -124,21 +129,15 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         }
 
         MqttSensor sensor = new MqttSensor();
-        BeanUtils.copyProperties(request, sensor);
-        sensor.setAlive(Alive.DOWN);
-        sensor.setOrganization(organization);
-        sensor.setPlace(place);
-
+        sensor.setInitialValues(request, organization, place);
         MqttSensor savedSensor = sensorRepository.save(sensor);
-        if (Objects.isNull(request.getTopic())){
+
+        String topic = request.getTopic();
+        String desc = request.getDescription();
+        if (Objects.isNull(topic)){
             throw new IllegalArgumentException();
         }
-
-        Topic topic = new Topic();
-        topic.setTopic(request.getTopic());
-        topic.setDescription(request.getDescription());
-        topic.setMqttSensor(savedSensor);
-        topicRepository.save(topic);
+        topicRepository.save(new Topic(topic, desc, savedSensor));
 
         sendRequestToRuleEngine(savedSensor);
 
@@ -148,21 +147,15 @@ public class MqttSensorServiceImpl implements MqttSensorService {
     /**
      * 센서 정보를 수정합니다. sensor_name, ip, port, place 만 수정 가능합니다.
      * @param sensorId 센서아이디
-     * @param sensorRequest 센서 수정 요청
+     * @param updateRequest 센서 수정 요청
      * @return 수정한 센서의 아이디를 반환합니다.
      */
     @Override
-    public int updateMqttSensor(int sensorId, SensorRequest sensorRequest) {
-        Place place = placeRepository.findById(sensorRequest.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
+    public int updateMqttSensor(int sensorId, MqttSensorRequest updateRequest) {
+        Place place = placeRepository.findById(updateRequest.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
         MqttSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
-
-        sensor.setName(sensorRequest.getName());
-        sensor.setIp(sensorRequest.getIp());
-        sensor.setPort(sensorRequest.getPort());
-        sensor.setPlace(place);
-
+        sensor.updateSensorInfo(updateRequest.getName(), updateRequest.getIp(), updateRequest.getPort(), place);
         MqttSensor savedSensor = sensorRepository.save(sensor);
-
         sendRequestToRuleEngine(savedSensor);
 
         return sensor.getId();
@@ -198,7 +191,5 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         sensorAdaptor.addBrokers(addBrokerRequest);
 
     }
-
-
 
 }
