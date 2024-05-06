@@ -26,7 +26,7 @@ public class ChannelController {
      */
     @GetMapping("/{sensorId}/channels")
     @VerifyOrganization
-    public ResponseEntity<List<ChannelDto>> getChannels(@PathVariable("sensorId") int sensorId) {
+    public ResponseEntity<List<ChannelDto>> getChannels(@PathVariable("sensorId")int sensorId) {
         return ResponseEntity.ok(channelService.getChannelList(sensorId));
     }
 
@@ -57,15 +57,14 @@ public class ChannelController {
 
     /**
      * 센서 아이디에 해당하는 센서의 채널명을 변경합니다.
-     * @param channelDto sensorId와 변경할 이름의 channel-Name이 있는 리퀘스트 입니다.
-     * @return 변경된 채널의 아이디를 반환합니다.
+     * @param channelName sensorId와 변경할 이름의 channel-Name이 있는 리퀘스트 입니다.
+     * @return 변경된 채널의 센서 아이디를 반환합니다.
      */
     @AdminOnly
     @VerifyOrganization
-    @PutMapping("/{sensorId}/channels/change-name")
-    public ResponseEntity<Integer> updateChannelName(@PathVariable("sensorId") int sensorId,
-                                                     @RequestBody ChannelDto channelDto) {
-        return ResponseEntity.ok(channelService.updateChannelName(sensorId, channelDto));
+    @PutMapping("/{channelId}/change-name")
+    public ResponseEntity<Integer> updateChannelName(@PathVariable("channelId") int channelId,
+                                                     String channelName) {
+        return ResponseEntity.ok(channelService.updateChannelName(channelId, channelName));
     }
-
 }

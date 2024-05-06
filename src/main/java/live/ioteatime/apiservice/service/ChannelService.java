@@ -13,5 +13,5 @@ public interface ChannelService {
 
     int updatePlace(int sensorId, int placeId);
 
-    int updateChannelName(int sensorId, ChannelDto channelDto);
+    int updateChannelName(int sensorId, String channelName);
 }

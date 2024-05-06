@@ -45,10 +45,11 @@ public class ChannelServiceImpl implements ChannelService {
             BeanUtils.copyProperties(channel.getSensor(), sensorDto);
             channelDto.setSensor(sensorDto);
 
-            PlaceResponseDto placeDto = new PlaceResponseDto();
-            BeanUtils.copyProperties(channel.getPlace(), placeDto);
-            channelDto.setPlace(placeDto);
-
+            if (channel.getPlace() != null) {
+                PlaceResponseDto placeDto = new PlaceResponseDto();
+                BeanUtils.copyProperties(channel.getPlace(), placeDto);
+                channelDto.setPlace(placeDto);
+            }
             channelDtoList.add(channelDto);
         }
         return channelDtoList;
@@ -121,15 +122,15 @@ public class ChannelServiceImpl implements ChannelService {
 
     /**
      * Controller의 updateChannelName에 사용되는 서비스로 ChannelDto에 담겨있는 ChannelName으로 변경합니다.
-     * @param sensorId   url 구성에 필수요소이나 해당 서비스에 필요하지 않아 예의상 받았습니다.
-     * @param channelDto 변경할 channelName이 담겨있는 DTO 입니다.
-     * @return
+     * @param channelId   url 구성에 필수요소이나 해당 서비스에 필요하지 않아 예의상 받았습니다.
+     * @param channelName 바꿀 채널의 아이디입니다.
+     * @return 채널의 센서 ID를 반환합니다.
      */
     @Override
-    public int updateChannelName(int sensorId, ChannelDto channelDto) {
-        Channel channel = channelRepository.findById(channelDto.getId()).orElseThrow(ChannelNotFoundException::new);
-        channel.setChannelName(channelDto.getChannelName());
+    public int updateChannelName(int channelId, String channelName) {
+        Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
+        channel.setChannelName(channelName);
         channelRepository.save(channel);
-        return channel.getId();
+        return channel.getSensor().getId();
     }
 }
