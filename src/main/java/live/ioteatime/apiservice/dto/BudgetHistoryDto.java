@@ -19,9 +19,9 @@ public interface BudgetHistoryDto {
         int getId();
 
         String getName();
-
+        @JsonProperty("electricity_budget")
         Long getElectricityBudget();
-
+        @JsonProperty("organization_code")
         String organizationCode();
     }
 }
