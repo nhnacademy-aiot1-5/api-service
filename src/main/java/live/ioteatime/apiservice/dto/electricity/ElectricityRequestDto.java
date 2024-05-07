@@ -1,4 +1,4 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.electricity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityResponseDto {
+public class ElectricityRequestDto {
     private LocalDateTime time;
-    private long kwh;
+    private int channelId;
 }

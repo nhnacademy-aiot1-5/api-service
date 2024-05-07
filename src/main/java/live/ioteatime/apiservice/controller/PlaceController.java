@@ -3,9 +3,8 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.PlaceRequest;
-import live.ioteatime.apiservice.dto.PlaceResponseDto;
-import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
+import live.ioteatime.apiservice.dto.place.PlaceRequestDto;
+import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
 import live.ioteatime.apiservice.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,22 +30,22 @@ public class PlaceController {
 
     @GetMapping("/places")
     @Operation(summary = "organization id 별로 place 리스트 가져오기")
-    public ResponseEntity<List<PlaceWithoutOrganizationDto>> getPlaces(int organizationId) {
+    public ResponseEntity<List<PlaceResponseDto>> getPlaces(int organizationId) {
         return ResponseEntity.ok(placeService.getPlaces(organizationId));
     }
 
     @PostMapping("/place")
     @Operation(summary = "구역 저장하기")
-    public PlaceResponseDto registerPlace(@RequestBody PlaceRequest placeRequestDto) {
+    public PlaceResponseDto registerPlace(@RequestBody PlaceRequestDto placeRequestDto) {
         Place place = placeService.savePlace(placeRequestDto);
         return new PlaceResponseDto(place.getId(), place.getPlaceName());
     }
 
-    @PutMapping("/place/update")
+    @PutMapping("/place")
     public ResponseEntity<PlaceResponseDto> updatePlace(int placeId, String placeName) {
         return ResponseEntity.ok(placeService.updatePlace(placeId, placeName));
     }
-    @DeleteMapping("/place/delete")
+    @DeleteMapping("/place")
     public ResponseEntity<String> deletePlace(int placeId) {
         placeService.deletePlace(placeId);
         return ResponseEntity.noContent().build();

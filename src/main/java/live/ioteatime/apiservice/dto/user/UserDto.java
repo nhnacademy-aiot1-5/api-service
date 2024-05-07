@@ -1,9 +1,9 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
+import live.ioteatime.apiservice.dto.OrganizationDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +25,7 @@ public class UserDto {
     @Schema(description = "유저의 이름입니다.")
     private String name;
     @Schema(description = "유저의 생성일입니다.")
+    @JsonProperty("created_at")
     private LocalDate createdAt;
     @Schema(description = "유저의 권한입니다.")
     private Role role;

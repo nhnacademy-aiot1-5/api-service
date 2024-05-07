@@ -1,20 +1,17 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.domain.Channel;
-import live.ioteatime.apiservice.dto.ChannelDto;
-import live.ioteatime.apiservice.dto.UpdateChannelNameRequest;
-import live.ioteatime.apiservice.dto.UpdatePlaceRequest;
+import live.ioteatime.apiservice.dto.channel.ChannelDto;
 
 import java.util.List;
 
 public interface ChannelService {
-    int createChannel(int sensorId);
-
-    int updatePlace(UpdatePlaceRequest updatePlaceRequest);
-
     List<ChannelDto> getChannelList(int sensorId);
 
-    int updateChannelName(UpdateChannelNameRequest updateChannelNameRequest);
+    List<ChannelDto>getChannelListByPlace(int placeId);
 
-    List<Channel> getChannelListByPlace(int placeId);
+    int createChannel(int sensorId);
+
+    int updatePlace(int sensorId, int placeId);
+
+    int updateChannelName(int sensorId, String channelName);
 }

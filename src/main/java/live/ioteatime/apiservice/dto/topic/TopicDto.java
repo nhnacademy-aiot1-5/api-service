@@ -1,4 +1,4 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.topic;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

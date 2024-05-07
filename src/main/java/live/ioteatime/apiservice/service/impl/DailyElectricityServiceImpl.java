@@ -7,8 +7,8 @@ import com.influxdb.query.FluxTable;
 import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.DailyElectricity;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.ElectricityRequestDto;
-import live.ioteatime.apiservice.dto.ElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.exception.ElectricityNotFoundException;
 import live.ioteatime.apiservice.repository.ChannelRepository;
 import live.ioteatime.apiservice.repository.DailyElectricityRepository;
@@ -26,11 +26,12 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("dailyElectricityService")
 @RequiredArgsConstructor
-public class DailyElectricityServiceImpl implements ElectricityService<DailyElectricity> {
+public class DailyElectricityServiceImpl implements ElectricityService {
     @Value("${spring.influx.bucket}")
     private String bucket;
     @Value("${spring.influx.org}")
@@ -41,10 +42,12 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
     private final ChannelRepository channelRepository;
 
     @Override
-    public DailyElectricity getElectricityByDate(ElectricityRequestDto electricityRequestDto) {
+    public ElectricityResponseDto getElectricityByDate(ElectricityRequestDto electricityRequestDto) {
         DailyElectricity.Pk pk = new DailyElectricity.Pk(electricityRequestDto.getChannelId(), electricityRequestDto.getTime());
-        return dailyElectricityRepository.findByPk(pk)
+
+        DailyElectricity dailyElectricity = dailyElectricityRepository.findByPk(pk)
                 .orElseThrow(() -> new ElectricityNotFoundException("Daily electricity not found for " + pk));
+        return new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh());
     }
 
     @Override
@@ -106,7 +109,6 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
     private List<DailyElectricity> fetchFromInfluxDB(String place, String type, int organizationId, int channelId,
                                                      LocalDateTime start, LocalDateTime end) {
         String fluxQuery = getQuery(place, type, organizationId, start, end);
-
         Map<LocalDateTime, DailyElectricity> results = new TreeMap<>();
         QueryApi queryApi = influxDBClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery, organization);
@@ -118,17 +120,22 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
                         .plusHours(9);
                 Long value = r.getValueByKey("_value") != null ?
                         ((Double) Objects.requireNonNull(r.getValueByKey("_value"))).longValue() : 0L;
-                results.merge(formattedTime, new DailyElectricity(
-                        new DailyElectricity.Pk(channelId, formattedTime),
-                        channelRepository.findById(channelId).orElse(null),
-                        value,
-                        0L //todo : 요금 가져오는 로직 필요
-                ), (existing, newEntry) -> new DailyElectricity(
-                        existing.getPk(),
-                        existing.getChannel(),
-                        existing.getKwh() + newEntry.getKwh(),
-                        existing.getBill() + newEntry.getBill()
-                ));
+
+                results.merge(
+                        formattedTime,
+                        new DailyElectricity(
+                                new DailyElectricity.Pk(channelId, formattedTime),
+                                channelRepository.findById(channelId).orElse(null),
+                                value,
+                                0L
+                        ),
+                        (existing, newEntry) -> new DailyElectricity(
+                                existing.getPk(),
+                                existing.getChannel(),
+                                existing.getKwh() + newEntry.getKwh(),
+                                existing.getBill() + newEntry.getBill()
+                        )
+                );
             }
         }
         return new ArrayList<>(results.values());
@@ -144,16 +151,11 @@ public class DailyElectricityServiceImpl implements ElectricityService<DailyElec
         List<Place> places = placeRepository.findAllByOrganization_Id(organizationId);
 
         if (place.equals("total") && places.size() > 1) {
-            Iterator<Place> iterator = places.iterator();
-            while (iterator.hasNext()) {
-                Place p = iterator.next();
-                fluxQuery.append("r[\"place\"] == \"")
-                        .append(p.getPlaceName())
-                        .append("\"");
-                if (iterator.hasNext()) {
-                    fluxQuery.append(" or ");
-                }
-            }
+            fluxQuery.append(
+                    places.stream()
+                            .map(p -> "r[\"place\"] == \"" + p.getPlaceName() + "\"")
+                            .collect(Collectors.joining(" or "))
+            );
         } else {
             fluxQuery.append("r[\"place\"] == \"")
                     .append(places.stream()

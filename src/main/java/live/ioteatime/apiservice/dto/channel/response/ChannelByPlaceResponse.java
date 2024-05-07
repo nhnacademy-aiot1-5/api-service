@@ -1,20 +1,18 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.channel.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public class ChannelResponseDto {
+public class ChannelByPlaceResponse {
     @JsonProperty("channel_id")
-    private int channelId;
+    private int id;
+    @JsonProperty("channel_name")
+    private String channelName;
     @JsonProperty("sensor_id")
     private int sensorId;
     @JsonProperty("place_id")
     private int placeId;
-    @JsonProperty("channel_name")
-    private String channelName;
 }

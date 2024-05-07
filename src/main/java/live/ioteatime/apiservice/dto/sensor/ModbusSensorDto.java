@@ -1,22 +1,23 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.sensor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import live.ioteatime.apiservice.domain.Alive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
 @Getter
 @Setter
-public class AddMqttSensorRequest{
+@NoArgsConstructor
+public class ModbusSensorDto {
+    private int id;
     @JsonProperty("sensor_name")
     private String name;
     @JsonProperty("sensor_model_name")
     private String modelName;
     private String ip;
     private String port;
-    @JsonProperty("place_id")
-    private int placeId;
-    private String topic;
-    private String description;
+    @JsonProperty("channel_count")
+    private int channelCount;
+    private Alive alive;
 }

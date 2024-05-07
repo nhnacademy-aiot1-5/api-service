@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.controller;
 
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
-import live.ioteatime.apiservice.dto.UserDto;
+import live.ioteatime.apiservice.dto.user.UserDto;
 import live.ioteatime.apiservice.service.impl.AdminServiceImpl;
 import live.ioteatime.apiservice.service.impl.OrganizationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,9 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AdminController.class)

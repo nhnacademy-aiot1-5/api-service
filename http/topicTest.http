@@ -1,6 +1,6 @@
 ### 토픽 등록
 POST http://localhost:8090/sensors/3/topics
-X-USER-ID: admin
+X-USER-ID: asdf
 Content-Type: application/json
 
 {
@@ -10,15 +10,15 @@ Content-Type: application/json
 
 ### 토픽 리스트 조회
 GET localhost:8090/sensors/3/topics
-X-USER-ID: admin
+X-USER-ID: asdf
 
 ### 토픽 단일 조회
 GET localhost:8090/sensors/3/topics/20
-X-USER-ID: admin
+X-USER-ID: asdf
 
 ### 토픽 수정
 PUT localhost:8090/sensors/3/topics/20/update
-X-USER-ID: admin
+X-USER-ID: asdf
 Content-Type: application/json
 
 {
@@ -28,4 +28,4 @@ Content-Type: application/json
 
 ### 토픽 삭제
 DELETE localhost:8090/sensors/3/topics/20
-X-USER-ID: admin
+X-USER-ID: asdf

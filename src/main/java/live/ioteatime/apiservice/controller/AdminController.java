@@ -6,7 +6,7 @@ import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.dto.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.OrganizationDto;
-import live.ioteatime.apiservice.dto.UserDto;
+import live.ioteatime.apiservice.dto.user.UserDto;
 import live.ioteatime.apiservice.service.AdminService;
 import live.ioteatime.apiservice.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 어드민만 사용할 수 있는 컨트롤러들 입니다.
+ * 어드민만 사용할 수 있는 컨트롤러 메서드 입니다.
  */
 @RestController
 @RequiredArgsConstructor
@@ -25,17 +25,17 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
     private final OrganizationService organizationService;
-    private final String X_USER_ID = "X-USER-ID";
+    private static final String X_USER_ID = "X-USER-ID";
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 GUEST 권한을 가진 유저의 리스트를 가져옵니다.
-     * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
-     * @return GUEST 권한을 가진 유러의 리스트를 반환합니다. HttpStatus 200번 OK
+     * @param userId 어드민의 아이디를 가져와 권한을 체크하는 동시에 어드민이 소속된 조직을 불러오는데 사용합니다.
+     * @return GUEST 권한을 가진 유저의 리스트를 반환합니다. HttpStatus 200번 OK
      */
     @GetMapping("/guests")
     @AdminOnly
     @Operation(summary = "소직에 속한 유저중 유저의 권한이 GUEST인 유저들의 리스트를 가져오는 API",
-            description = "저직에 속한 유저중 유저의 권한이 GUEST인 유저들의 리스트를 가져옵니다.")
+            description = "조직에 속한 유저중 유저의 권한이 GUEST인 유저들의 리스트를 가져옵니다.")
     public ResponseEntity<List<UserDto>> getGuestUsers(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.ok(adminService.getGuestUsers(userId));
     }
@@ -59,7 +59,7 @@ public class AdminController {
      * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
      * @return 요금 변경 내역리스트를 반환합니다.
      */
-    @GetMapping("/budgethistory")
+    @GetMapping("/budget-histories")
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져오는 API",
             description = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져옵니다.")
@@ -68,7 +68,7 @@ public class AdminController {
     }
 
     /**
-     * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 요금 변경 내역 리스트를 가져옵니다.
+     * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 조직 이름과 조직 코드를 가져옵니다.
      * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
      * @return 조직이름과 조직 코드를 반환합니다.
      */
@@ -85,11 +85,11 @@ public class AdminController {
      * @param code 클라이언트에서 입력한 조직 코드 값입니다.
      * @return 데이터베이스에 중복되는 code값이 있으면 true, 없으면 false를 반환합니다.
      */
-    @GetMapping("/checkcode")
+    @GetMapping("/check-code")
     @AdminOnly
     @Operation(summary = "조직 코드가 중복이 있는지 확인하는 API", description = "조직 코드가 이미 중복된 코드인지 확인합니다.")
-    public ResponseEntity<Boolean> checkCode(String code) {
-        return ResponseEntity.ok(adminService.checkCode(code));
+    public ResponseEntity<Boolean> isOrganizationCodeDuplicate(String code) {
+        return ResponseEntity.ok(adminService.isOrganizationCodeDuplicate(code));
     }
 
     /**
@@ -97,7 +97,7 @@ public class AdminController {
      * @param userId 유저 권한을 GUEST -> USER로 바꿔줄 유저의 아이디
      * @return HttpStatus 200번 OK
      */
-    @PutMapping("/roles")
+    @PutMapping("/role")
     @AdminOnly
     @Operation(summary = "유저 권한을 수정하는 API",
             description = "ADMIN 유저가 GUEST 권한을 가진 유저의 권한을 GUEST에서 USER로 수정합니다.")
@@ -121,20 +121,26 @@ public class AdminController {
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 이름을 수정하는 메서드 입니다.
      * @param userId 조직을 가져오기 위한 어드민의 아이디
-     * @param name   수정할 조직 이름
+     * @param organizationName 수정할 조직 이름
      * @return HttpStats 200번 OK
      */
-    @PutMapping("/organizationname")
+    @PutMapping("/organization-name")
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 이름을 변경하는 API", description = "어드민이 속한 조직의 이름을 변경합니다.")
-    public ResponseEntity<Organization> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String name) {
-        return ResponseEntity.ok(organizationService.updateName(userId, name));
+    public ResponseEntity<Organization> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String organizationName) {
+        return ResponseEntity.ok(organizationService.updateName(userId, organizationName));
     }
 
-    @PutMapping("/organizationcode")
+    /**
+     * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 조직코드를 수정하는 메서드 입니다.
+     * @param userId 조직을 가져오기 위한 어드민의 아이디
+     * @param organizationCode 수정할 조직 코드
+     * @return HttpStatus 200번 OK
+     */
+    @PutMapping("/organization-code")
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 조직코드를 변경하는 API", description = "어드민이 속한 조직의 조직코드를 변경합니다.")
-    public ResponseEntity<Organization> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String code) {
-        return ResponseEntity.ok(organizationService.updateCode(userId, code));
+    public ResponseEntity<Organization> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String organizationCode) {
+        return ResponseEntity.ok(organizationService.updateCode(userId, organizationCode));
     }
 }

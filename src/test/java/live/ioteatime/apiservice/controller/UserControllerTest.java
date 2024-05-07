@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.controller;
 
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
-import live.ioteatime.apiservice.dto.UserDto;
+import live.ioteatime.apiservice.dto.user.UserDto;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

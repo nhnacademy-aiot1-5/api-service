@@ -2,9 +2,8 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.PlaceRequest;
-import live.ioteatime.apiservice.dto.PlaceResponseDto;
-import live.ioteatime.apiservice.dto.PlaceWithoutOrganizationDto;
+import live.ioteatime.apiservice.dto.place.PlaceRequestDto;
+import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.PlaceNotFoundException;
 import live.ioteatime.apiservice.repository.OrganizationRepository;
@@ -29,11 +28,11 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public List<PlaceWithoutOrganizationDto> getPlaces(int organizationId) {
+    public List<PlaceResponseDto> getPlaces(int organizationId) {
         List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
-        List<PlaceWithoutOrganizationDto> dtoList = new ArrayList<>();
+        List<PlaceResponseDto> dtoList = new ArrayList<>();
         for (Place place : placeList) {
-            PlaceWithoutOrganizationDto dto = new PlaceWithoutOrganizationDto();
+            PlaceResponseDto dto = new PlaceResponseDto();
             BeanUtils.copyProperties(place, dto);
             dtoList.add(dto);
         }
@@ -41,7 +40,7 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public Place savePlace(PlaceRequest placeRequestDto) {
+    public Place savePlace(PlaceRequestDto placeRequestDto) {
         Organization organization = organizationRepository.findById(placeRequestDto.getOrganizationId())
                 .orElseThrow(OrganizationNotFoundException::new);
         Place place = new Place(0,

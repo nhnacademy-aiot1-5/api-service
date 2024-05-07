@@ -1,4 +1,4 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -13,6 +13,8 @@ public class RegisterRequest {
     @JsonProperty("pw")
     private String password;
     private String name;
+    @JsonProperty("organization_name")
     private String organizationName;
+    @JsonProperty("organization_code")
     private String organizationCode;
 }

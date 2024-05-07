@@ -17,22 +17,22 @@ public class SensorControllerAdvice {
     }
 
     @ExceptionHandler(SensorNotFoundException.class)
-    public ResponseEntity<String> sensorNotFound(){
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<String> sensorNotFound(SensorNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(TopicNotFoundException.class)
-    public ResponseEntity<String> topicNotFound(){
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<String> topicNotFound(TopicNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(IllegalAccessException.class)
-    public ResponseEntity<String> illegalAccess(){
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<String> illegalAccess(IllegalStateException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> illegalState(IllegalStateException e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 }

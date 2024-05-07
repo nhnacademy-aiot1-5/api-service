@@ -1,15 +1,13 @@
-package live.ioteatime.apiservice.dto;
+package live.ioteatime.apiservice.dto.sensor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import live.ioteatime.apiservice.domain.Alive;
+import live.ioteatime.apiservice.domain.Protocol;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-public class ModbusSensorDto {
+@Getter @Setter
+public class SensorDto {
     private int id;
     @JsonProperty("sensor_name")
     private String name;
@@ -17,7 +15,6 @@ public class ModbusSensorDto {
     private String modelName;
     private String ip;
     private String port;
-    @JsonProperty("channel_count")
-    private int channelCount;
     private Alive alive;
+    private Protocol protocol;
 }

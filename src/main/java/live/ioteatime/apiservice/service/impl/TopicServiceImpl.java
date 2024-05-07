@@ -4,8 +4,7 @@ import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.MqttSensor;
 import live.ioteatime.apiservice.domain.Topic;
 import live.ioteatime.apiservice.dto.AddBrokerRequest;
-import live.ioteatime.apiservice.dto.TopicDto;
-import live.ioteatime.apiservice.dto.TopicRequest;
+import live.ioteatime.apiservice.dto.topic.TopicDto;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.exception.TopicNotFoundException;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
@@ -17,12 +16,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class TopicServiceImpl implements TopicService {
 
     private final MqttSensorRepository mqttSensorRepository;
@@ -36,14 +36,16 @@ public class TopicServiceImpl implements TopicService {
      */
     @Override
     public List<TopicDto> getTopicsBySensorId(int sensorId) {
-        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensorId);
-        List<TopicDto> topicDtoList = new ArrayList<>();
-        for(Topic topic : topicList){
-            TopicDto topicDto = new TopicDto();
-            BeanUtils.copyProperties(topic, topicDto);
-            topicDtoList.add(topicDto);
-        }
-        return topicDtoList;
+
+        return topicRepository.findAllByMqttSensor_Id(sensorId)
+                .stream()
+                .map(topic -> {
+                    TopicDto topicDto = new TopicDto();
+                    BeanUtils.copyProperties(topic, topicDto);
+                    return topicDto;
+                })
+                .collect(Collectors.toList());
+
     }
 
     /**
@@ -62,20 +64,16 @@ public class TopicServiceImpl implements TopicService {
     /**
      * 조직의 ADMIN 유저가 센서에 토픽을 추가합니다.
      * @param sensorId 센서아이디
-     * @param topicDto 추가할 토픽 정보
+     * @param addTopicRequest 추가할 토픽 정보
      * @return 추가한 토픽
      */
     @Override
-    public int addTopic(int sensorId, TopicDto topicDto) {
+    public int addTopic(int sensorId, TopicDto addTopicRequest) {
 
         MqttSensor sensor = mqttSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
-
-        Topic topic = new Topic();
-        topic.setTopic(topicDto.getTopic());
-        topic.setDescription(topicDto.getDescription());
-        topic.setMqttSensor(sensor);
-
-        Topic savedTopic = topicRepository.save(topic);
+        Topic savedTopic = topicRepository.save(
+                new Topic(addTopicRequest.getTopic(), addTopicRequest.getDescription(), sensor)
+        );
 
         requestAddBrokerToRuleEngine(sensor);
 
@@ -88,7 +86,7 @@ public class TopicServiceImpl implements TopicService {
      * @param topicRequest 수정 요청
      */
     @Override
-    public void updateTopic(int sensorId, int topicId, TopicRequest topicRequest) {
+    public void updateTopic(int sensorId, int topicId, TopicDto topicRequest) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(TopicNotFoundException::new);
         topic.setTopic(topicRequest.getTopic());
         topic.setDescription(topicRequest.getDescription());
@@ -124,20 +122,19 @@ public class TopicServiceImpl implements TopicService {
      */
     private void requestAddBrokerToRuleEngine(MqttSensor sensor) {
 
-        String mqttHost = "tcp://" + sensor.getIp() + ":" + sensor.getPort();
-        String mqttId = "mqtt" +  sensor.getId();
-        List<Topic> topicList = topicRepository.findByMqttSensor_Id(sensor.getId());
-        List<String> topicValueList = new ArrayList<>();
-        for(Topic topicEntity : topicList){
-            topicValueList.add(topicEntity.getTopic());
-        }
+        int sensorId = sensor.getId();
+        String sensorIp = sensor.getIp();
+        String sensorPort = sensor.getPort();
 
-        AddBrokerRequest addBrokerRequest = new AddBrokerRequest();
-        addBrokerRequest.setMqttHost(mqttHost);
-        addBrokerRequest.setMqttId(mqttId);
-        addBrokerRequest.setMqttTopic(topicValueList);
 
-        sensorAdaptor.addBrokers(addBrokerRequest);
+        String mqttHost = "tcp://" + sensorIp + ":" + sensorPort;
+        String mqttId = "mqtt" +  sensorId;
+        List<String> topicList = topicRepository.findAllByMqttSensor_Id(sensorId)
+                .stream()
+                .map(Topic::getTopic)
+                .collect(Collectors.toList());
+
+        sensorAdaptor.addBrokers(new AddBrokerRequest(mqttHost, mqttId, topicList));
     }
 
 }

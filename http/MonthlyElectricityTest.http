@@ -1,0 +1,5 @@
+### 월별 단건 조회
+GET localhost:8090/monthly/electricity?localDateTime=2024-04-30T00:00:00&channelId=1
+
+### 월별 리스트 조회
+GET localhost:8090/monthly/electricities?localDateTime=2024-04-30T00:00:00&channelId=1
