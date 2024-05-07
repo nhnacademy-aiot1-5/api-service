@@ -1,8 +1,10 @@
 package live.ioteatime.apiservice.domain;
 
+import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 
@@ -40,4 +42,20 @@ public class MqttSensor {
     @JoinColumn(name = "place_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Place place;
+
+
+    public void setInitialValues(MqttSensorRequest request, Organization organization, Place place) {
+        BeanUtils.copyProperties(request, this);
+        this.alive = Alive.DOWN;
+        this.organization = organization;
+        this.place = place;
+    }
+
+    public void updateSensorInfo(String name, String ip, String port, Place place){
+        this.name = name;
+        this.ip = ip;
+        this.port = port;
+        this.place = place;
+    }
+
 }

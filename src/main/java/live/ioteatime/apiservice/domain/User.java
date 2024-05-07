@@ -1,7 +1,6 @@
 package live.ioteatime.apiservice.domain;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,9 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
-@Getter
-@Setter
+@Getter @Setter
 public class User {
     @Id
     @Column(name = "user_id")
@@ -28,4 +25,5 @@ public class User {
     @JoinColumn(name = "organization_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Organization organization;
+
 }

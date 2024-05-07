@@ -57,7 +57,7 @@ public class BeforeExecuteMethodAspect {
      * 일치하지 않으면 UnAuthorizedException을 던집니다.
      * @param sensorId 센서아이디
      */
-    @Before("mqttPointcut() && verifyOrganizationPointcut() && args(*,sensorId,*)")
+    @Before("mqttPointcut() && verifyOrganizationPointcut() && args(sensorId,*,*)")
     public void checkOrganizationMatchFotMqtt(int sensorId){
 
         Organization sensorOrganization = mqttSensorRepository.findById(sensorId)
@@ -70,7 +70,7 @@ public class BeforeExecuteMethodAspect {
 
     }
 
-    @Before("modbusPointcut() && verifyOrganizationPointcut() && args(*,sensorId,*)")
+    @Before("modbusPointcut() && verifyOrganizationPointcut() && args(sensorId,*,*)")
     public void checkOrganizationMatchForModbus(int sensorId){
 
         Organization sensorOrganization = modbusSensorRepository.findById(sensorId)

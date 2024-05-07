@@ -70,7 +70,7 @@ public class TopicController {
      * @param topicRequest 토픽 수정 요청
      * @return 200 Ok
      */
-    @PutMapping("/{sensorId}/topics/{topicId}/update")
+    @PutMapping("/{sensorId}/topics/{topicId}")
     @AdminOnly @VerifyOrganization
     @Operation(summary = "토픽을 수정하는 API입니다.", description = "토픽과 토픽에 대한 설명을 수정 가능합니다.")
     public ResponseEntity<String> updateTopic(@PathVariable("sensorId") int sensorId,
