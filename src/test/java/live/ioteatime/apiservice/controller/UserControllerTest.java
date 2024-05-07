@@ -8,7 +8,6 @@ import live.ioteatime.apiservice.dto.user.UserDto;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.service.impl.OrganizationServiceImpl;
 import live.ioteatime.apiservice.service.impl.UserServiceImpl;
-import org.apache.tomcat.util.file.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
