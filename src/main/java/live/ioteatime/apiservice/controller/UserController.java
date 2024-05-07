@@ -61,6 +61,7 @@ public class UserController {
     @PostMapping
     @Operation(summary = "회원정보를 생성하는 API", description = "회원가입 페이지에서 받은 정보를 데이터베이스에 저장합니다.")
     public ResponseEntity<String> createUser(@RequestBody RegisterRequest registerRequest) {
+
         String createdUserId = userService.createUser(registerRequest);
 
         URI location = UriComponentsBuilder
