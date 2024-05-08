@@ -1,22 +1,39 @@
 package live.ioteatime.apiservice.service.impl;
 
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.QueryApi;
+import com.influxdb.query.FluxRecord;
+import com.influxdb.query.FluxTable;
+import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.MonthlyElectricity;
 import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
 import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.exception.ElectricityNotFoundException;
+import live.ioteatime.apiservice.repository.ChannelRepository;
 import live.ioteatime.apiservice.repository.MonthlyElectricityRepository;
 import live.ioteatime.apiservice.service.ElectricityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service("monthlyElectricityService")
 @RequiredArgsConstructor
 public class MonthlyElectricityServiceImpl implements ElectricityService {
+    @Value("${spring.influx.bucket}")
+    private String bucket;
+    @Value("${spring.influx.org}")
+    private String organization;
+    private final InfluxDBClient influxDBClient;
     private final MonthlyElectricityRepository monthlyElectricityRepository;
+    private final ChannelRepository channelRepository;
 
     @Override
     public ElectricityResponseDto getElectricityByDate(ElectricityRequestDto electricityRequestDto) {
@@ -42,5 +59,73 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
             responseDtos.add(new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh()));
         }
         return responseDtos;
+    }
+
+    @Override
+    public ElectricityResponseDto getCurrentElectricity(){
+        LocalDateTime start = LocalDateTime.now().minusMonths(1).plusDays(1);
+        LocalDateTime end = LocalDateTime.now();
+
+        String fluxQuery = getKwhQuery("total", "main", start, end);
+        QueryApi queryApi = influxDBClient.getQueryApi();
+        FluxTable fluxTable = queryApi.query(fluxQuery, organization).get(0);
+        List<FluxRecord> records = fluxTable.getRecords();
+
+        long result = 0;
+        if (!records.isEmpty()) {
+            FluxRecord firstRecord = records.get(0);
+            FluxRecord lastRecord = records.get(records.size() - 1);
+
+            Double firstKwh = (Double) firstRecord.getValueByKey("_value");
+            Double lastKwh = (Double) lastRecord.getValueByKey("_value");
+
+            result = (long) (lastKwh-firstKwh);
+        }
+
+        return new ElectricityResponseDto(end, result);
+    }
+
+    @Override
+    public ElectricityResponseDto getLastElectricity() {
+        List<Channel> channels = channelRepository.findAllByChannelName("main");
+        LocalDateTime lastMonth = LocalDateTime.now().minusMonths(1).toLocalDate().atStartOfDay();
+
+        long kwh = 0;
+        for (Channel channel : channels) {
+            int channelId = channel.getId();
+            MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(channelId, lastMonth);
+            Optional<MonthlyElectricity> monthlyElectricity = monthlyElectricityRepository.findMonthlyElectricityByPk(pk);
+            if (monthlyElectricity.isPresent()) {
+                kwh += monthlyElectricity.get().getKwh();
+            }
+        }
+        return new ElectricityResponseDto(lastMonth, kwh);
+    }
+
+    private String getKwhQuery(String place, String type, LocalDateTime start, LocalDateTime end) {
+        String startRFC3339 = DateTimeFormatter.ISO_INSTANT.format(start.atZone(ZoneId.systemDefault()).toInstant());
+        String endRFC3339 = DateTimeFormatter.ISO_INSTANT.format(end.atZone(ZoneId.systemDefault()).toInstant());
+
+        StringBuilder fluxQuery = new StringBuilder();
+        fluxQuery.append("from(bucket: \"").append(bucket).append("\")\n")
+                .append("  |> range(start: ").append(startRFC3339).append(", stop: ").append(endRFC3339).append(")\n");
+
+
+        if (!Objects.equals(place, "total")){
+            fluxQuery.append("  |> filter(fn: (r) => r[\"place\"] == \"").append(place).append("\")\n");
+        }
+
+        fluxQuery.append("  |> filter(fn: (r) => r[\"type\"] == \"").append(type).append("\")\n")
+                .append("  |> filter(fn: (r) => r[\"phase\"] == \"kwh\")\n")
+                .append("  |> filter(fn: (r) => r[\"description\"] == \"sum\")\n")
+                .append("  |> aggregateWindow(every: 1d, fn: last, createEmpty: false)\n");
+
+        if (place.equals("total")) {
+            fluxQuery.append("  |> group(columns: [\"_time\"])\n")
+                    .append("  |> sum()\n")
+                    .append("  |> group(mode: \"by\")");
+        }
+
+        return fluxQuery.toString();
     }
 }

@@ -44,6 +44,16 @@ public class MonthlyElectricityController {
                 new ElectricityRequestDto(localDateTime, channelId)));
     }
 
+    @GetMapping("/electricity/last")
+    public ResponseEntity<ElectricityResponseDto> getLastMonthElectricity(){
+        return ResponseEntity.ok(electricityService.getLastElectricity());
+    }
+
+    @GetMapping("/electricity/current")
+    public ResponseEntity<ElectricityResponseDto> getcurrentMonthElectricity(){
+        return ResponseEntity.ok(electricityService.getCurrentElectricity());
+    }
+
     /**
      * 지정된 날짜와 채널 ID에 해당하는 모든 월별 전력 사용량 데이터를 조회합니다.
      *
