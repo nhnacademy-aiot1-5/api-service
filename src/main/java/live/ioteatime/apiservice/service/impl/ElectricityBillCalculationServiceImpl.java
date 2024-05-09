@@ -4,7 +4,6 @@ import live.ioteatime.apiservice.domain.DemandCharge;
 import live.ioteatime.apiservice.service.ElectricityBillCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 
 /*
