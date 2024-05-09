@@ -1,0 +1,9 @@
+package live.ioteatime.apiservice.service;
+
+public interface ElectricityBillCalculationService {
+    Long calculateElectricityBill(Long kwh);
+    Long getGeneralCharge();
+    Long getDemandCharge();
+    Long getClimateChangeCharge(Long kwh);
+    Long getFuelCostAdjustmentCharge(Long kwh);
+}
