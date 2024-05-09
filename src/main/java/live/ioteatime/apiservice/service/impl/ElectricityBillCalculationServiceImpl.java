@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 public class ElectricityBillCalculationServiceImpl implements ElectricityBillCalculationService {
     @Override
     public Long calculateElectricityBill(Long kwh) {
+        // 전력요금(electricityBill) = 기본요금 + 전력량요금 + 기후변화요금 + 연료비조정요금
         long electricityBill = getDemandCharge(kwh) + getDemandCharge(kwh) + getClimateChangeCharge(kwh) + getFuelCostAdjustmentCharge(kwh);
 
+        // 청구요금(billingCharge) = 전력요금 + 부가가치세 + 전력산업기반기금
         long billingCharge = electricityBill + getVAT(electricityBill) + getElectricityIndustryInfraFund(electricityBill);
 
         return billingCharge;
@@ -43,17 +45,17 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
             seasonalCharge = DemandCharge.SPRING_FALL.getDemandCharge();
         }
 
-        return (long) Math.floor(seasonalCharge * kwh); // 사용한 전력만큼 계절 요금을 계산해서 반환합니다. (원 이하 버림)
+        return (long) Math.floor(seasonalCharge * kwh); // 사용한 전력만큼 계절 요금을 곱해서 반환합니다.
     }
 
     @Override
     public Long getClimateChangeCharge(Long kwh) {
-        return (long) Math.floor(kwh * 9);
+        return (long) Math.floor(kwh * 9); // 기후변화요금 9원에 사용한 전력을 곱해서 반환합니다.
     }
 
     @Override
     public Long getFuelCostAdjustmentCharge(Long kwh) {
-        return (long) Math.floor(kwh * 5);
+        return (long) Math.floor(kwh * 5); // 연료비조정요금 5원에 사용한 전력을 곱해서 반환합니다.
     }
 
     @Override
