@@ -28,13 +28,13 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
 
     @Override
     public Long getDemandCharge() {
-        int currentMonth = LocalDateTime.now().getMonthValue();
-
         Map<String, Double> GENERAL_A_I_DEMAND_CHARGE = Map.of(
                 "SUMMER", 98.6,
                 "WINTER", 142.6,
                 "SPRING_FALL", 130.3
         );
+
+        int currentMonth = LocalDateTime.now().getMonthValue();
 
         double chargePerMonth = 0;
 
