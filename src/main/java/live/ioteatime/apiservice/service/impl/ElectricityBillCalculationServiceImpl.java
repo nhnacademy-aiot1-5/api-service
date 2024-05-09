@@ -63,7 +63,7 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
     }
 
     /*
-    * 기부변화요금을 반환하는 메서드입니다.
+    * 기후변화요금을 반환하는 메서드입니다.
     */
 
     @Override
