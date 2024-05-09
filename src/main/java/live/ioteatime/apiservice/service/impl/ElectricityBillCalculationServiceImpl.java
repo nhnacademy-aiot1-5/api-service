@@ -17,6 +17,7 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
 
     /*
     * 전력요금을 계산하고 청구요금을 반환하는 메서드입니다.
+    * 요금 계산 중 소수점 이하는 버림 처리합니다.
     *
     * 전력요금(electricityBill) = 기본요금 + 전력량요금 + 기후변화요금 + 연료비조정요금
     *
@@ -66,7 +67,6 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
 
     /*
     * 기후변화요금을 반환하는 메서드입니다.
-    * 소수점 이하 버림
     */
 
     @Override
