@@ -1,6 +1,7 @@
 package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.DemandCharge;
+import live.ioteatime.apiservice.domain.SupplyVoltage;
 import live.ioteatime.apiservice.service.ElectricityBillCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,9 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
 
     @Override
     public Long getGeneralCharge() {
-        return 7170 * 30L;
+        long generalCharge = SupplyVoltage.HIGH_VOLTAGE_A_OPTION_I.getGeneralCharge();
+
+        return generalCharge * 30L;
     }
 
     /*
@@ -63,6 +66,7 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
 
     /*
     * 기후변화요금을 반환하는 메서드입니다.
+    * 소수점 이하 버림
     */
 
     @Override
