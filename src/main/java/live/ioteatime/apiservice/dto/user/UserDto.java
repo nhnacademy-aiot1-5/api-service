@@ -29,7 +29,6 @@ public class UserDto {
     private LocalDate createdAt;
     @Schema(description = "유저의 권한입니다.")
     private Role role;
-
     @Schema(description = "유저의 소속 조직입니다.")
     private OrganizationDto organization;
 }
