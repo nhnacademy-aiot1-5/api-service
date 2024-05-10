@@ -3,11 +3,10 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.ModbusSensor;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
-import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
 import live.ioteatime.apiservice.dto.channel.ChannelDto;
+import live.ioteatime.apiservice.dto.place.PlaceDto;
+import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
 import live.ioteatime.apiservice.exception.ChannelNotFoundException;
-import live.ioteatime.apiservice.exception.PlaceNotFoundException;
 import live.ioteatime.apiservice.exception.SensorNotFoundException;
 import live.ioteatime.apiservice.repository.ChannelRepository;
 import live.ioteatime.apiservice.repository.ModbusSensorRepository;
@@ -46,7 +45,7 @@ public class ChannelServiceImpl implements ChannelService {
             channelDto.setSensor(sensorDto);
 
             if (channel.getPlace() != null) {
-                PlaceResponseDto placeDto = new PlaceResponseDto();
+                PlaceDto placeDto = new PlaceDto();
                 BeanUtils.copyProperties(channel.getPlace(), placeDto);
                 channelDto.setPlace(placeDto);
             }
@@ -68,7 +67,7 @@ public class ChannelServiceImpl implements ChannelService {
             ChannelDto channelDto = new ChannelDto();
             BeanUtils.copyProperties(channel, channelDto);
 
-            PlaceResponseDto placeDto = new PlaceResponseDto();
+            PlaceDto placeDto = new PlaceDto();
             BeanUtils.copyProperties(channel.getPlace(), placeDto);
             channelDto.setPlace(placeDto);
 
@@ -81,48 +80,60 @@ public class ChannelServiceImpl implements ChannelService {
         return channelDtoList;
     }
 
+    @Override
+    public boolean existChannelCheck(int sensorId) {
+        return channelRepository.existsBySensor_Id(sensorId);
+    }
+
     /**
-     * 이 메서드는 ChannelController에 소속된 서비스가 아닌 ModbusSensorController에 소속된 컨트롤러로
-     * ModbusSensor를 추가할 때 채널의 숫자의 개수만큼 새로운 행을 만듭니다.
+     * 모드버스 채널을 추가합니다.
      * @param sensorId 채널이 추가될 센서의 아이디입니다.
      * @return 생성된 채널의 개수를 반환합니다.
      */
     @Override
-    public int createChannel(int sensorId) {
+    public int createChannel(int sensorId, ChannelDto channelDto) {
         ModbusSensor sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
-        List<ChannelDto> channelList = new ArrayList<>();
-        for (int i = 1; i <= sensor.getChannelCount(); i++) {
-            Channel channel = new Channel();
-            channel.setSensor(sensor);
-            channel.setChannelName(sensor.getName() + "_" + i);
-            ChannelDto channelDto = new ChannelDto();
-            BeanUtils.copyProperties(channel, channelDto);
-            channelList.add(channelDto);
-            channelRepository.save(channel);
-        }
-        return channelList.size();
+        ModbusSensorDto sensorDto = new ModbusSensorDto();
+        BeanUtils.copyProperties(sensor, sensorDto);
+        channelDto.setSensor(sensorDto);
+
+        Place place = placeRepository.findByPlaceName(channelDto.getPlaceName());
+        PlaceDto placeDto = new PlaceDto();
+        BeanUtils.copyProperties(place, placeDto);
+        channelDto.setPlace(placeDto);
+
+        Channel channel = new Channel();
+        BeanUtils.copyProperties(channelDto, channel);
+        channel.setSensor(sensor);
+        channel.setPlace(place);
+
+        channelRepository.save(channel);
+
+        int channelCount = channelRepository.countBySensor_Id(sensorId);
+
+        sensor.setChannelCount(channelCount);
+        modbusSensorRepository.save(sensor);
+        return sensorId;
     }
 
     /**
-     * Controller의 updatePlace에 사용되는 서비스로 modbus센서의 장소를 UpdatePlaceRequest의 placeId값으로 수정합니다.
-     * @param sensorId 장소를 바꿀 sensor의 ID입니다.
-     * @param placeId  바꿀 장소의 ID입니다.
-     * @return 변경된 리스트의 개수를 반환합니다.
+     * Controller의 updateChannelPlace에 사용되는 서비스로 장소를 placeName으로 변경합니다.
+     * @param channelId
+     * @param placeName 바꿀 장소의 이름입니다.
+     * @return
      */
     @Override
-    public int updatePlace(int sensorId, int placeId) {
-        Place place = placeRepository.findById(placeId).orElseThrow(PlaceNotFoundException::new);
-        List<Channel> channelList = channelRepository.findAllBySensor_Id(sensorId);
-        for (Channel channel : channelList) {
-            channel.setPlace(place);
-            channelRepository.save(channel);
-        }
-        return channelList.size();
+    public int updateChannelPlace(int channelId, String placeName) {
+        Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
+        Place place = placeRepository.findByPlaceName(placeName);
+        channel.setPlace(place);
+        channelRepository.save(channel);
+        return channel.getSensor().getId();
     }
 
     /**
      * Controller의 updateChannelName에 사용되는 서비스로 ChannelDto에 담겨있는 ChannelName으로 변경합니다.
-     * @param channelId   url 구성에 필수요소이나 해당 서비스에 필요하지 않아 예의상 받았습니다.
+     * @param channelId
      * @param channelName 바꿀 채널의 아이디입니다.
      * @return 채널의 센서 ID를 반환합니다.
      */
@@ -132,5 +143,27 @@ public class ChannelServiceImpl implements ChannelService {
         channel.setChannelName(channelName);
         channelRepository.save(channel);
         return channel.getSensor().getId();
+    }
+
+    @Override
+    public int updateChannelName(int channelId, ChannelDto channelDto) {
+        Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
+        channel.setAddress(channelDto.getAddress());
+        channel.setType(channelDto.getType());
+        channel.setFunctionCode(channelDto.getFunctionCode());
+        channelRepository.save(channel);
+        return channel.getSensor().getId();
+    }
+
+    @Override
+    public void deleteChannel(int sensorId, int channelId) {
+        Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
+        channelRepository.delete(channel);
+
+
+        ModbusSensor sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        int channelCount = channelRepository.countBySensor_Id(sensorId);
+        sensor.setChannelCount(channelCount);
+        modbusSensorRepository.save(sensor);
     }
 }
