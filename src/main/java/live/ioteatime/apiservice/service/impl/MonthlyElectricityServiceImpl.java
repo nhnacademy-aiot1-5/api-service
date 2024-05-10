@@ -40,7 +40,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
         MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(electricityRequestDto.getChannelId(), electricityRequestDto.getTime());
         MonthlyElectricity monthlyElectricity = monthlyElectricityRepository.findMonthlyElectricityByPk(pk)
                 .orElseThrow(() -> new ElectricityNotFoundException("monthly Electricity not found."));
-        return new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh());
+        return new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh(), monthlyElectricity.getBill());
     }
 
     @Override
@@ -56,13 +56,13 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
         List<ElectricityResponseDto> responseDtos = new ArrayList<>();
 
         for (MonthlyElectricity monthlyElectricity : monthlyElectricities) {
-            responseDtos.add(new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh()));
+            responseDtos.add(new ElectricityResponseDto(monthlyElectricity.getPk().getTime(), monthlyElectricity.getKwh(), monthlyElectricity.getBill()));
         }
         return responseDtos;
     }
 
     @Override
-    public ElectricityResponseDto getCurrentElectricity(){
+    public ElectricityResponseDto getCurrentElectricity() {
         LocalDateTime start = LocalDateTime.now().minusMonths(1).plusDays(1);
         LocalDateTime end = LocalDateTime.now();
 
@@ -79,10 +79,10 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
             Double firstKwh = (Double) firstRecord.getValueByKey("_value");
             Double lastKwh = (Double) lastRecord.getValueByKey("_value");
 
-            result = (long) (lastKwh-firstKwh);
+            result = (long) (lastKwh - firstKwh);
         }
 
-        return new ElectricityResponseDto(end, result);
+        return new ElectricityResponseDto(end, result, 0L);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
                 kwh += monthlyElectricity.get().getKwh();
             }
         }
-        return new ElectricityResponseDto(lastMonth, kwh);
+        return new ElectricityResponseDto(lastMonth, kwh, 0L);
     }
 
     private String getKwhQuery(String place, String type, LocalDateTime start, LocalDateTime end) {
@@ -111,7 +111,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
                 .append("  |> range(start: ").append(startRFC3339).append(", stop: ").append(endRFC3339).append(")\n");
 
 
-        if (!Objects.equals(place, "total")){
+        if (!Objects.equals(place, "total")) {
             fluxQuery.append("  |> filter(fn: (r) => r[\"place\"] == \"").append(place).append("\")\n");
         }
 
