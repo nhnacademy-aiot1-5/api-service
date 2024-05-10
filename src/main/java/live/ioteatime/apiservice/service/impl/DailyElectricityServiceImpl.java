@@ -9,6 +9,7 @@ import live.ioteatime.apiservice.domain.DailyElectricity;
 import live.ioteatime.apiservice.domain.Place;
 import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
 import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.KwhResponseDto;
 import live.ioteatime.apiservice.exception.ElectricityNotFoundException;
 import live.ioteatime.apiservice.repository.ChannelRepository;
 import live.ioteatime.apiservice.repository.DailyElectricityRepository;
@@ -58,6 +59,26 @@ public class DailyElectricityServiceImpl implements ElectricityService {
         } else {
             return getHourlyElectricitiesByDate(electricityRequestDto);
         }
+    }
+
+    /**
+     * @param organizationId 조직아이디
+     * @return 최근 1시간동안의 5분 간격 전체 전력사용량 리스트
+     */
+    public List<KwhResponseDto> getRealtimeTotalElectricties(int organizationId) {
+
+        LocalDateTime requestTime = LocalDateTime.now();
+
+        Map<LocalDateTime, Double> totalKwh = new HashMap<>();
+
+
+        placeRepository.findAllByOrganization_Id(organizationId)
+                .forEach(place -> calculateAndAddKwhValue(place.getPlaceName(), requestTime, 5, totalKwh));
+
+        return totalKwh.entrySet()
+                .stream()
+                .map(entry -> new KwhResponseDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     // mysql에서 2달 치 일별 데이터 가져오기 이유는 월 초에는 최근 1주일치를 가져올 수 없음
@@ -176,5 +197,84 @@ public class DailyElectricityServiceImpl implements ElectricityService {
                 .append("  |> yield(name: \"mean\")");
 
         return fluxQuery.toString();
+    }
+
+    private void calculateAndAddKwhValue(String placeName,LocalDateTime requestTime, int timePeriod, Map<LocalDateTime, Double> totalKwh){
+
+        String fluxQuery = getOneHourKwhQuery(placeName, requestTime);
+
+        QueryApi queryApi = influxDBClient.getQueryApi();
+        try {
+            List<FluxRecord> records = queryApi.query(fluxQuery, organization).get(0).getRecords();
+            if(records.isEmpty()) return;
+
+
+        Map<LocalDateTime, List<Double>> aggregatedData = new TreeMap<>();
+
+        LocalDateTime startTime = requestTime.minusHours(1);
+        for(int i=0; i<(60/timePeriod); i++){
+            aggregatedData.put(startTime, new ArrayList<>());
+            startTime = startTime.plusMinutes(timePeriod);
+        }
+
+        LocalDateTime current = requestTime.minusHours(1);
+        LocalDateTime next = current.plusMinutes(timePeriod);
+
+        for(FluxRecord r : records){
+            LocalDateTime formattedTime = LocalDateTime
+                    .parse(Objects.requireNonNull(r.getValueByKey("_time")).toString(), DateTimeFormatter.ISO_DATE_TIME)
+                    .plusHours(9);
+            Double value = r.getValueByKey("_value") != null ?
+                    (Double) Objects.requireNonNull(r.getValueByKey("_value")) : 0.00;
+
+            if (formattedTime.isAfter(next)){
+                aggregatedData.get(current).add(value);
+                current = next;
+                next = current.plusMinutes(timePeriod);
+            }
+            aggregatedData.get(current).add(value);
+        }
+
+        for(LocalDateTime t : aggregatedData.keySet()) {
+
+            List<Double> values = aggregatedData.get(t);
+            if(values.size() < 2){
+                return;
+            }
+
+            Double firstValue = values.get(0);
+            Double lastValue = values.get(values.size()-1);
+            Double kwh = lastValue - firstValue >= 0 ? lastValue - firstValue : 0L;
+
+            if(totalKwh.containsKey(t)){
+                totalKwh.put(t, totalKwh.get(t) + kwh);
+            } else{
+                totalKwh.put(t, kwh);
+            }
+        }
+        } catch (Exception e){
+            return;
+        }
+
+
+    }
+
+    private String getOneHourKwhQuery(String placeName, LocalDateTime requestTime){
+
+        LocalDateTime start = requestTime.minusHours(1);
+        LocalDateTime end = requestTime;
+
+        String startRFC3339 = DateTimeFormatter.ISO_INSTANT.format(start.atZone(ZoneId.systemDefault()).toInstant());
+        String endRFC3339 = DateTimeFormatter.ISO_INSTANT.format(end.atZone(ZoneId.systemDefault()).toInstant());
+
+        return "from(bucket: \"" + bucket + "\")\n" +
+                "  |> range(start: " + startRFC3339 + ", stop: " + endRFC3339 + ")\n" +
+                "  |> filter(fn: (r) => r[\"place\"] == \"" + placeName + "\")\n" +
+                "  |> filter(fn: (r) => r[\"phase\"] == \"kwh\")\n" +
+                "  |> filter(fn: (r) => r[\"type\"] == \"main\")\n" +
+                "  |> filter(fn: (r) => r[\"description\"] == \"sum\")\n" +
+                "  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n" +
+                "  |> yield(name: \"" + placeName + "\")";
+
     }
 }
