@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityResponseDto {
-    private LocalDateTime time;
-    private long kwh;
-    private long bill;
+public class RealtimeElectricityResponseDto {
+    private String place;
+    private String channel;
+    private Double w;
 }
