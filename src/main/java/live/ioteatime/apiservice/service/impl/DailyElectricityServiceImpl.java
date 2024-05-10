@@ -101,6 +101,8 @@ public class DailyElectricityServiceImpl implements ElectricityService {
         return new ElectricityResponseDto(endOfDay, kwh);
     }
 
+
+
     // mysql에서 2달 치 일별 데이터 가져오기 이유는 월 초에는 최근 1주일치를 가져올 수 없음
     private List<ElectricityResponseDto> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
         LocalDateTime localDateTime = electricityRequestDto.getTime();
@@ -245,4 +247,5 @@ public class DailyElectricityServiceImpl implements ElectricityService {
 
         return fluxQuery.toString();
     }
+
 }

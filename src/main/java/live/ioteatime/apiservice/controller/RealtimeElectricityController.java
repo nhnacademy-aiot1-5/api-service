@@ -15,9 +15,10 @@ import java.util.List;
 @RequestMapping("/realtime")
 @RequiredArgsConstructor
 public class RealtimeElectricityController {
+
     private final RealtimeElectricityService realtimeElectricityService;
 
-    @GetMapping("electricity")
+    @GetMapping("/electricity")
     public ResponseEntity<List<RealtimeElectricityResponseDto>> getRealtimeElectricity(@RequestParam int organizationId){
         return ResponseEntity.ok(realtimeElectricityService.getRealtimeElectricity(organizationId));
     }
