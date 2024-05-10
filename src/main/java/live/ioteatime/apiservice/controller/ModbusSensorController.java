@@ -67,7 +67,7 @@ public class ModbusSensorController {
                                                   @RequestBody SensorRequest addSensorRequest) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Sensor registered:" + modbusSensorService.addSensorWithChannels(userId, addSensorRequest));
+                .body("Sensor registered:" + modbusSensorService.addModbusSensor(userId, addSensorRequest));
     }
 
     /**
