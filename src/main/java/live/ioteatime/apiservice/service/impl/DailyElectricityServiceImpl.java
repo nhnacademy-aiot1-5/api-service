@@ -47,7 +47,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
 
         DailyElectricity dailyElectricity = dailyElectricityRepository.findByPk(pk)
                 .orElseThrow(() -> new ElectricityNotFoundException("Daily electricity not found for " + pk));
-        return new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh());
+        return new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh(), dailyElectricity.getBill());
     }
 
     @Override
@@ -78,10 +78,10 @@ public class DailyElectricityServiceImpl implements ElectricityService {
             Double firstKwh = (Double) firstRecord.getValueByKey("_value");
             Double lastKwh = (Double) lastRecord.getValueByKey("_value");
 
-            result = (long) (lastKwh-firstKwh);
+            result = (long) (lastKwh - firstKwh);
         }
 
-        return new ElectricityResponseDto(end, result);
+        return new ElectricityResponseDto(end, result, 0L);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
                 kwh += dailyElectricity.get().getKwh();
             }
         }
-        return new ElectricityResponseDto(endOfDay, kwh);
+        return new ElectricityResponseDto(endOfDay, kwh, 0L);
     }
 
 
@@ -117,7 +117,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
 
         for (DailyElectricity dailyElectricity : dailyElectricities) {
             electricityResponseDtos.add(
-                    new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh())
+                    new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh(), dailyElectricity.getBill())
             );
         }
         return electricityResponseDtos;
@@ -143,7 +143,10 @@ public class DailyElectricityServiceImpl implements ElectricityService {
 
         for (DailyElectricity dailyElectricity : dailyElectricities) {
             electricityResponseDtos.add(
-                    new ElectricityResponseDto(dailyElectricity.getPk().getTime(), dailyElectricity.getKwh())
+                    new ElectricityResponseDto(
+                            dailyElectricity.getPk().getTime(),
+                            dailyElectricity.getKwh(),
+                            dailyElectricity.getBill())
             );
         }
         return electricityResponseDtos;
@@ -230,19 +233,19 @@ public class DailyElectricityServiceImpl implements ElectricityService {
                 .append("  |> range(start: ").append(startRFC3339).append(", stop: ").append(endRFC3339).append(")\n");
 
 
-        if (!Objects.equals(place, "total")){
+        if (!Objects.equals(place, "total")) {
             fluxQuery.append("  |> filter(fn: (r) => r[\"place\"] == \"").append(place).append("\")\n");
         }
 
         fluxQuery.append("  |> filter(fn: (r) => r[\"type\"] == \"").append(type).append("\")\n")
-                 .append("  |> filter(fn: (r) => r[\"phase\"] == \"kwh\")\n")
-                 .append("  |> filter(fn: (r) => r[\"description\"] == \"sum\")\n")
-                 .append("  |> aggregateWindow(every: 1h, fn: last, createEmpty: false)\n");
+                .append("  |> filter(fn: (r) => r[\"phase\"] == \"kwh\")\n")
+                .append("  |> filter(fn: (r) => r[\"description\"] == \"sum\")\n")
+                .append("  |> aggregateWindow(every: 1h, fn: last, createEmpty: false)\n");
 
         if (place.equals("total")) {
             fluxQuery.append("  |> group(columns: [\"_time\"])\n")
-                     .append("  |> sum()\n")
-                     .append("  |> group(mode: \"by\")");
+                    .append("  |> sum()\n")
+                    .append("  |> group(mode: \"by\")");
         }
 
         return fluxQuery.toString();
