@@ -9,4 +9,6 @@ public interface ChannelRepository extends JpaRepository<Channel, Integer> {
     List<Channel> findAllBySensor_Id(Integer sensorId);
 
     List<Channel> findAllByPlace_Id(int placeId);
+
+    List<Channel> findAllByChannelName(String channelName);
 }

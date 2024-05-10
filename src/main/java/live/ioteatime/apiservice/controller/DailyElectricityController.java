@@ -45,4 +45,14 @@ public class DailyElectricityController {
         return ResponseEntity.ok(electricityService.getElectricitiesByDate(
                 new ElectricityRequestDto(localDateTime, channelId)));
     }
+
+    @GetMapping("electricity/last")
+    public ResponseEntity<ElectricityResponseDto> getLastDayElectricity(){
+        return ResponseEntity.ok(electricityService.getLastElectricity());
+    }
+
+    @GetMapping("electricity/current")
+    public ResponseEntity<ElectricityResponseDto> getCurrentDayElectricity(){
+        return ResponseEntity.ok(electricityService.getCurrentElectricity());
+    }
 }

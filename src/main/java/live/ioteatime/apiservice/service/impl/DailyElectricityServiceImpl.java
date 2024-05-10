@@ -61,6 +61,47 @@ public class DailyElectricityServiceImpl implements ElectricityService {
         }
     }
 
+    @Override
+    public ElectricityResponseDto getCurrentElectricity() {
+        LocalDateTime start = LocalDateTime.now().minusDays(1).plusSeconds(1);
+        LocalDateTime end = LocalDateTime.now();
+
+        String fluxQuery = getKwhQuery("total", "main", start, end);
+        QueryApi queryApi = influxDBClient.getQueryApi();
+        FluxTable fluxTable = queryApi.query(fluxQuery, organization).get(0);
+        List<FluxRecord> records = fluxTable.getRecords();
+
+        long result = 0;
+        if (!records.isEmpty()) {
+            FluxRecord firstRecord = records.get(0);
+            FluxRecord lastRecord = records.get(records.size() - 1);
+
+            Double firstKwh = (Double) firstRecord.getValueByKey("_value");
+            Double lastKwh = (Double) lastRecord.getValueByKey("_value");
+
+            result = (long) (lastKwh-firstKwh);
+        }
+
+        return new ElectricityResponseDto(end, result);
+    }
+
+    @Override
+    public ElectricityResponseDto getLastElectricity() {
+        List<Channel> channels = channelRepository.findAllByChannelName("main");
+        LocalDateTime endOfDay = LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay();
+
+        long kwh = 0;
+        for (Channel channel : channels) {
+            int channelId = channel.getId();
+            DailyElectricity.Pk pk = new DailyElectricity.Pk(channelId, endOfDay);
+            Optional<DailyElectricity> dailyElectricity = dailyElectricityRepository.findByPk(pk);
+            if (dailyElectricity.isPresent()) {
+                kwh += dailyElectricity.get().getKwh();
+            }
+        }
+        return new ElectricityResponseDto(endOfDay, kwh);
+    }
+
     /**
      * @param organizationId 조직아이디
      * @return 최근 1시간동안의 5분 간격 전체 전력사용량 리스트
@@ -195,6 +236,33 @@ public class DailyElectricityServiceImpl implements ElectricityService {
                 .append("  |> filter(fn: (r) => r[\"description\"] == \"w\")\n")
                 .append("  |> aggregateWindow(every: 1h, fn: mean, createEmpty: false)\n")
                 .append("  |> yield(name: \"mean\")");
+
+        return fluxQuery.toString();
+    }
+
+    private String getKwhQuery(String place, String type, LocalDateTime start, LocalDateTime end) {
+        String startRFC3339 = DateTimeFormatter.ISO_INSTANT.format(start.atZone(ZoneId.systemDefault()).toInstant());
+        String endRFC3339 = DateTimeFormatter.ISO_INSTANT.format(end.atZone(ZoneId.systemDefault()).toInstant());
+
+        StringBuilder fluxQuery = new StringBuilder();
+        fluxQuery.append("from(bucket: \"").append(bucket).append("\")\n")
+                .append("  |> range(start: ").append(startRFC3339).append(", stop: ").append(endRFC3339).append(")\n");
+
+
+        if (!Objects.equals(place, "total")){
+            fluxQuery.append("  |> filter(fn: (r) => r[\"place\"] == \"").append(place).append("\")\n");
+        }
+
+        fluxQuery.append("  |> filter(fn: (r) => r[\"type\"] == \"").append(type).append("\")\n")
+                 .append("  |> filter(fn: (r) => r[\"phase\"] == \"kwh\")\n")
+                 .append("  |> filter(fn: (r) => r[\"description\"] == \"sum\")\n")
+                 .append("  |> aggregateWindow(every: 1h, fn: last, createEmpty: false)\n");
+
+        if (place.equals("total")) {
+            fluxQuery.append("  |> group(columns: [\"_time\"])\n")
+                     .append("  |> sum()\n")
+                     .append("  |> group(mode: \"by\")");
+        }
 
         return fluxQuery.toString();
     }

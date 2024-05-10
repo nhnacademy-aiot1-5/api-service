@@ -10,4 +10,8 @@ public interface ElectricityService {
     ElectricityResponseDto getElectricityByDate(ElectricityRequestDto electricityRequestDto);
 
     List<ElectricityResponseDto> getElectricitiesByDate(ElectricityRequestDto electricityRequestDto);
+
+    ElectricityResponseDto getCurrentElectricity();
+
+    ElectricityResponseDto getLastElectricity();
 }
