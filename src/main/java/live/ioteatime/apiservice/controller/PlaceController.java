@@ -3,11 +3,12 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.domain.Place;
-import live.ioteatime.apiservice.dto.place.PlaceRequestDto;
-import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
+import live.ioteatime.apiservice.dto.place.PlaceDto;
 import live.ioteatime.apiservice.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,27 +23,27 @@ public class PlaceController {
 
     @GetMapping("/place")
     @Operation(summary = "id 별로 place 가져오기")
-    public ResponseEntity<PlaceResponseDto> getPlace(@RequestParam(name = "place_id") int placeId) {
+    public ResponseEntity<PlaceDto> getPlace(@RequestParam(name = "place_id") int placeId) {
         Place place = placeService.getPlace(placeId);
-        PlaceResponseDto placeResponseDto = new PlaceResponseDto(place.getId(), place.getPlaceName());
-        return ResponseEntity.ok(placeResponseDto);
+        PlaceDto placeDto = new PlaceDto();
+        BeanUtils.copyProperties(place, placeDto);
+        return ResponseEntity.ok(placeDto);
     }
 
     @GetMapping("/places")
     @Operation(summary = "organization id 별로 place 리스트 가져오기")
-    public ResponseEntity<List<PlaceResponseDto>> getPlaces(int organizationId) {
+    public ResponseEntity<List<PlaceDto>> getPlaces(int organizationId) {
         return ResponseEntity.ok(placeService.getPlaces(organizationId));
     }
 
     @PostMapping("/place")
     @Operation(summary = "구역 저장하기")
-    public PlaceResponseDto registerPlace(@RequestBody PlaceRequestDto placeRequestDto) {
-        Place place = placeService.savePlace(placeRequestDto);
-        return new PlaceResponseDto(place.getId(), place.getPlaceName());
+    public ResponseEntity<PlaceDto> registerPlace(@RequestBody PlaceDto placeDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(placeService.createPlace(placeDto));
     }
 
     @PutMapping("/place")
-    public ResponseEntity<PlaceResponseDto> updatePlace(int placeId, String placeName) {
+    public ResponseEntity<PlaceDto> updatePlace(int placeId, String placeName) {
         return ResponseEntity.ok(placeService.updatePlace(placeId, placeName));
     }
     @DeleteMapping("/place")
