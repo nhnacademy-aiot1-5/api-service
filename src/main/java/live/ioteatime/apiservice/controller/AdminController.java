@@ -10,6 +10,7 @@ import live.ioteatime.apiservice.dto.user.UserDto;
 import live.ioteatime.apiservice.service.AdminService;
 import live.ioteatime.apiservice.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +38,7 @@ public class AdminController {
     @Operation(summary = "소직에 속한 유저중 유저의 권한이 GUEST인 유저들의 리스트를 가져오는 API",
             description = "조직에 속한 유저중 유저의 권한이 GUEST인 유저들의 리스트를 가져옵니다.")
     public ResponseEntity<List<UserDto>> getGuestUsers(@RequestHeader(X_USER_ID) String userId) {
-        return ResponseEntity.ok(adminService.getGuestUsers(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getGuestUsers(userId));
     }
 
 
@@ -51,7 +52,7 @@ public class AdminController {
     @Operation(summary = "어드민이 속한 조직의 모든 유저들의 리스트를 가져오는 API",
             description = "어드민이 속한 조직의 모든 유저들의 리스트를 가져옵니다.")
     public ResponseEntity<List<UserDto>> getUsers(@RequestHeader(X_USER_ID) String userId) {
-        return ResponseEntity.ok(adminService.getUsers(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getUsers(userId));
     }
 
     /**
@@ -64,7 +65,7 @@ public class AdminController {
     @Operation(summary = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져오는 API",
             description = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져옵니다.")
     public ResponseEntity<List<BudgetHistoryDto>> getBudgetHistory(@RequestHeader(X_USER_ID) String userId) {
-        return ResponseEntity.ok(adminService.getBudgetHistory(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getBudgetHistory(userId));
     }
 
     /**
@@ -77,7 +78,7 @@ public class AdminController {
     @Operation(summary = "어드민이 속한 조직이름과 조직 코드를 확인하는 API",
             description = "어드민이 속한 조직이름과 조직 코드를 가져옵니다.")
     public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId) {
-        return ResponseEntity.ok(adminService.getOrganization(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getOrganization(userId));
     }
 
     /**
@@ -89,7 +90,7 @@ public class AdminController {
     @AdminOnly
     @Operation(summary = "조직 코드가 중복이 있는지 확인하는 API", description = "조직 코드가 이미 중복된 코드인지 확인합니다.")
     public ResponseEntity<Boolean> isOrganizationCodeDuplicate(String code) {
-        return ResponseEntity.ok(adminService.isOrganizationCodeDuplicate(code));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.isOrganizationCodeDuplicate(code));
     }
 
     /**
@@ -102,7 +103,7 @@ public class AdminController {
     @Operation(summary = "유저 권한을 수정하는 API",
             description = "ADMIN 유저가 GUEST 권한을 가진 유저의 권한을 GUEST에서 USER로 수정합니다.")
     public ResponseEntity<UserDto> updateUserRole(String userId) {
-        return ResponseEntity.ok(adminService.updateUserRole(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.updateUserRole(userId));
     }
 
     /**
@@ -115,7 +116,7 @@ public class AdminController {
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 요금을 설정하는 API", description = "어드민이 속한 조직의 요금을 설정합니다.")
     public ResponseEntity<OrganizationDto> updateBudget(@RequestHeader(X_USER_ID) String userId, Long budget) {
-        return ResponseEntity.ok(organizationService.updateBudget(userId, budget));
+        return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateBudget(userId, budget));
     }
 
     /**
@@ -128,7 +129,7 @@ public class AdminController {
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 이름을 변경하는 API", description = "어드민이 속한 조직의 이름을 변경합니다.")
     public ResponseEntity<Organization> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String name) {
-        return ResponseEntity.ok(organizationService.updateName(userId, name));
+        return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateName(userId, name));
     }
 
     /**
@@ -141,6 +142,6 @@ public class AdminController {
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 조직코드를 변경하는 API", description = "어드민이 속한 조직의 조직코드를 변경합니다.")
     public ResponseEntity<Organization> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String code) {
-        return ResponseEntity.ok(organizationService.updateCode(userId, code));
+        return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateCode(code, userId));
     }
 }

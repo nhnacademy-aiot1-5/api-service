@@ -27,13 +27,13 @@ public class PlaceController {
         Place place = placeService.getPlace(placeId);
         PlaceDto placeDto = new PlaceDto();
         BeanUtils.copyProperties(place, placeDto);
-        return ResponseEntity.ok(placeDto);
+        return ResponseEntity.status(HttpStatus.OK).body(placeDto);
     }
 
     @GetMapping("/places")
     @Operation(summary = "organization id 별로 place 리스트 가져오기")
     public ResponseEntity<List<PlaceDto>> getPlaces(int organizationId) {
-        return ResponseEntity.ok(placeService.getPlaces(organizationId));
+        return ResponseEntity.status(HttpStatus.OK).body(placeService.getPlaces(organizationId));
     }
 
     @PostMapping("/place")
@@ -44,11 +44,11 @@ public class PlaceController {
 
     @PutMapping("/place")
     public ResponseEntity<PlaceDto> updatePlace(int placeId, String placeName) {
-        return ResponseEntity.ok(placeService.updatePlace(placeId, placeName));
+        return ResponseEntity.status(HttpStatus.OK).body(placeService.updatePlace(placeId, placeName));
     }
     @DeleteMapping("/place")
     public ResponseEntity<String> deletePlace(int placeId) {
         placeService.deletePlace(placeId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -80,14 +80,17 @@ public class ModbusSensorController {
     @AdminOnly @VerifyOrganization
     public ResponseEntity<String> updateModbusSensor(@PathVariable("sensorId") int sensorId,
                                                      @RequestBody SensorRequest updateSensorRequest) {
-        return ResponseEntity.ok()
+        return  ResponseEntity
+                .status(HttpStatus.OK)
                 .body("Sensor updated. id=" + modbusSensorService.updateModbusSensor(sensorId, updateSensorRequest));
     }
 
     @PutMapping("/health")
     @AdminOnly @VerifyOrganization
     public ResponseEntity<String> updateHealth(int sensorId){
-        return ResponseEntity.ok().body("Sensor health changed" + modbusSensorService.updateHealth(sensorId));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Sensor health changed" + modbusSensorService.updateHealth(sensorId));
     }
 
     /**

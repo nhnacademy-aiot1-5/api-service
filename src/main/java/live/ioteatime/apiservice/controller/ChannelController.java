@@ -29,7 +29,7 @@ public class ChannelController {
     @GetMapping("/{sensorId}/channels")
     @VerifyOrganization
     public ResponseEntity<List<ChannelDto>> getChannels(@PathVariable("sensorId") int sensorId) {
-        return ResponseEntity.ok(channelService.getChannelList(sensorId));
+        return ResponseEntity.status(HttpStatus.OK).body(channelService.getChannelList(sensorId));
     }
 
     /**
@@ -42,14 +42,19 @@ public class ChannelController {
     @VerifyOrganization
     public ResponseEntity<List<ChannelDto>> getChannelsFromPlace(@PathVariable("placeId") int placeId) {
         List<ChannelDto> channelDto = channelService.getChannelListByPlace(placeId);
-        return ResponseEntity.ok(channelDto);
+        return ResponseEntity.status(HttpStatus.OK).body(channelDto);
     }
 
+    /**
+     * 서버를 삭제하기 이전에 서버에 소속된 채널이 있는지 확인하는 메서드입니다.
+     * @param sensorId 채널이 있는지 확인할 서버의 아이디입니다.
+     * @return
+     */
     @GetMapping("/{sensorId}/exist-channels")
     @AdminOnly
     @VerifyOrganization
     public ResponseEntity<Boolean> existChannelCheck(@PathVariable("sensorId") int sensorId){
-        return ResponseEntity.ok(channelService.existChannelCheck(sensorId));
+        return ResponseEntity.status(HttpStatus.OK).body(channelService.existChannelCheck(sensorId));
     }
 
 
@@ -71,7 +76,7 @@ public class ChannelController {
     @AdminOnly
     @VerifyOrganization
     public ResponseEntity<Integer> updateChannelPlace(@PathVariable("channelId") int channelId, String channelPlace) {
-        return ResponseEntity.ok(channelService.updateChannelPlace(channelId, channelPlace));
+        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelPlace(channelId, channelPlace));
     }
 
     /**
@@ -83,9 +88,8 @@ public class ChannelController {
     @AdminOnly
     @VerifyOrganization
     @PutMapping("/{channelId}/change-name")
-    public ResponseEntity<Integer> updateChannelName(@PathVariable("channelId") int channelId,
-                                                     String channelName) {
-        return ResponseEntity.ok(channelService.updateChannelName(channelId, channelName));
+    public ResponseEntity<Integer> updateChannelName(@PathVariable("channelId") int channelId, String channelName) {
+        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelName(channelId, channelName));
     }
 
     /**
@@ -98,7 +102,7 @@ public class ChannelController {
     @VerifyOrganization
     @PutMapping("/{channelId}/change-info")
     public ResponseEntity<Integer> updateChannelInfo(@PathVariable("channelId") int channelId, @RequestBody ChannelDto channelDto) {
-        return ResponseEntity.ok(channelService.updateChannelName(channelId, channelDto));
+        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelName(channelId, channelDto));
     }
 
     @AdminOnly
@@ -106,6 +110,7 @@ public class ChannelController {
     @DeleteMapping("/{sensorId}/channels/{channelId}")
     public ResponseEntity<String> deleteChannel(@PathVariable("sensorId") int sensorId, @PathVariable("channelId") int channelId) {
         channelService.deleteChannel(sensorId, channelId);
-        return ResponseEntity.noContent().build();
+//        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
