@@ -2,4 +2,4 @@
 GET localhost:8090/daily/electricities?localDateTime=2024-04-28T16:18:00&channelId=1
 
 ###
-GET localhost:8090/realtime-total?organizationId=1
+GET localhost:8090/hourly/electricities/total?organizationId=1
