@@ -121,26 +121,26 @@ public class AdminController {
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 이름을 수정하는 메서드 입니다.
      * @param userId 조직을 가져오기 위한 어드민의 아이디
-     * @param organizationName 수정할 조직 이름
+     * @param name 수정할 조직 이름
      * @return HttpStats 200번 OK
      */
     @PutMapping("/organization-name")
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 이름을 변경하는 API", description = "어드민이 속한 조직의 이름을 변경합니다.")
-    public ResponseEntity<Organization> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String organizationName) {
-        return ResponseEntity.ok(organizationService.updateName(userId, organizationName));
+    public ResponseEntity<Organization> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String name) {
+        return ResponseEntity.ok(organizationService.updateName(userId, name));
     }
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 조직코드를 수정하는 메서드 입니다.
      * @param userId 조직을 가져오기 위한 어드민의 아이디
-     * @param organizationCode 수정할 조직 코드
+     * @param code 수정할 조직 코드
      * @return HttpStatus 200번 OK
      */
     @PutMapping("/organization-code")
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 조직코드를 변경하는 API", description = "어드민이 속한 조직의 조직코드를 변경합니다.")
-    public ResponseEntity<Organization> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String organizationCode) {
-        return ResponseEntity.ok(organizationService.updateCode(userId, organizationCode));
+    public ResponseEntity<Organization> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String code) {
+        return ResponseEntity.ok(organizationService.updateCode(userId, code));
     }
 }
