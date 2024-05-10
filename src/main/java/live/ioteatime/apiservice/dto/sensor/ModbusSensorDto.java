@@ -10,9 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ModbusSensorDto {
+    @JsonProperty("sensor_id")
     private int id;
     @JsonProperty("sensor_name")
-    private String name;
+    private String sensorName;
     @JsonProperty("sensor_model_name")
     private String modelName;
     private String ip;

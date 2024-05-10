@@ -7,11 +7,19 @@ import java.util.List;
 public interface ChannelService {
     List<ChannelDto> getChannelList(int sensorId);
 
-    List<ChannelDto>getChannelListByPlace(int placeId);
+    List<ChannelDto> getChannelListByPlace(int placeId);
 
-    int createChannel(int sensorId);
+    boolean existChannelCheck(int sensorId);
 
-    int updatePlace(int sensorId, int placeId);
+    int createChannel(int sensorId, ChannelDto channel);
 
-    int updateChannelName(int sensorId, String channelName);
+    int updateChannelPlace(int channelId, String channelPlace);
+
+    int updateChannelName(int channelId, String channelName);
+
+    int updateChannelName(int channelId, ChannelDto channelDto);
+
+    void deleteChannel(int sensorId, int channelId);
+
+
 }

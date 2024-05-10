@@ -18,9 +18,6 @@ public class SupportedSensor {
     @Column(name = "sensor_model_name")
     private String modelName;
 
-    @Column(name = "channel_count")
-    private int channelCount;
-
     @Column(name = "protocol")
     @Enumerated(EnumType.STRING)
     private Protocol protocol;

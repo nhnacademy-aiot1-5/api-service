@@ -2,10 +2,9 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.adaptor.SensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
-import live.ioteatime.apiservice.dto.*;
-import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
-import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
+import live.ioteatime.apiservice.dto.AddBrokerRequest;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
+import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
 import live.ioteatime.apiservice.exception.*;
 import live.ioteatime.apiservice.repository.*;
 import live.ioteatime.apiservice.service.MqttSensorService;
@@ -71,10 +70,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
                 .map(sensor -> {
                     MqttSensorDto sensorDto = new MqttSensorDto();
                     BeanUtils.copyProperties(sensor, sensorDto);
-                    sensorDto.setPlace(new PlaceResponseDto(
-                            sensor.getPlace().getId(),
-                            sensor.getPlace().getPlaceName())
-                    );
+                    BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
                     return sensorDto;
                 })
                 .collect(Collectors.toList());
@@ -93,11 +89,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         MqttSensorDto sensorDto = new MqttSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
-
-        sensorDto.setPlace(new PlaceResponseDto(
-                sensor.getPlace().getId(),
-                sensor.getPlace().getPlaceName()
-        ));
+        BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
 
         return sensorDto;
 
