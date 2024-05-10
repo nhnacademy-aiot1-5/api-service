@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter @Setter
 public class SensorRequest {
     @JsonProperty("sensor_name")
-    private String name;
+    private String sensorName;
 
     @JsonProperty("sensor_model_name")
     private String modelName;
