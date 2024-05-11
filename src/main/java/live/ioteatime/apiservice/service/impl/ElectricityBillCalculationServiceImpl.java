@@ -5,66 +5,79 @@ import live.ioteatime.apiservice.domain.SupplyVoltage;
 import live.ioteatime.apiservice.service.ElectricityBillCalculationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
 public class ElectricityBillCalculationServiceImpl implements ElectricityBillCalculationService {
-    @Override
-    public Long calculateElectricityBill(Long kwh) {
-        // 전력요금(electricityBill) = 기본요금 + 전력량요금 + 기후변화요금 + 연료비조정요금
-        long electricityBill = getDemandCharge(kwh) + getDemandCharge(kwh) + getClimateChangeCharge(kwh) + getFuelCostAdjustmentCharge(kwh);
+    private final static int CLIMATE_CHANGE_CHARGE = 9;
+    private final static int FUEL_COST_ADJUSTMENT_CHARGE = 5;
+    private final static double VAT = 0.1;
+    private final static double ELECTRICITY_INDUSTRY_INFRASTRUCTURE_FUND = 0.037;
+    private final static int FEBRUARY = 2;
+    private final static int JUNE = 6;
+    private final static int AUGUST = 8;
+    private final static int NOVEMBER = 11;
 
-        // 청구요금(billingCharge) = 전력요금 + 부가가치세 + 전력산업기반기금
-        long billingCharge = electricityBill + getVAT(electricityBill) + getElectricityIndustryInfraFund(electricityBill);
+    @Override
+    public Long calculateElectricityBill(Double thisMonthKwhUsage) {
+        long electricityBill = getGeneralCharge()
+                + getDemandCharge(thisMonthKwhUsage)
+                + getClimateChangeCharge(thisMonthKwhUsage)
+                + getFuelCostAdjustmentCharge(thisMonthKwhUsage);
+
+        long billingCharge = electricityBill
+                + getVAT(electricityBill)
+                + getElectricityIndustryInfraFund(electricityBill);
 
         return billingCharge;
     }
 
-
     @Override
     public Long getGeneralCharge() {
-        // 고압 A 옵션 I의 기본 요금을 가져옵니다.
         long generalCharge = SupplyVoltage.HIGH_VOLTAGE_A_OPTION_I.getGeneralCharge();
 
-        return generalCharge * 30L; // 30일치 기본 요금을 반환합니다.
+        int THIS_MONTH_DAYS = LocalDate.now().lengthOfMonth();
+
+        return generalCharge * THIS_MONTH_DAYS;
     }
 
 
     @Override
-    public Long getDemandCharge(Long kwh) {
-        int currentMonth = LocalDateTime.now().getMonthValue();
+    public Long getDemandCharge(Double thisMonthKwhUsage) {
+        int currentMonth = LocalDate.now().getMonthValue();
 
         double seasonalCharge = 0;
 
-        if (currentMonth >= 6 && currentMonth <= 8) {
+        if (currentMonth >= JUNE && currentMonth <= AUGUST) {
             seasonalCharge = DemandCharge.SUMMER.getDemandCharge();
-        } else if (currentMonth <= 2 || currentMonth >= 11) {
+        } else if (currentMonth >= NOVEMBER || currentMonth <= FEBRUARY) {
             seasonalCharge = DemandCharge.WINTER.getDemandCharge();
         } else {
             seasonalCharge = DemandCharge.SPRING_FALL.getDemandCharge();
         }
 
-        return (long) Math.floor(seasonalCharge * kwh); // 사용한 전력만큼 계절 요금을 곱해서 반환합니다.
+        return (long) Math.floor(seasonalCharge * thisMonthKwhUsage);
     }
 
     @Override
-    public Long getClimateChangeCharge(Long kwh) {
-        return (long) Math.floor(kwh * 9); // 기후변화요금 9원에 사용한 전력을 곱해서 반환합니다.
+    public Long getClimateChangeCharge(Double thisMonthKwhUsage) {
+        return (long) Math.floor(thisMonthKwhUsage * CLIMATE_CHANGE_CHARGE);
     }
 
     @Override
-    public Long getFuelCostAdjustmentCharge(Long kwh) {
-        return (long) Math.floor(kwh * 5); // 연료비조정요금 5원에 사용한 전력을 곱해서 반환합니다.
+    public Long getFuelCostAdjustmentCharge(Double thisMonthKwhUsage) {
+        return (long) Math.floor(thisMonthKwhUsage * FUEL_COST_ADJUSTMENT_CHARGE);
     }
 
     @Override
-    public Long getVAT(Long electricityBill) {
-        return Math.round(electricityBill * 0.1); // 전력요금의 10%를 부가가치세로 반환합니다.
+    public Long getVAT(long electricityBill) {
+        return Math.round(electricityBill * VAT);
     }
 
     @Override
-    public Long getElectricityIndustryInfraFund(Long electricityBill) {
-        return (long) Math.floor(electricityBill * 0.037); // 전력요금의 3.7%를 반환합니다.
+    public Long getElectricityIndustryInfraFund(long electricityBill) {
+        return (long) Math.floor(electricityBill * ELECTRICITY_INDUSTRY_INFRASTRUCTURE_FUND);
     }
 }
