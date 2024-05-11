@@ -3,7 +3,7 @@ package live.ioteatime.apiservice.service.impl;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.influxdb.query.FluxRecord;
-import live.ioteatime.apiservice.dto.electricity.PreciseKwhResponseDto;
+import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
 import live.ioteatime.apiservice.repository.PlaceRepository;
 import live.ioteatime.apiservice.service.HourlyElectricityService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class HourlyElectricityServiceImpl implements HourlyElectricityService {
      * @param organizationId 조직아이디
      * @return 최근 1시간동안의 5분 간격 전체 전력사용량 리스트
      */
-    public List<PreciseKwhResponseDto> getOneHourTotalElectricties(int organizationId) {
+    public List<PreciseElectricityResponseDto> getOneHourTotalElectricties(int organizationId) {
 
         LocalDateTime requestTime = LocalDateTime.now();
 
@@ -46,10 +46,9 @@ public class HourlyElectricityServiceImpl implements HourlyElectricityService {
 
         return totalKwh.entrySet()
                 .stream()
-                .map(entry -> new PreciseKwhResponseDto(entry.getKey(), entry.getValue()))
+                .map(entry -> new PreciseElectricityResponseDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
     }
-
 
     private void calcFiveMinKwhUsage(String placeName,LocalDateTime requestTime,
                                          Map<LocalDateTime, Double> totalKwh){
@@ -132,6 +131,5 @@ public class HourlyElectricityServiceImpl implements HourlyElectricityService {
                 "  |> filter(fn: (r) => r[\"description\"] == \"sum\")\n" +
                 "  |> aggregateWindow(every: 1m, fn: last, createEmpty: false)\n" +
                 "  |> yield(name: \"" + placeName + "\")";
-
     }
 }

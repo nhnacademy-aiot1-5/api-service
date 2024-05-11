@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PreciseKwhResponseDto {
+public class PreciseElectricityResponseDto {
     private LocalDateTime time;
     private Double kwh;
 }
