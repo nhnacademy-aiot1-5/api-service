@@ -1,8 +1,10 @@
 package live.ioteatime.apiservice.service.impl;
 
+import live.ioteatime.apiservice.adaptor.ModbusSensorAdaptor;
 import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.ModbusSensor;
 import live.ioteatime.apiservice.domain.Place;
+import live.ioteatime.apiservice.dto.AddModbusSensorRequest;
 import live.ioteatime.apiservice.dto.channel.ChannelDto;
 import live.ioteatime.apiservice.dto.place.PlaceDto;
 import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
@@ -25,6 +27,7 @@ public class ChannelServiceImpl implements ChannelService {
     private final ChannelRepository channelRepository;
     private final ModbusSensorRepository modbusSensorRepository;
     private final PlaceRepository placeRepository;
+    private final ModbusSensorAdaptor modbusSensorAdaptor;
 
     /**
      * Controller의 getChannels에 사용되는 서비스로 센서 아이디에 소속된 채널의 리스트를 불러옵니다.
@@ -110,9 +113,17 @@ public class ChannelServiceImpl implements ChannelService {
         channelRepository.save(channel);
 
         int channelCount = channelRepository.countBySensor_Id(sensorId);
-
         sensor.setChannelCount(channelCount);
         modbusSensorRepository.save(sensor);
+
+        AddModbusSensorRequest modbusSensorRequest = new AddModbusSensorRequest();
+        modbusSensorRequest.setName(sensor.getSensorName());
+        modbusSensorRequest.setHost(sensor.getIp());
+        modbusSensorRequest.setPort(sensor.getPort());
+        modbusSensorRequest.setChannel(channel.getFunctionCode() + "/" + channel.getAddress() + "/" + channel.getType());
+
+        modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
+
         return sensorId;
     }
 
