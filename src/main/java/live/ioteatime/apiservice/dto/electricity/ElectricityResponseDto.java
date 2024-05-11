@@ -12,5 +12,5 @@ import java.time.LocalDateTime;
 public class ElectricityResponseDto {
     private LocalDateTime time;
     private long kwh;
-    private long bill;
+    private Long bill;
 }
