@@ -11,14 +11,14 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 public class ElectricityBillCalculationServiceImpl implements ElectricityBillCalculationService {
-    private final static int CLIMATE_CHANGE_CHARGE = 9;
-    private final static int FUEL_COST_ADJUSTMENT_CHARGE = 5;
-    private final static double VAT = 0.1;
-    private final static double ELECTRICITY_INDUSTRY_INFRASTRUCTURE_FUND = 0.037;
-    private final static int FEBRUARY = 2;
-    private final static int JUNE = 6;
-    private final static int AUGUST = 8;
-    private final static int NOVEMBER = 11;
+    private static final int CLIMATE_CHANGE_CHARGE = 9;
+    private static final int FUEL_COST_ADJUSTMENT_CHARGE = 5;
+    private static final double VAT = 0.1;
+    private static final double ELECTRICITY_INDUSTRY_INFRASTRUCTURE_FUND = 0.037;
+    private static final int FEBRUARY = 2;
+    private static final int JUNE = 6;
+    private static final int AUGUST = 8;
+    private static final int NOVEMBER = 11;
 
     @Override
     public Long calculateElectricityBill(Double thisMonthKwhUsage) {
@@ -48,7 +48,7 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
     public Long getDemandCharge(Double thisMonthKwhUsage) {
         int currentMonth = LocalDate.now().getMonthValue();
 
-        double seasonalCharge = 0;
+        double seasonalCharge = 0.0;
 
         if (currentMonth >= JUNE && currentMonth <= AUGUST) {
             seasonalCharge = DemandCharge.SUMMER.getDemandCharge();
