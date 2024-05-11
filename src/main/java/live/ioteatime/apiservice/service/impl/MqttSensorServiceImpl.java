@@ -1,6 +1,6 @@
 package live.ioteatime.apiservice.service.impl;
 
-import live.ioteatime.apiservice.adaptor.SensorAdaptor;
+import live.ioteatime.apiservice.adaptor.MqttSensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
 import live.ioteatime.apiservice.dto.AddBrokerRequest;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MqttSensorServiceImpl implements MqttSensorService {
 
-    private final SensorAdaptor sensorAdaptor;
+    private final MqttSensorAdaptor sensorAdaptor;
     private final UserRepository userRepository;
     private final TopicRepository topicRepository;
     private final PlaceRepository placeRepository;
@@ -180,7 +180,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         addBrokerRequest.setMqttTopic(topicValueList);
 
-        sensorAdaptor.addBrokers(addBrokerRequest);
+        sensorAdaptor.addMqttBrokers(addBrokerRequest);
 
     }
 
