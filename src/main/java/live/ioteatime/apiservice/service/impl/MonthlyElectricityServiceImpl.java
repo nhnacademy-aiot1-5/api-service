@@ -6,11 +6,13 @@ import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
 import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.MonthlyElectricity;
+import live.ioteatime.apiservice.domain.Place;
 import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
 import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.exception.ElectricityNotFoundException;
 import live.ioteatime.apiservice.repository.ChannelRepository;
 import live.ioteatime.apiservice.repository.MonthlyElectricityRepository;
+import live.ioteatime.apiservice.repository.PlaceRepository;
 import live.ioteatime.apiservice.service.ElectricityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,10 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service("monthlyElectricityService")
 @RequiredArgsConstructor
@@ -34,6 +33,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
     private final InfluxDBClient influxDBClient;
     private final MonthlyElectricityRepository monthlyElectricityRepository;
     private final ChannelRepository channelRepository;
+    private final PlaceRepository placeRepository;
 
     @Override
     public ElectricityResponseDto getElectricityByDate(ElectricityRequestDto electricityRequestDto) {
@@ -100,6 +100,35 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
             }
         }
         return new ElectricityResponseDto(lastMonth, kwh, 0L);
+    }
+
+    @Override
+    public List<ElectricityResponseDto> getTotalElectricitiesByDate(LocalDateTime localDateTime, int organizationId) {
+        LocalDateTime start = localDateTime.withMonth(1).withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = localDateTime.minusMonths(1).withDayOfMonth(31)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        Map<LocalDateTime, ElectricityResponseDto> totalKwh = new HashMap<>();
+        for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            totalKwh.put(date, new ElectricityResponseDto(date, 0L, null));
+        }
+
+        List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
+        for(Place place : placeList){
+            Channel channel = channelRepository.findByPlaceAndChannelName(place, "main");
+            if(channel == null) {
+                continue;
+            }
+            List<MonthlyElectricity> currentMonthDataList = monthlyElectricityRepository
+                    .findAllByPkChannelIdAndPkTimeBetween(channel.getId(), start, end);
+            for(MonthlyElectricity data : currentMonthDataList) {
+                LocalDateTime key = data.getPk().getTime();
+                long kwh = totalKwh.get(key).getKwh();
+                totalKwh.get(key).setKwh(kwh + data.getKwh());
+            }
+        }
+        return new ArrayList<>(totalKwh.values());
     }
 
     private String getKwhQuery(String place, String type, LocalDateTime start, LocalDateTime end) {
