@@ -24,7 +24,7 @@ public class PredictedElectricityController {
     @GetMapping
     public ResponseEntity<List<PreciseElectricityResponseDto>> getMonthlyPredictedValues(
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @RequestParam("LocalDateTime") LocalDateTime requestTime){
+            @RequestParam("requestTime") LocalDateTime requestTime){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(predictedElectricityService.getCurrentMonthPredictions(requestTime));
     }

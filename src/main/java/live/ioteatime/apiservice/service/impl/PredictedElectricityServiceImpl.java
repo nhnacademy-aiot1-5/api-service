@@ -20,7 +20,7 @@ public class PredictedElectricityServiceImpl implements PredictedElectricityServ
 
     @Override
     public List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime) {
-        LocalDateTime start = requestTime.plusDays(1);
+        LocalDateTime start = requestTime.withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime end = YearMonth.from(requestTime).atEndOfMonth().atTime(0,0,0);
         return predictedElectricityRepository.findAllByTimeBetween(start, end)
                 .stream()

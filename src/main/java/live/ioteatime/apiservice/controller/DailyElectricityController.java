@@ -56,7 +56,7 @@ public class DailyElectricityController {
      */
     @GetMapping("/electricities/total")
     @VerifyOrganization
-    public ResponseEntity<List<ElectricityResponseDto>> getMontlyTotalElectricities(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    public ResponseEntity<List<ElectricityResponseDto>> getcurrentMonthTotalElectricities(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                                     @RequestParam("localDateTime") LocalDateTime localDateTime,
                                                                                     @RequestParam("organizationId") int organizationId){
         return ResponseEntity.status(HttpStatus.OK)
