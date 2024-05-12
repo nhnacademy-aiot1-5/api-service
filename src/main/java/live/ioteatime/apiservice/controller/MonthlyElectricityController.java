@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -62,7 +59,7 @@ public class MonthlyElectricityController {
      * @return 조회된 모든 월별 전력 사용량 데이터를 {@link ElectricityResponseDto} 객체의 리스트로 반환합니다.
      */
     @GetMapping("/electricities")
-    public ResponseEntity<List<ElectricityResponseDto>> getMonthlyElectricies(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    public ResponseEntity<List<ElectricityResponseDto>> getMonthlyElectricties(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                               @RequestParam LocalDateTime localDateTime,
                                                                               @RequestParam int channelId) {
         return ResponseEntity.ok(electricityService.getElectricitiesByDate(

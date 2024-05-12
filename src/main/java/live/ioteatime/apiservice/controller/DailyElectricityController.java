@@ -1,10 +1,12 @@
 package live.ioteatime.apiservice.controller;
 
+import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
 import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.ElectricityService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,21 @@ public class DailyElectricityController {
                 new ElectricityRequestDto(localDateTime, channelId)));
     }
 
+    /**
+     * 지정된 날짜에 해당하는 모든 월별 전력 사용량 데이터를 조회합니다.
+     * 요청을 보내는 사용자 조직의 모든 채널의 총 사용량 합을 반환합니다.
+     *
+     * @return
+     */
+    @GetMapping("/electricities/total")
+    @VerifyOrganization
+    public ResponseEntity<List<ElectricityResponseDto>> getcurrentMonthTotalElectricities(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                                                    @RequestParam("localDateTime") LocalDateTime localDateTime,
+                                                                                    @RequestParam("organizationId") int organizationId){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(electricityService.getTotalElectricitiesByDate(localDateTime, organizationId));
+    }
+
     @GetMapping("electricity/last")
     public ResponseEntity<ElectricityResponseDto> getLastDayElectricity(){
         return ResponseEntity.ok(electricityService.getLastElectricity());
@@ -55,4 +72,6 @@ public class DailyElectricityController {
     public ResponseEntity<ElectricityResponseDto> getCurrentDayElectricity(){
         return ResponseEntity.ok(electricityService.getCurrentElectricity());
     }
+
+
 }

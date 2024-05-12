@@ -101,7 +101,32 @@ public class DailyElectricityServiceImpl implements ElectricityService {
         return new ElectricityResponseDto(endOfDay, kwh, 0L);
     }
 
+    @Override
+    public List<ElectricityResponseDto> getTotalElectricitiesByDate(LocalDateTime localDateTime, int organizationId) {
+        LocalDateTime start = localDateTime.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = localDateTime.withHour(0).withMinute(0).withSecond(0).withNano(0);
 
+        Map<LocalDateTime, ElectricityResponseDto> totalKwh = new HashMap<>();
+        for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            totalKwh.put(date, new ElectricityResponseDto(date, 0L, null));
+        }
+
+        List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
+        for(Place place : placeList){
+            Channel channel = channelRepository.findByPlaceAndChannelName(place, "main");
+            if(channel == null) {
+                continue;
+            }
+            List<DailyElectricity> currentMonthDataList = dailyElectricityRepository
+                    .findAllByPkChannelIdAndPkTimeBetween(channel.getId(), start, end);
+            for(DailyElectricity data : currentMonthDataList) {
+                LocalDateTime key = data.getPk().getTime();
+                long kwh = totalKwh.get(key).getKwh();
+                totalKwh.get(key).setKwh(kwh + data.getKwh());
+            }
+        }
+        return new ArrayList<>(totalKwh.values());
+    }
 
     // mysql에서 2달 치 일별 데이터 가져오기 이유는 월 초에는 최근 1주일치를 가져올 수 없음
     private List<ElectricityResponseDto> getDailyElectricitiesByDate(ElectricityRequestDto electricityRequestDto) {
