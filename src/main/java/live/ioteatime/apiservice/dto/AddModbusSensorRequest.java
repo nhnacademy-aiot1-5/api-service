@@ -14,8 +14,6 @@ public class AddModbusSensorRequest {
     //ip 주소
     private String host;
 
-    private String port;
-
     //채널 {function-code}/{address}/{type}
     private String channel;
 }
