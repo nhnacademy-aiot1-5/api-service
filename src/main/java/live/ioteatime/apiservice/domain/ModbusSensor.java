@@ -17,7 +17,7 @@ public class ModbusSensor {
     private int id;
 
     @Column(name = "sensor_name")
-    private String name;
+    private String sensorName;
 
     @Column(name = "sensor_model_name")
     private String modelName;

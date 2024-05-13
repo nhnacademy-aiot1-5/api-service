@@ -22,7 +22,7 @@ public class Channel {
     @Column
     private int address;
     @Column
-    private int quantity;
+    private String type;
     @Column(name = "function_code")
     private int functionCode;
     @JoinColumn(name = "sensor_id")

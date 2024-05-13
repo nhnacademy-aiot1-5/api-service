@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.dto.sensor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import live.ioteatime.apiservice.domain.Alive;
-import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
+import live.ioteatime.apiservice.dto.place.PlaceDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,5 +16,5 @@ public class MqttSensorDto {
     private String ip;
     private String port;
     private Alive alive;
-    private PlaceResponseDto place;
+    private PlaceDto place;
 }

@@ -1,0 +1,1 @@
+GET http://localhost:8090/predicted?LocalDateTime=2024-05-11T00:00:00

@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(value = "rule-engine")
-public interface SensorAdaptor {
+@FeignClient(value = "rule-engine", contextId = "mqtt-broker")
+public interface MqttSensorAdaptor {
 
     @PostMapping("/brokers")
-    ResponseEntity<String> addBrokers(@RequestBody AddBrokerRequest addBrokerRequest);
+    ResponseEntity<String> addMqttBrokers(@RequestBody AddBrokerRequest addBrokerRequest);
 
     @GetMapping("/delete/{bridgeName}")
     ResponseEntity<String> deleteSensor(@PathVariable("bridgeName") String sensorId);

@@ -1,6 +1,6 @@
 package live.ioteatime.apiservice.service.impl;
 
-import live.ioteatime.apiservice.adaptor.SensorAdaptor;
+import live.ioteatime.apiservice.adaptor.MqttSensorAdaptor;
 import live.ioteatime.apiservice.domain.MqttSensor;
 import live.ioteatime.apiservice.domain.Topic;
 import live.ioteatime.apiservice.dto.AddBrokerRequest;
@@ -27,7 +27,7 @@ public class TopicServiceImpl implements TopicService {
 
     private final MqttSensorRepository mqttSensorRepository;
     private final TopicRepository topicRepository;
-    private final SensorAdaptor sensorAdaptor;
+    private final MqttSensorAdaptor sensorAdaptor;
 
     /**
      * 센서의 토픽 리스트를 모두 반환합니다.
@@ -134,7 +134,7 @@ public class TopicServiceImpl implements TopicService {
                 .map(Topic::getTopic)
                 .collect(Collectors.toList());
 
-        sensorAdaptor.addBrokers(new AddBrokerRequest(mqttHost, mqttId, topicList));
+        sensorAdaptor.addMqttBrokers(new AddBrokerRequest(mqttHost, mqttId, topicList));
     }
 
 }

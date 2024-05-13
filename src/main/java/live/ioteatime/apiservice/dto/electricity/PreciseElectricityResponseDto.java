@@ -1,18 +1,15 @@
 package live.ioteatime.apiservice.dto.electricity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityResponseDto {
+public class PreciseElectricityResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime time;
-    private long kwh;
-    private Long bill;
+    private Double kwh;
 }

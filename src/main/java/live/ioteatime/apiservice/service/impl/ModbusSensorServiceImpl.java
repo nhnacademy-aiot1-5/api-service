@@ -105,24 +105,6 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
     }
 
     /**
-     * Controller의 addModbusSensor에 사용되는 메서드로 센서를 추가하는 서비스와 센서에 대한 채널을 추가하는 서비스를 동시애 살행하며
-     * Transactional 작업을 통해 2개의 서비스를 실행하는 동안 오류가 발생 시 기존 작업들을 전보 롤백합니다.
-     * @param userId           조직의 정보를 가지고 있는 유저의 ID입니다.
-     * @param addSensorRequest Modbus센서를 추가하기 위한 정보들이 담겨있는 Request입니다.
-     * @return 성공시 1, 실패시 0을 반환합니다.
-     */
-    @Override
-    public int addSensorWithChannels(String userId, SensorRequest addSensorRequest) {
-        try {
-            int sensorId = addModbusSensor(userId, addSensorRequest);
-            channelService.createChannel(sensorId);
-            return 1;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    /**
      * Controller의 updateModbus에 사용되는 메서드로 센서 정보를 수정하며, 센서 이름, ip, port만 수정 가능합니다.
      * @param sensorId            수정할 센서의 아이디입니다.
      * @param updateSensorRequest 수정할 센서의 정보가 담겨있는 Request입니다.
@@ -132,7 +114,7 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
     public int updateModbusSensor(int sensorId, SensorRequest updateSensorRequest) {
         ModbusSensor sensor = sensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
 
-        sensor.setName(updateSensorRequest.getName());
+        sensor.setSensorName(updateSensorRequest.getSensorName());
         sensor.setIp(updateSensorRequest.getIp());
         sensor.setPort(updateSensorRequest.getPort());
 
