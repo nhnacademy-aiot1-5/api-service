@@ -160,6 +160,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
                                 .forEach(t -> topicRepository.deleteById(t.getId()));
 
         sensorRepository.deleteById(sensorId);
+        sensorAdaptor.deleteSensor("mqtt"+sensorId);
     }
 
     /**
