@@ -142,6 +142,6 @@ public class AdminController {
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 조직코드를 변경하는 API", description = "어드민이 속한 조직의 조직코드를 변경합니다.")
     public ResponseEntity<Organization> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String code) {
-        return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateCode(code, userId));
+        return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateCode(userId, code));
     }
 }
