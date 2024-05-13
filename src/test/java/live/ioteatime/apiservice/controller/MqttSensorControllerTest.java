@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import live.ioteatime.apiservice.domain.Alive;
-import live.ioteatime.apiservice.dto.place.PlaceResponseDto;
+import live.ioteatime.apiservice.dto.place.PlaceDto;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
 import live.ioteatime.apiservice.service.impl.MqttSensorServiceImpl;
@@ -75,7 +75,10 @@ class MqttSensorControllerTest {
         testSensor.setIp("0.0.0.0");
         testSensor.setPort("1880");
         testSensor.setAlive(Alive.DOWN);
-        testSensor.setPlace(new PlaceResponseDto(1,"office"));
+        PlaceDto place = new PlaceDto();
+        place.setId(1);
+        place.setPlaceName("office");
+        testSensor.setPlace(place);
 
         Mockito.when(mqttSensorService.getSensorById(anyInt()))
                         .thenReturn(testSensor);

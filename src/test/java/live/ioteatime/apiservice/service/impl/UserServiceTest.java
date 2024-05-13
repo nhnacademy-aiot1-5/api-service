@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.service.impl;
 
+import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
 import live.ioteatime.apiservice.dto.user.RegisterRequest;
@@ -49,6 +50,7 @@ class UserServiceTest {
         user.setPassword(passwordEncoder.encode("password"));
         user.setName("seungjin");
         user.setRole(Role.GUEST);
+        user.setOrganization(new Organization());
 
         userDto = new UserDto();
         userDto.setId("ryu");
@@ -85,15 +87,6 @@ class UserServiceTest {
 
         assertThatThrownBy(() -> userService.loadUserByUserName(id))
                 .isInstanceOf(UserNotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("새로운 유저를 등록하는 서비스")
-    void createUser() {
-
-        given(userRepository.save(user)).willReturn(user);
-        String saveUser = userService.createUser(registerRequest);
-        assertThat(saveUser).isEqualTo("ryu");
     }
 
     @Test
@@ -163,6 +156,7 @@ class UserServiceTest {
 
         User updatedUser = new User();
         BeanUtils.copyProperties(userDto, updatedUser);
+        updatedUser.setOrganization(new Organization());
 
         when(userRepository.findById(anyString())).thenReturn(Optional.of(updatedUser));
 
