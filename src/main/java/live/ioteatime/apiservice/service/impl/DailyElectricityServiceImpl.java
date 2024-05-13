@@ -112,14 +112,14 @@ public class DailyElectricityServiceImpl implements ElectricityService {
         }
 
         List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
-        for(Place place : placeList){
+        for (Place place : placeList) {
             Channel channel = channelRepository.findByPlaceAndChannelName(place, "main");
-            if(channel == null) {
+            if (channel == null) {
                 continue;
             }
             List<DailyElectricity> currentMonthDataList = dailyElectricityRepository
                     .findAllByPkChannelIdAndPkTimeBetween(channel.getId(), start, end);
-            for(DailyElectricity data : currentMonthDataList) {
+            for (DailyElectricity data : currentMonthDataList) {
                 LocalDateTime key = data.getPk().getTime();
                 long kwh = totalKwh.get(key).getKwh();
                 totalKwh.get(key).setKwh(kwh + data.getKwh());

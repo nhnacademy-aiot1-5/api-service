@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(value = "rule-engine", contextId = "mqtt-broker")
 public interface MqttSensorAdaptor {
 
-    @PostMapping("/brokers")
+    @PostMapping("/mqtt")
     ResponseEntity<String> addMqttBrokers(@RequestBody AddBrokerRequest addBrokerRequest);
 
     @GetMapping("/delete/{bridgeName}")
