@@ -119,7 +119,6 @@ public class ChannelServiceImpl implements ChannelService {
         AddModbusSensorRequest modbusSensorRequest = new AddModbusSensorRequest();
         modbusSensorRequest.setName(sensor.getSensorName());
         modbusSensorRequest.setHost(sensor.getIp());
-        modbusSensorRequest.setPort(sensor.getPort());
         modbusSensorRequest.setChannel(channel.getFunctionCode() + "/" + channel.getAddress() + "/" + channel.getType());
 
         modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
