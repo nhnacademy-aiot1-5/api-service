@@ -4,6 +4,10 @@ import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface UserRepository extends JpaRepository<User,String> {
-    Role findRoleById(String id);
+    List<User> findAllByRoleAndOrganization_Id(Role role, int organizationId);
+
+    List<User> findAllByOrganization_Id(int organizationId);
 }

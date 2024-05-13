@@ -1,0 +1,44 @@
+POST localhost:8090/users/
+Content-Type: application/json
+
+{
+  "id" : "user1",
+  "pw": "1111",
+  "name": "이은지",
+  "organization_name": "nhnacademy",
+  "organization_code": "1234"
+}
+
+###
+POST localhost:8090/users/
+Content-Type: application/json
+
+{
+  "id" : "user2",
+  "pw": "1111",
+  "name": "허시영"
+}
+
+###
+PUT localhost:8090/admin/role?userId=user1
+Content-Type: application/json
+X-USER-ID: asdf
+
+
+
+###
+GET localhost:8090/admin/guests
+X-USER-ID: asdf
+Content-Type: application/json
+
+
+
+###
+GET localhost:8090/admin/budget-histories
+X-USER-ID: asdf
+Content-Type: application/json
+
+###
+PUT localhost:8090/admin/budget?budget=1000
+X-USER-ID: asdf
+Content-Type: application/json

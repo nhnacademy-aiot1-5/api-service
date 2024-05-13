@@ -1,0 +1,20 @@
+###
+GET localhost:8090/sensors/modbus/1/channels;
+Content-Type: application/json
+X-USER-ID: admin
+
+
+###
+PUT localhost:8090/sensors/modbus/1/channels/change-name
+Content-Type: application/json
+X-USER-ID: asdf
+
+{
+  "channel_id": 1,
+  "channel_name": "정수기"
+}
+### 시간별 전력량 가져오기
+GET localhost:8090/sensors/modbus/channels/by-place?placeId=2
+
+###
+GET localhost:8090/sensors/modbus/1/channels
