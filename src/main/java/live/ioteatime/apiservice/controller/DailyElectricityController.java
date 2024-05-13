@@ -72,6 +72,4 @@ public class DailyElectricityController {
     public ResponseEntity<ElectricityResponseDto> getCurrentDayElectricity(){
         return ResponseEntity.ok(electricityService.getCurrentElectricity());
     }
-
-
 }

@@ -19,6 +19,11 @@ spring:
     active: dev
   jackson:
     default-property-inclusion: non_null
+  influx:
+    url: http://127.0.0.1:8086/
+    bucket: test
+    org: test
+    token: test
 
 springdoc:
   packages-to-scan: live.ioteatime.apiservice
