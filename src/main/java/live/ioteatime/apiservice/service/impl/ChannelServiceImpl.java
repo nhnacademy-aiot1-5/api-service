@@ -138,26 +138,10 @@ public class ChannelServiceImpl implements ChannelService {
         return channel.getSensor().getId();
     }
 
-    /**
-     * Controller의 updateChannelName에 사용되는 서비스로 ChannelDto에 담겨있는 ChannelName으로 변경합니다.
-     * @param channelId
-     * @param channelName 바꿀 채널의 아이디입니다.
-     * @return 채널의 센서 ID를 반환합니다.
-     */
-    @Override
-    public int updateChannelName(int channelId, String channelName) {
-        Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
-        channel.setChannelName(channelName);
-
-        channelRepository.save(channel);
-        sendRequestToRuleEngine(channel.getSensor().getId());
-
-        return channel.getSensor().getId();
-    }
-
     @Override
     public int updateChannelInfo(int channelId, ChannelDto channelDto) {
         Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
+        channel.setChannelName(channelDto.getChannelName());
         channel.setAddress(channelDto.getAddress());
         channel.setType(channelDto.getType());
         channel.setFunctionCode(channelDto.getFunctionCode());
@@ -191,11 +175,11 @@ public class ChannelServiceImpl implements ChannelService {
 
         StringBuilder channels = new StringBuilder();
         channelRepository.findAllBySensor_Id(sensor.getId())
-                .forEach(c -> channels.append(c.getFunctionCode() + "/" + c.getAddress() + "/" + c.getType() + ","));
+                .forEach(c -> channels.append(c.getFunctionCode() + "/" + c.getAddress() + "/" + c.getType() + ", "));
         int length = channels.length();
         channels.delete(length-2, length);
         modbusSensorRequest.setChannel(channels.toString());
-        log.debug("Send request to Rule Engine: URL=/mqtt, method=POST, body=\"{}\"", modbusSensorRequest.getChannel());
+        log.info("Send request to Rule Engine: URL=/modbus, method=POST, body=\"{}\"", modbusSensorRequest.getChannel());
 
         modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
     }
