@@ -46,8 +46,8 @@ public class ChannelController {
     }
 
     /**
-     * 서버를 삭제하기 이전에 서버에 소속된 채널이 있는지 확인하는 메서드입니다.
-     * @param sensorId 채널이 있는지 확인할 서버의 아이디입니다.
+     * 센서를 삭제하기 이전에 센서에 소속된 채널이 있는지 확인하는 메서드입니다.
+     * @param sensorId 채널이 있는지 확인할 센서의 아이디입니다.
      * @return
      */
     @GetMapping("/{sensorId}/exist-channels")
@@ -57,7 +57,12 @@ public class ChannelController {
         return ResponseEntity.status(HttpStatus.OK).body(channelService.existChannelCheck(sensorId));
     }
 
-
+    /**
+     * 모드버스 센서에 새 채널을 추가하는 메서드입니다.
+     * @param sensorId 센서아이디
+     * @param channelDto 채널 추가 요청 데이터
+     * @return 성공:200ok
+     */
     @PostMapping("/{sensorId}/channels")
     @AdminOnly
     @VerifyOrganization
@@ -92,6 +97,12 @@ public class ChannelController {
         return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelInfo(channelId, channelDto));
     }
 
+    /**
+     * 센서 아이디에 해당하는 센서를 삭제합니다.
+     * @param sensorId 센서아이디
+     * @param channelId 채널아이디
+     * @return 204 No Content
+     */
     @AdminOnly
     @VerifyOrganization
     @DeleteMapping("/{sensorId}/channels/{channelId}")

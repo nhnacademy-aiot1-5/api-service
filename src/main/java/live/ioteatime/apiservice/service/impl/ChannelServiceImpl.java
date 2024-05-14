@@ -85,6 +85,10 @@ public class ChannelServiceImpl implements ChannelService {
         return channelDtoList;
     }
 
+    /**
+     * @param sensorId 센서아이디
+     * @return 센서에 채널이 1개 이상 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existChannelCheck(int sensorId) {
         return channelRepository.existsBySensor_Id(sensorId);
@@ -138,6 +142,13 @@ public class ChannelServiceImpl implements ChannelService {
         return channel.getSensor().getId();
     }
 
+    /**
+     * 채널 정보를 수정하고, 룰엔진에 수정 요청을 전송합니다.
+     * 채널 이름, Address, Type, Function-Code 만 수정 가능합니다.
+     * @param channelId 채널아이디
+     * @param channelDto 채널 정보 수정 요청
+     * @return 채널아이디
+     */
     @Override
     public int updateChannelInfo(int channelId, ChannelDto channelDto) {
         Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
@@ -152,6 +163,11 @@ public class ChannelServiceImpl implements ChannelService {
         return channel.getSensor().getId();
     }
 
+    /**
+     * 채널을 삭제하고, 룰엔진에 삭제 요청을 전송합니다.
+     * @param sensorId 센서아이디
+     * @param channelId 채널아이디
+     */
     @Override
     public void deleteChannel(int sensorId, int channelId) {
         Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
@@ -166,6 +182,10 @@ public class ChannelServiceImpl implements ChannelService {
         sendRequestToRuleEngine(sensorId);
     }
 
+    /**
+     * 센서의 채널이 추가, 변경, 삭제될 때 룰엔진 엔드포인트로 센서 정보를 전송합니다.
+     * @param sensorId 센서아이디
+     */
     private void sendRequestToRuleEngine(int sensorId) {
         ModbusSensor sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
 
