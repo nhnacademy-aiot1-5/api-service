@@ -58,7 +58,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      */
     @Override
     public List<MqttSensorDto> getOrganizationSensorsByUserId(String userId) {
-
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
@@ -95,7 +94,12 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         MqttSensorDto sensorDto = new MqttSensorDto();
         BeanUtils.copyProperties(sensor, sensorDto);
-        BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
+
+        Place place = sensor.getPlace();
+        PlaceDto placeDto = new PlaceDto();
+        placeDto.setId(place.getId());
+        placeDto.setPlaceName(place.getPlaceName());
+        sensorDto.setPlace(placeDto);
 
         return sensorDto;
     }
@@ -108,7 +112,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
      */
     @Override
     public int addMqttSensor(String userId, MqttSensorRequest request) {
-
         if(!supportedSensorRepository.existsByModelName(request.getModelName())){
             throw new SensorNotSupportedException();
         }
@@ -120,7 +123,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         }
 
         Place place = placeRepository.findById(request.getPlaceId()).orElseThrow(PlaceNotFoundException::new);
-
         if(place.getOrganization().getId() != organization.getId()){
             throw new UnauthorizedException();
         }
