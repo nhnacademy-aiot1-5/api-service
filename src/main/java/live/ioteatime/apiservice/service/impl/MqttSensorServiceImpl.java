@@ -3,6 +3,7 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.adaptor.MqttSensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
 import live.ioteatime.apiservice.dto.AddBrokerRequest;
+import live.ioteatime.apiservice.dto.place.PlaceDto;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorDto;
 import live.ioteatime.apiservice.dto.sensor.MqttSensorRequest;
 import live.ioteatime.apiservice.exception.*;
@@ -69,12 +70,17 @@ public class MqttSensorServiceImpl implements MqttSensorService {
                 .stream()
                 .map(sensor -> {
                     MqttSensorDto sensorDto = new MqttSensorDto();
+                    PlaceDto placeDto = new PlaceDto();
                     BeanUtils.copyProperties(sensor, sensorDto);
-                    BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
+
+                    Place place = sensor.getPlace();
+                    placeDto.setId(place.getId());
+                    placeDto.setPlaceName(place.getPlaceName());
+                    sensorDto.setPlace(placeDto);
+                    
                     return sensorDto;
                 })
                 .collect(Collectors.toList());
-
     }
 
     /**
@@ -92,7 +98,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
 
         return sensorDto;
-
     }
 
     /**
@@ -155,10 +160,8 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
     @Override
     public void deleteSensorById(int sensorId) {
-
         topicRepository.findAllByMqttSensor_Id(sensorId)
                                 .forEach(t -> topicRepository.deleteById(t.getId()));
-
         sensorRepository.deleteById(sensorId);
         sensorAdaptor.deleteSensor("mqtt"+sensorId);
     }
@@ -182,7 +185,5 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         addBrokerRequest.setMqttTopic(topicValueList);
 
         sensorAdaptor.addMqttBrokers(addBrokerRequest);
-
     }
-
 }
