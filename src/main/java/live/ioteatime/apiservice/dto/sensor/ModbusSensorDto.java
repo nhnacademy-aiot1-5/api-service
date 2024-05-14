@@ -3,12 +3,10 @@ package live.ioteatime.apiservice.dto.sensor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import live.ioteatime.apiservice.domain.Alive;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class ModbusSensorDto {
     @JsonProperty("sensor_id")
     private int id;
