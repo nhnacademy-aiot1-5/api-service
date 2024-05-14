@@ -11,47 +11,50 @@ public interface ElectricityBillCalculationService {
      * <br>
      * 청구요금(billingCharge) = 전력요금 + 부가가치세 + 전력산업기반기금
      * <br>
+     * @param kwhUsage 전력 사용량입니다.
+     * @param day 전력을 사용한 일수입니다.
      * @return 청구요금(billingCharge)을 반환합니다.
      */
-    Long calculateElectricityBill(Double thisMonthKwhUsage);
+    Long calculateElectricityBill(Double kwhUsage, int day);
 
     /**
      * 기본요금을 반환하는 메서드입니다.
-     * @return 30일치 기본요금을 반환합니다.
+     * @param day 전력을 사용한 일수입니다.
+     * @return 전력을 사용한 일수만큼 기본요금을 반환합니다.
      */
-    Long getGeneralCharge();
+    Long getGeneralCharge(int day);
 
     /**
-     * 이번 달 사용한 전력에 대한 요금을 반환하는 메서드입니다.
-     * @param thisMonthKwhUsage 이번 달 전력 사용량입니다.
-     * @return 이번 달 전력량요금을 반환합니다.
+     * 사용한 전력에 대한 요금을 반환하는 메서드입니다.
+     * @param kwhUsage 전력 사용량입니다.
+     * @return 전력량요금을 반환합니다.
      */
-    Long getDemandCharge(Double thisMonthKwhUsage);
+    Long getDemandCharge(Double kwhUsage);
 
     /**
      * 기후변화요금을 반환하는 메서드입니다.
-     * @param thisMonthKwhUsage 이번 달 전력 사용량입니다.
+     * @param kwhUsage 전력 사용량입니다.
      * @return 기후변화요금을 반환합니다.
      */
-    Long getClimateChangeCharge(Double thisMonthKwhUsage);
+    Long getClimateChangeCharge(Double kwhUsage);
 
     /**
      * 연료비조정요금을 반환하는 메서드입니다.
-     * @param thisMonthKwhUsage 이번 달 전력 사용량입니다.
+     * @param kwhUsage 전력 사용량입니다.
      * @return 연료비조정요금을 반환합니다.
      */
-    Long getFuelCostAdjustmentCharge(Double thisMonthKwhUsage);
+    Long getFuelCostAdjustmentCharge(Double kwhUsage);
 
     /**
      * 전력요금의 10%인 부가가치세를 반환하는 메서드입니다.
-     * @param electricityBill 이번 달 전력요금입니다.
+     * @param electricityBill 전력요금입니다.
      * @return 부가가치세를 반환합니다.
      */
     Long getVAT(long electricityBill);
 
     /**
      * 전력요금의 3.7%인 전력산업발전기금을 반환하는 메서드입니다.
-     * @param electricityBill 이번 달 전력요금입니다.
+     * @param electricityBill 전력요금입니다.
      * @return 전력산업기반기금을 반환합니다.
      */
     Long getElectricityIndustryInfraFund(long electricityBill);
