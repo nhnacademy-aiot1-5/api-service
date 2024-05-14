@@ -21,11 +21,11 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
     private static final int NOVEMBER = 11;
 
     @Override
-    public Long calculateElectricityBill(Double thisMonthKwhUsage) {
-        long electricityBill = getGeneralCharge()
-                + getDemandCharge(thisMonthKwhUsage)
-                + getClimateChangeCharge(thisMonthKwhUsage)
-                + getFuelCostAdjustmentCharge(thisMonthKwhUsage);
+    public Long calculateElectricityBill(Double kwhUsage, int day) {
+        long electricityBill = getGeneralCharge(day)
+                + getDemandCharge(kwhUsage)
+                + getClimateChangeCharge(kwhUsage)
+                + getFuelCostAdjustmentCharge(kwhUsage);
 
         long billingCharge = electricityBill
                 + getVAT(electricityBill)
@@ -35,17 +35,14 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
     }
 
     @Override
-    public Long getGeneralCharge() {
+    public Long getGeneralCharge(int day) {
         long generalCharge = SupplyVoltage.HIGH_VOLTAGE_A_OPTION_I.getGeneralCharge();
 
-        int THIS_MONTH_DAYS = LocalDate.now().lengthOfMonth();
-
-        return generalCharge * THIS_MONTH_DAYS;
+        return generalCharge * day;
     }
 
-
     @Override
-    public Long getDemandCharge(Double thisMonthKwhUsage) {
+    public Long getDemandCharge(Double kwhUsage) {
         int currentMonth = LocalDate.now().getMonthValue();
 
         double seasonalCharge = 0.0;
@@ -58,17 +55,17 @@ public class ElectricityBillCalculationServiceImpl implements ElectricityBillCal
             seasonalCharge = DemandCharge.SPRING_FALL.getDemandCharge();
         }
 
-        return (long) Math.floor(seasonalCharge * thisMonthKwhUsage);
+        return (long) Math.floor(seasonalCharge * kwhUsage);
     }
 
     @Override
-    public Long getClimateChangeCharge(Double thisMonthKwhUsage) {
-        return (long) Math.floor(thisMonthKwhUsage * CLIMATE_CHANGE_CHARGE);
+    public Long getClimateChangeCharge(Double kwhUsage) {
+        return (long) Math.floor(kwhUsage * CLIMATE_CHANGE_CHARGE);
     }
 
     @Override
-    public Long getFuelCostAdjustmentCharge(Double thisMonthKwhUsage) {
-        return (long) Math.floor(thisMonthKwhUsage * FUEL_COST_ADJUSTMENT_CHARGE);
+    public Long getFuelCostAdjustmentCharge(Double kwhUsage) {
+        return (long) Math.floor(kwhUsage * FUEL_COST_ADJUSTMENT_CHARGE);
     }
 
     @Override
