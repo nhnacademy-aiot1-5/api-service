@@ -160,12 +160,10 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
     @Override
     public void deleteSensorById(int sensorId) {
-
         topicRepository.findAllByMqttSensor_Id(sensorId)
                                 .forEach(t -> topicRepository.deleteById(t.getId()));
-
         sensorRepository.deleteById(sensorId);
-        sensorAdaptor.deleteSensor("mqtt", "mqtt"+sensorId);
+        sensorAdaptor.deleteSensor("mqtt"+sensorId);
     }
 
     /**
