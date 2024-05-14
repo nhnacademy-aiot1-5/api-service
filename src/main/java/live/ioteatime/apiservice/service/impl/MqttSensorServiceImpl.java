@@ -98,7 +98,6 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         BeanUtils.copyProperties(sensor.getPlace(), sensorDto.getPlace());
 
         return sensorDto;
-
     }
 
     /**
@@ -166,7 +165,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
                                 .forEach(t -> topicRepository.deleteById(t.getId()));
 
         sensorRepository.deleteById(sensorId);
-        sensorAdaptor.deleteSensor("mqtt"+sensorId);
+        sensorAdaptor.deleteSensor("mqtt", "mqtt"+sensorId);
     }
 
     /**
@@ -188,7 +187,5 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         addBrokerRequest.setMqttTopic(topicValueList);
 
         sensorAdaptor.addMqttBrokers(addBrokerRequest);
-
     }
-
 }
