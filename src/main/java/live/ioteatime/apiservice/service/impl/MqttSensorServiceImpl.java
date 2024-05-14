@@ -165,6 +165,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         topicRepository.findAllByMqttSensor_Id(sensorId)
                                 .forEach(t -> topicRepository.deleteById(t.getId()));
         sensorRepository.deleteById(sensorId);
+        log.debug("Send request to Rule Engine: URL=/delete/mqtt/mqtt{}, method=GET", sensorId);
         sensorAdaptor.deleteSensor("mqtt"+sensorId);
     }
 
@@ -186,6 +187,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         addBrokerRequest.setMqttTopic(topicValueList);
 
+        log.debug("Send request to Rule Engine: URL=/mqtt, method=POST, body={}", addBrokerRequest);
         sensorAdaptor.addMqttBrokers(addBrokerRequest);
     }
 }

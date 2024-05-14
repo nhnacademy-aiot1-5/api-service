@@ -121,7 +121,6 @@ public class TopicServiceImpl implements TopicService {
      * @param sensor 센서 엔티티
      */
     private void requestAddBrokerToRuleEngine(MqttSensor sensor) {
-
         int sensorId = sensor.getId();
         String sensorIp = sensor.getIp();
         String sensorPort = sensor.getPort();
@@ -134,7 +133,8 @@ public class TopicServiceImpl implements TopicService {
                 .map(Topic::getTopic)
                 .collect(Collectors.toList());
 
-        sensorAdaptor.addMqttBrokers(new AddBrokerRequest(mqttHost, mqttId, topicList));
+        AddBrokerRequest addBrokerRequest = new AddBrokerRequest(mqttHost, mqttId, topicList);
+        log.debug("Send request to Rule Engine: URL=/mqtt, method=POST, body={}", addBrokerRequest);
+        sensorAdaptor.addMqttBrokers(addBrokerRequest);
     }
-
 }
