@@ -102,7 +102,7 @@ public class ChannelController {
     @VerifyOrganization
     @PutMapping("/{channelId}/change-info")
     public ResponseEntity<Integer> updateChannelInfo(@PathVariable("channelId") int channelId, @RequestBody ChannelDto channelDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelName(channelId, channelDto));
+        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelInfo(channelId, channelDto));
     }
 
     @AdminOnly
@@ -110,7 +110,6 @@ public class ChannelController {
     @DeleteMapping("/{sensorId}/channels/{channelId}")
     public ResponseEntity<String> deleteChannel(@PathVariable("sensorId") int sensorId, @PathVariable("channelId") int channelId) {
         channelService.deleteChannel(sensorId, channelId);
-//        return ResponseEntity.noContent().build();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

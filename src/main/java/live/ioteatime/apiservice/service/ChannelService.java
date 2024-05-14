@@ -17,7 +17,7 @@ public interface ChannelService {
 
     int updateChannelName(int channelId, String channelName);
 
-    int updateChannelName(int channelId, ChannelDto channelDto);
+    int updateChannelInfo(int channelId, ChannelDto channelDto);
 
     void deleteChannel(int sensorId, int channelId);
 
