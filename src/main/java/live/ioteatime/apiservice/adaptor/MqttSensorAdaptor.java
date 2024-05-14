@@ -14,7 +14,6 @@ public interface MqttSensorAdaptor {
     @PostMapping("/mqtt")
     ResponseEntity<String> addMqttBrokers(@RequestBody AddBrokerRequest addBrokerRequest);
 
-    @GetMapping("/delete/{bridgeName}")
-    ResponseEntity<String> deleteSensor(@PathVariable("bridgeName") String sensorId);
-
+    @GetMapping("/delete/mqtt/{fileName}")
+    ResponseEntity<String> deleteSensor(@PathVariable("fileName") String sensorId);
 }
