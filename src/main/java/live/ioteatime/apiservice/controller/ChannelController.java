@@ -46,8 +46,8 @@ public class ChannelController {
     }
 
     /**
-     * 서버를 삭제하기 이전에 서버에 소속된 채널이 있는지 확인하는 메서드입니다.
-     * @param sensorId 채널이 있는지 확인할 서버의 아이디입니다.
+     * 센서를 삭제하기 이전에 센서에 소속된 채널이 있는지 확인하는 메서드입니다.
+     * @param sensorId 채널이 있는지 확인할 센서의 아이디입니다.
      * @return
      */
     @GetMapping("/{sensorId}/exist-channels")
@@ -57,7 +57,12 @@ public class ChannelController {
         return ResponseEntity.status(HttpStatus.OK).body(channelService.existChannelCheck(sensorId));
     }
 
-
+    /**
+     * 모드버스 센서에 새 채널을 추가하는 메서드입니다.
+     * @param sensorId 센서아이디
+     * @param channelDto 채널 추가 요청 데이터
+     * @return 성공:200ok
+     */
     @PostMapping("/{sensorId}/channels")
     @AdminOnly
     @VerifyOrganization
@@ -81,19 +86,6 @@ public class ChannelController {
 
     /**
      * 센서 아이디에 해당하는 센서의 채널명을 변경합니다.
-     * @param channelId   이름을 변경할 채널의 아이디입니다.
-     * @param channelName 변경할 이름의 값입니다.
-     * @return 변경된 채널의 센서 아이디를 반환합니다.
-     */
-    @AdminOnly
-    @VerifyOrganization
-    @PutMapping("/{channelId}/change-name")
-    public ResponseEntity<Integer> updateChannelName(@PathVariable("channelId") int channelId, String channelName) {
-        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelName(channelId, channelName));
-    }
-
-    /**
-     * 센서 아이디에 해당하는 센서의 채널명을 변경합니다.
      * @param channelId 정보를 변경할 채널의 아이디입니다.
      * @param channelDto sensorId와 변경할 Address, Quantity, Function-Code가 있는 리퀘스트 입니다.
      * @return 변경된 채널의 센서 아이디를 반환합니다.
@@ -102,15 +94,20 @@ public class ChannelController {
     @VerifyOrganization
     @PutMapping("/{channelId}/change-info")
     public ResponseEntity<Integer> updateChannelInfo(@PathVariable("channelId") int channelId, @RequestBody ChannelDto channelDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelName(channelId, channelDto));
+        return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelInfo(channelId, channelDto));
     }
 
+    /**
+     * 센서 아이디에 해당하는 센서를 삭제합니다.
+     * @param sensorId 센서아이디
+     * @param channelId 채널아이디
+     * @return 204 No Content
+     */
     @AdminOnly
     @VerifyOrganization
     @DeleteMapping("/{sensorId}/channels/{channelId}")
     public ResponseEntity<String> deleteChannel(@PathVariable("sensorId") int sensorId, @PathVariable("channelId") int channelId) {
         channelService.deleteChannel(sensorId, channelId);
-//        return ResponseEntity.noContent().build();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

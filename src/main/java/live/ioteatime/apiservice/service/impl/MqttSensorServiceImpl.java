@@ -160,11 +160,16 @@ public class MqttSensorServiceImpl implements MqttSensorService {
         return sensor.getId();
     }
 
+    /**
+     * 데이터베이스에서 센서를 삭제하고, 룰엔진에 삭제 요청을 전송합니다.
+     * @param sensorId 센서아이디
+     */
     @Override
     public void deleteSensorById(int sensorId) {
         topicRepository.findAllByMqttSensor_Id(sensorId)
                                 .forEach(t -> topicRepository.deleteById(t.getId()));
         sensorRepository.deleteById(sensorId);
+        log.debug("Send request to Rule Engine: URL=/delete/mqtt/mqtt{}, method=GET", sensorId);
         sensorAdaptor.deleteSensor("mqtt"+sensorId);
     }
 
@@ -186,6 +191,7 @@ public class MqttSensorServiceImpl implements MqttSensorService {
 
         addBrokerRequest.setMqttTopic(topicValueList);
 
+        log.debug("Send request to Rule Engine: URL=/mqtt, method=POST, body={}", addBrokerRequest);
         sensorAdaptor.addMqttBrokers(addBrokerRequest);
     }
 }

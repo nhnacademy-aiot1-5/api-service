@@ -1,15 +1,13 @@
 package live.ioteatime.apiservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
+@ToString
 public class AddBrokerRequest {
     private String mqttHost;
     private String mqttId;

@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.service.impl;
 
+import live.ioteatime.apiservice.adaptor.ModbusSensorAdaptor;
 import live.ioteatime.apiservice.domain.*;
 import live.ioteatime.apiservice.dto.sensor.ModbusSensorDto;
 import live.ioteatime.apiservice.dto.sensor.SensorRequest;
@@ -8,7 +9,6 @@ import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.ModbusSensorRepository;
 import live.ioteatime.apiservice.repository.SupportedSensorRepository;
 import live.ioteatime.apiservice.repository.UserRepository;
-import live.ioteatime.apiservice.service.ChannelService;
 import live.ioteatime.apiservice.service.ModbusSensorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
     private final ModbusSensorRepository sensorRepository;
     private final UserRepository userRepository;
     private final SupportedSensorRepository supportedSensorRepository;
-    private final ChannelService channelService;
+    private final ModbusSensorAdaptor modbusSensorAdaptor;
 
     /**
      * Modbus프로토콜을 지원하는 센서 리스트를 반환합니다.
@@ -147,5 +147,7 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
     @Override
     public void deleteSensorById(int sensorId) {
         sensorRepository.deleteById(sensorId);
+        modbusSensorAdaptor.deleteModbusSensor("modbus"+sensorId);
+        log.debug("Send request to Rule Engine: URL=/delete/modbus/modbus{}, method=GET", sensorId);
     }
 }
