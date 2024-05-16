@@ -69,12 +69,11 @@ public class MqttSensorServiceImpl implements MqttSensorService {
                 .stream()
                 .map(sensor -> {
                     MqttSensorDto sensorDto = new MqttSensorDto();
-                    PlaceDto placeDto = new PlaceDto();
                     BeanUtils.copyProperties(sensor, sensorDto);
 
-                    Place place = sensor.getPlace();
-                    placeDto.setId(place.getId());
-                    placeDto.setPlaceName(place.getPlaceName());
+                    PlaceDto placeDto = new PlaceDto();
+                    BeanUtils.copyProperties(sensor.getPlace(), placeDto);
+
                     sensorDto.setPlace(placeDto);
                     
                     return sensorDto;
