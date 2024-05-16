@@ -25,7 +25,7 @@ public interface ElectricityBillCalculationService {
     Long getGeneralCharge(int day);
 
     /**
-     * 사용한 전력에 대한 요금을 반환하는 메서드입니다.
+     * 전력량요금(사용한 전력에 대한 요금)을 반환하는 메서드입니다.
      * @param kwhUsage 전력 사용량입니다.
      * @return 전력량요금을 반환합니다.
      */
