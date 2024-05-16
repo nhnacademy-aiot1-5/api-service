@@ -43,7 +43,8 @@ public class MqttSensorController {
     @GetMapping("/list")
     @Operation(summary = "모든 mqtt 센서들의 리스트를 가져오는 API", description = "소속 조직의 모든 mqtt 센서 리스트를 반환합니다.")
     public ResponseEntity<List<MqttSensorDto>> getMqttSensors(@RequestHeader(X_USER_ID) String userId){
-        return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getOrganizationSensorsByUserId(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(
+                mqttSensorService.getOrganizationSensorsByUserId(userId));
     }
 
     /**
