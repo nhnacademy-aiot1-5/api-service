@@ -3,9 +3,8 @@ package live.ioteatime.apiservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
-import live.ioteatime.apiservice.domain.Organization;
-import live.ioteatime.apiservice.dto.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.OrganizationDto;
+import live.ioteatime.apiservice.dto.user.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.user.UserDto;
 import live.ioteatime.apiservice.service.AdminService;
 import live.ioteatime.apiservice.service.OrganizationService;
@@ -128,7 +127,7 @@ public class AdminController {
     @PutMapping("/organization-name")
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 이름을 변경하는 API", description = "어드민이 속한 조직의 이름을 변경합니다.")
-    public ResponseEntity<Organization> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String name) {
+    public ResponseEntity<OrganizationDto> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String name) {
         return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateName(userId, name));
     }
 
@@ -141,7 +140,7 @@ public class AdminController {
     @PutMapping("/organization-code")
     @AdminOnly
     @Operation(summary = "어드민이 속한 조직의 조직코드를 변경하는 API", description = "어드민이 속한 조직의 조직코드를 변경합니다.")
-    public ResponseEntity<Organization> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String code) {
+    public ResponseEntity<OrganizationDto> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String code) {
         return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateCode(userId, code));
     }
 }
