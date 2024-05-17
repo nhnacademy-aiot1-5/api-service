@@ -2,12 +2,10 @@ package live.ioteatime.apiservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import live.ioteatime.apiservice.domain.Place;
 import live.ioteatime.apiservice.dto.place.PlaceDto;
 import live.ioteatime.apiservice.service.PlaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +20,9 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @GetMapping("/place")
-    @Operation(summary = "id 별로 place 가져오기")
+    @Operation(summary = "장소 id 별로 place 가져오기")
     public ResponseEntity<PlaceDto> getPlace(@RequestParam(name = "place_id") int placeId) {
-        Place place = placeService.getPlace(placeId);
-        PlaceDto placeDto = new PlaceDto();
-        BeanUtils.copyProperties(place, placeDto);
-        return ResponseEntity.status(HttpStatus.OK).body(placeDto);
+        return ResponseEntity.status(HttpStatus.OK).body(placeService.getPlace(placeId));
     }
 
     @GetMapping("/places")
@@ -46,6 +41,7 @@ public class PlaceController {
     public ResponseEntity<PlaceDto> updatePlace(int placeId, String placeName) {
         return ResponseEntity.status(HttpStatus.OK).body(placeService.updatePlace(placeId, placeName));
     }
+
     @DeleteMapping("/place")
     public ResponseEntity<String> deletePlace(int placeId) {
         placeService.deletePlace(placeId);

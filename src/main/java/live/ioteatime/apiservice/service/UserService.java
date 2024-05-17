@@ -12,8 +12,6 @@ public interface UserService {
 
     UserDto getUserInfo(String userId);
 
-    String updateUserRole(String userId);
-
     String updateUser(UserDto userDto);
 
     OrganizationDto getOrganizationByUserId(String userId);
