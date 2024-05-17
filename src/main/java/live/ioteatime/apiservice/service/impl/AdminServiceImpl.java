@@ -3,8 +3,8 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
-import live.ioteatime.apiservice.dto.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.OrganizationDto;
+import live.ioteatime.apiservice.dto.user.BudgetHistoryDto;
 import live.ioteatime.apiservice.dto.user.UserDto;
 import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -82,7 +83,12 @@ public class AdminServiceImpl implements AdminService {
         User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
 
-        return budgetHistoryRepository.findAllByOrganization_IdOrderByChangeTimeDesc(organization.getId());
+        return budgetHistoryRepository.findAllByOrganization_IdOrderByChangeTimeDesc(organization.getId())
+                .stream().map(b -> {
+                    BudgetHistoryDto budgetHistoryDto = new BudgetHistoryDto();
+                    BeanUtils.copyProperties(b, budgetHistoryDto);
+                    return budgetHistoryDto;
+                }).collect(Collectors.toList());
     }
 
     /**
