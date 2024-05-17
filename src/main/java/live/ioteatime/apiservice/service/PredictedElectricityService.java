@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PredictedElectricityService {
-    List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime);
+    List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime, int organizationId);
 }
