@@ -1,12 +1,11 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.domain.Place;
 import live.ioteatime.apiservice.dto.place.PlaceDto;
 
 import java.util.List;
 
 public interface PlaceService {
-    Place getPlace(int placeId);
+    PlaceDto getPlace(int placeId);
 
     List<PlaceDto> getPlaces(int organizationId);
 
