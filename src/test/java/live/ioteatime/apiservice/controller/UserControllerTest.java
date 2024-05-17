@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
@@ -11,7 +12,6 @@ import live.ioteatime.apiservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,9 +19,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -71,28 +73,32 @@ class UserControllerTest {
     @Test
     @DisplayName("getUserInfo 성공")
     void getUserInfo() throws Exception {
-        Mockito.when(userService.getUserInfo(anyString())).thenReturn(testUserDto);
+        given(userService.getUserInfo(anyString())).willReturn(testUserDto);
 
-        mockMvc.perform(get("/users")
-                        .header("X-USER-ID", "testId"))
-                .andExpect(status().isOk())
+        ResultActions result = mockMvc.perform(get("/users")
+                .header("X-USER-ID", "testId"));
+
+        result.andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(testUserDto.getId()))
-                .andExpect(jsonPath("$.pw").value(testUserDto.getPassword()))
-                .andExpect(jsonPath("$.name").value(testUserDto.getName()))
-                .andExpect(jsonPath("$.role").value(testUserDto.getRole().toString()))
+                .andExpect(jsonPath("$.id").value(testUser.getId()))
+                .andExpect(jsonPath("$.pw").value(testUser.getPassword()))
+                .andExpect(jsonPath("$.name").value(testUser.getName()))
+                .andExpect(jsonPath("$.role").value(testUser.getRole().toString()))
                 .andExpect(jsonPath("$.organization.id").value(testOrganizationDto.getId()));
+
+
     }
 
     @Test
     @DisplayName("getUserInfo 실패 - user not found")
     void getUserInfoFail() throws Exception {
 
-        Mockito.when(userService.getUserInfo(anyString())).thenThrow(new UserNotFoundException(testUser.getId()));
+        given(userService.getUserInfo(anyString())).willThrow(new UserNotFoundException(testUser.getId()));
 
-        mockMvc.perform(get("/users")
-                        .header("X-USER-ID", "testId"))
-                .andExpect(status().isNotFound())
+        ResultActions result = mockMvc.perform(get("/users")
+                .header("X-USER-ID", "testId"));
+
+        result.andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string("User not found: testId"));
     }
@@ -100,11 +106,12 @@ class UserControllerTest {
     @Test
     @DisplayName("loadUserByUserName 성공")
     void loadUserByUserName() throws Exception {
-        Mockito.when(userService.loadUserByUserName(anyString())).thenReturn(testUserDto);
+        given(userService.loadUserByUserName(anyString())).willReturn(testUserDto);
 
-        mockMvc.perform(get("/users/{userId}/details", "testId")
-                        .header("X-USER-ID", "testId"))
-                .andExpect(status().isOk())
+        ResultActions result = mockMvc.perform(get("/users/{userId}/details", "testId")
+                .header("X-USER-ID", "testId"));
+
+        result.andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testUserDto.getId()))
                 .andExpect(jsonPath("$.pw").value(testUserDto.getPassword()));
@@ -113,12 +120,12 @@ class UserControllerTest {
     @Test
     @DisplayName("loadUserByUserName 실패 - user not found")
     void loadUserByUserNameFail() throws Exception {
+        given(userService.loadUserByUserName(anyString())).willThrow(new UserNotFoundException(testUser.getId()));
 
-        Mockito.when(userService.loadUserByUserName(anyString())).thenThrow(new UserNotFoundException(testUser.getId()));
+        ResultActions result = mockMvc.perform(get("/users/{userId}/details", "testId")
+                .header("X-USER-ID", "testId"));
 
-        mockMvc.perform(get("/users/{userId}/details", "testId")
-                        .header("X-USER-ID", "testId"))
-                .andExpect(status().isNotFound())
+        result.andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
                 .andExpect(content().string("User not found: testId"));
     }
@@ -126,13 +133,14 @@ class UserControllerTest {
     @Test
     @DisplayName("createUser 성공")
     void createUser() throws Exception {
-        Mockito.when(userService.createUser(any())).thenReturn(testUser.getId());
+        given(userService.createUser(any())).willReturn(testUser.getId());
 
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":\"testId\",\"password\":\"12345\",\"name\":\"testName\"," +
-                                "\"organizationName\":\"nhnacademy\",\"organizationCode\":\"1234\"}"))
-                .andDo(print())
+        ResultActions result = mockMvc.perform(post("/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id\":\"testId\",\"password\":\"12345\",\"name\":\"testName\"," +
+                        "\"organizationName\":\"nhnacademy\",\"organizationCode\":\"1234\"}"));
+
+        result.andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().string(HttpHeaders.LOCATION, "https://www.ioteatime.live/mypage"))
                 .andExpect(content().string("Successfully registered: userId=testId"))
@@ -140,24 +148,39 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("updateUserRole 성공")
-    void updateUserRole() throws Exception{
+    @DisplayName("updateUser 성공")
+    void updateUserRole() throws Exception {
         testUserDto.setRole(Role.USER);
-        Mockito.when(userService.updateUserRole(any())).thenReturn(testUserDto.getId());
-        Mockito.when(userService.getUserInfo(anyString())).thenReturn(testUserDto);
+        given(userService.updateUser(any())).willReturn(testUser.getId());
 
-        mockMvc.perform(put("/users/update-user")
-                        .header("X-USER-ID", "testId")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":\"testId\",\"password\":\"12345\",\"name\":\"testName\"," +
-                                "\"created_at\":\"2020-01-01\",\"role\":\"GUEST\"}"))
-                .andExpect(status().isOk());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(testUserDto);
+        ResultActions result = mockMvc.perform(put("/users/update-user")
+                .header("X-USER-ID", "testId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json));
 
-        mockMvc.perform(get("/users")
-                        .header("X-USER-ID", "testId"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.role").value("USER"));
+        result.andExpect(status().isOk())
+                .andExpect(content().string(testUserDto.getId()));
+    }
+
+
+    @Test
+    @DisplayName("updateUserPassword 성공")
+    void updateUserPassword() throws Exception {
+        testUserDto.setPassword("123456789");
+
+        given(userService.updateUserPassword(anyString(), any())).willReturn(testUser.getId());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(testUserDto);
+        ResultActions result = mockMvc.perform(put("/users/password")
+                .header("X-USER-ID", "testId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json));
+
+        result.andExpect(status().isOk())
+                .andExpect(content().string(testUserDto.getId()));
     }
 
 }
