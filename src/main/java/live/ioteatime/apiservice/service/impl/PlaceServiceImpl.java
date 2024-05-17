@@ -22,8 +22,12 @@ public class PlaceServiceImpl implements PlaceService {
     private final OrganizationRepository organizationRepository;
 
     @Override
-    public Place getPlace(int placeId) {
-        return placeRepository.findById(placeId).orElseThrow(PlaceNotFoundException::new);
+    public PlaceDto getPlace(int placeId) {
+        Place place = placeRepository.findById(placeId).orElseThrow(PlaceNotFoundException::new);
+        PlaceDto placeDto = new PlaceDto();
+        BeanUtils.copyProperties(place, placeDto);
+
+        return placeDto;
     }
 
     @Override
