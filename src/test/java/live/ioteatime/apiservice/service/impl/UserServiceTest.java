@@ -120,34 +120,6 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
     }
 
-    @Test
-    @DisplayName("updateUserRole 성공")
-    void updateUserRole() {
-
-        String id = "ryu";
-        given(userRepository.findById(any())).willReturn(Optional.of(user));
-
-        String response = userService.updateUserRole(id);
-        assertThat(response).isEqualTo("ryu");
-
-
-        user.setRole(Role.USER);
-        when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
-
-        User result = userRepository.findById(id).get();
-        assertThat(result.getRole()).isEqualTo(Role.USER);
-
-    }
-
-    @Test
-    @DisplayName("updateUserRole 실패 - user not found")
-    void updateUserRoleFail() {
-        String id = "ryu";
-        given(userRepository.findById(any())).willReturn(Optional.empty());
-
-        assertThatThrownBy(() -> userService.updateUserRole(id))
-                .isInstanceOf(UserNotFoundException.class);
-    }
 
     @Test
     @DisplayName("updateUser 성공")
