@@ -76,6 +76,7 @@ class MqttSensorControllerTest {
     @Test
     @DisplayName("센서 아이디를 통해 mqtt 센서 정보를 단건 조회하는 테스트")
     void getMqttSensor() throws Exception {
+        supportedMqttSensor1 = new MqttSensorDto();
         supportedMqttSensor1.setId(1);
         supportedMqttSensor1.setName("test_sensor");
         supportedMqttSensor1.setIp("0.0.0.0");
