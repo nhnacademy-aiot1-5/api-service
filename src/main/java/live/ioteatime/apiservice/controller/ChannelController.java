@@ -39,7 +39,6 @@ public class ChannelController {
      * @return 채널 리스트
      */
     @GetMapping("/channels/{placeId}")
-    @VerifyOrganization
     public ResponseEntity<List<ChannelDto>> getChannelsFromPlace(@PathVariable("placeId") int placeId) {
         List<ChannelDto> channelDto = channelService.getChannelListByPlace(placeId);
         return ResponseEntity.status(HttpStatus.OK).body(channelDto);
