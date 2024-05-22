@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -56,9 +57,11 @@ class PredictedElectricityControllerTest {
 
     @Test
     void getMonthlyPredictedValues() throws Exception {
-        given(predictedElectricityService.getCurrentMonthPredictions(any())).willReturn(responseList);
+        given(predictedElectricityService.getCurrentMonthPredictions(any(), anyInt())).willReturn(responseList);
 
-        ResultActions result = mockMvc.perform(get("/predicted").param("requestTime", "2024-01-28T00:00:00"));
+        ResultActions result = mockMvc.perform(get("/predicted")
+                .param("requestTime", "2024-01-28T00:00:00")
+                .param("organizationId", "1"));
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -68,6 +71,5 @@ class PredictedElectricityControllerTest {
                 .andExpect(jsonPath("$[1].kwh").value(1972.11))
                 .andExpect(jsonPath("$[2].time").value("2024-01-31T00:00:00"))
                 .andExpect(jsonPath("$[2].kwh").value(1972.21));
-
     }
 }

@@ -14,15 +14,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PredictedElectricityServiceImpl implements PredictedElectricityService {
-
     private final PredictedElectricityRepository predictedElectricityRepository;
 
-
     @Override
-    public List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime) {
+    public List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime, int organizationId) {
         LocalDateTime start = requestTime.withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
         LocalDateTime end = YearMonth.from(requestTime).atEndOfMonth().atTime(0,0,0);
-        return predictedElectricityRepository.findAllByTimeBetween(start, end)
+        return predictedElectricityRepository
+                .findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(start, end, organizationId, -1)
                 .stream()
                 .map(data -> new PreciseElectricityResponseDto(data.getTime(), data.getKwh()))
                 .collect(Collectors.toList());

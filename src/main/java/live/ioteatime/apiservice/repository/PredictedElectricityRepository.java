@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface PredictedElectricityRepository extends JpaRepository<PredictedDailyElectricity, LocalDateTime> {
 
-    List<PredictedDailyElectricity> findAllByTimeBetween(LocalDateTime start, LocalDateTime end);
+    List<PredictedDailyElectricity> findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(
+            LocalDateTime start, LocalDateTime end, int organizationId, int channelId);
 }
