@@ -3,7 +3,10 @@ package live.ioteatime.apiservice.aop;
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
-import live.ioteatime.apiservice.exception.*;
+import live.ioteatime.apiservice.exception.OrganizationNotFoundException;
+import live.ioteatime.apiservice.exception.SensorNotFoundException;
+import live.ioteatime.apiservice.exception.UnauthorizedException;
+import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.ModbusSensorRepository;
 import live.ioteatime.apiservice.repository.MqttSensorRepository;
 import live.ioteatime.apiservice.repository.PlaceRepository;
@@ -40,7 +43,7 @@ public class BeforeExecuteMethodAspect {
     }
 
     @Pointcut("execution(* live.ioteatime.apiservice.controller.ModbusSensorController.*(..)) || " +
-            "execution(* live.ioteatime.apiservice.controller.ModbusSensorController.*(..))")
+            "execution(* live.ioteatime.apiservice.controller.ChannelController.*(..))")
     public void modbusPointcut() {
     }
 
@@ -53,6 +56,10 @@ public class BeforeExecuteMethodAspect {
     public void verifyOrganizationPointcut() {
     }
 
+    @Before("verifyOrganizationPointcut() && (args(organizationId,*) || args(organizationId))")
+    public void checkOrganizationMatch(int organizationId) {
+        checkOrganizationMatchesWithUserOrganization(organizationId);
+    }
 
     @Before("verifyOrganizationPointcut() && (args(organizationId,*) || args(organizationId))")
     public void checkOrganizationMatch(int organizationId) {
@@ -90,18 +97,6 @@ public class BeforeExecuteMethodAspect {
         checkOrganizationMatchesWithUserOrganization(sensorOrganization.getId());
     }
 
-    @Before("modbusPointcut() && verifyOrganizationPointcut() && args(*,placeId,*)")
-    public void checkOrganizationMatchForPlace(int placeId) {
-
-        Organization placeOrganization = placeRepository.findById(placeId)
-                .orElseThrow(PlaceNotFoundException::new).getOrganization();
-        if (Objects.isNull(placeOrganization)) {
-            throw new OrganizationNotFoundException();
-        }
-
-        checkOrganizationMatchesWithUserOrganization(placeOrganization.getId());
-    }
-
     /**
      * http 요청의 "X-USER-ID" 헤더로 유저를 검색합니다.
      *
@@ -112,7 +107,7 @@ public class BeforeExecuteMethodAspect {
                 ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
                         .getRequest();
         String userId = httpServletRequest.getHeader("X-USER-ID");
-        if(userId == null) {
+        if (userId == null) {
             throw new UnauthorizedException();
         }
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
