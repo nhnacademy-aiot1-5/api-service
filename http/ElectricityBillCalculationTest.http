@@ -1,0 +1,21 @@
+## 1kwh 당 요금
+## 여름철(6-8월) 142.6원
+## 겨울철(11월-2월) 130.3원
+## 봄(3-5월), 가을철(9-10월) 98.6원
+## 현재 월을 기준으로 계산합니다.
+
+## 전기 요금 조회 테스트
+
+### 100kwh를 사용했을 때 전력량요금 테스트
+GET localhost:8090/calculate/demand/100
+
+### 10000000000kwh를 사용했을 때 전력량요금 테스트
+GET localhost:8090/calculate/demand/10000000000
+
+## 전기 요금 조회 테스트
+
+### kwh 100kwh를 10일 동안 사용했을 때 전기요금 테스트
+GET localhost:8090/calculate/bill?kwhUsage=100&day=10
+
+### 10000000000kwh를 365일 사용했을 때 전기요금 테스트
+GET localhost:8090/calculate/bill?kwhUsage=10000000000&day=365
