@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface PredictedElectricityService {
     List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime, int organizationId);
+
+    List<PreciseElectricityResponseDto> getNextMonthPrediction(LocalDateTime requestTime, int organizationId);
+
+    List<PreciseElectricityResponseDto> getThisMonthPrediction(LocalDateTime requestTime, int organizationId);
 }
