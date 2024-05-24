@@ -19,11 +19,35 @@ public class PredictedElectricityServiceImpl implements PredictedElectricityServ
     @Override
     public List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime, int organizationId) {
         LocalDateTime start = requestTime.withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
-        LocalDateTime end = YearMonth.from(requestTime).atEndOfMonth().atTime(0,0,0);
+        LocalDateTime end = YearMonth.from(requestTime).atEndOfMonth().atTime(0, 0, 0);
         return predictedElectricityRepository
                 .findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(start, end, organizationId, -1)
                 .stream()
                 .map(data -> new PreciseElectricityResponseDto(data.getTime(), data.getKwh()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<PreciseElectricityResponseDto> getNextMonthPrediction(LocalDateTime requestTime, int organizationId) {
+        LocalDateTime start = requestTime.plusMonths(1).withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0)
+                .withNano(0);
+        LocalDateTime end = start.plusMonths(1).minusDays(1);
+        return getFromRepository(start, end, organizationId);
+    }
+
+    @Override
+    public List<PreciseElectricityResponseDto> getThisMonthPrediction(LocalDateTime requestTime, int organizationId) {
+        LocalDateTime start = requestTime.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusMonths(1).minusDays(1);
+        return getFromRepository(start, end, organizationId);
+    }
+
+    private List<PreciseElectricityResponseDto> getFromRepository(LocalDateTime start, LocalDateTime end, int organizationId) {
+        return predictedElectricityRepository
+                .findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(start, end, organizationId, -1)
+                .stream()
+                .map(data -> new PreciseElectricityResponseDto(data.getTime(), data.getKwh()))
+                .collect(Collectors.toList());
+    }
+
 }
