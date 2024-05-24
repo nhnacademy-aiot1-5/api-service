@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUserPassword(String userId, UpdateUserPasswordRequest updatePasswordRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        if (! passwordEncoder.matches(updatePasswordRequest.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(updatePasswordRequest.getCurrentPassword(), user.getPassword())) {
             throw new UnauthenticatedException();
         }
 
