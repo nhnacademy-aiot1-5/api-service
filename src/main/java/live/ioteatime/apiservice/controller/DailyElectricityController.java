@@ -63,12 +63,12 @@ public class DailyElectricityController {
                 .body(electricityService.getTotalElectricitiesByDate(localDateTime, organizationId));
     }
 
-    @GetMapping("electricity/last")
+    @GetMapping("/electricity/last")
     public ResponseEntity<ElectricityResponseDto> getLastDayElectricity(){
         return ResponseEntity.ok(electricityService.getLastElectricity());
     }
 
-    @GetMapping("electricity/current")
+    @GetMapping("/electricity/current")
     public ResponseEntity<ElectricityResponseDto> getCurrentDayElectricity(){
         return ResponseEntity.ok(electricityService.getCurrentElectricity());
     }
