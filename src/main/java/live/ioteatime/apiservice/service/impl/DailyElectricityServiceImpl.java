@@ -108,7 +108,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
 
         Map<LocalDateTime, ElectricityResponseDto> totalKwh = new HashMap<>();
         for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
-            totalKwh.put(date, new ElectricityResponseDto(date, 0L, null));
+            totalKwh.put(date, new ElectricityResponseDto(date, 0L, 0L));
         }
 
         List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
@@ -122,7 +122,9 @@ public class DailyElectricityServiceImpl implements ElectricityService {
             for (DailyElectricity data : currentMonthDataList) {
                 LocalDateTime key = data.getPk().getTime();
                 long kwh = totalKwh.get(key).getKwh();
+                long bill = totalKwh.get(key).getBill();
                 totalKwh.get(key).setKwh(kwh + data.getKwh());
+                totalKwh.get(key).setBill(bill + data.getBill());
             }
         }
         return new ArrayList<>(totalKwh.values());

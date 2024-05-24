@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 public class ElectricityResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime time;
-    private long kwh;
+    private Long kwh;
     private Long bill;
 }

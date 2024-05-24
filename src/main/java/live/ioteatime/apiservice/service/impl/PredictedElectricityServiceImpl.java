@@ -23,7 +23,7 @@ public class PredictedElectricityServiceImpl implements PredictedElectricityServ
         return predictedElectricityRepository
                 .findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(start, end, organizationId, -1)
                 .stream()
-                .map(data -> new PreciseElectricityResponseDto(data.getTime(), data.getKwh()))
+                .map(data -> new PreciseElectricityResponseDto(data.getTime(), data.getKwh(), data.getBill()))
                 .collect(Collectors.toList());
     }
 
@@ -46,7 +46,7 @@ public class PredictedElectricityServiceImpl implements PredictedElectricityServ
         return predictedElectricityRepository
                 .findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(start, end, organizationId, -1)
                 .stream()
-                .map(data -> new PreciseElectricityResponseDto(data.getTime(), data.getKwh()))
+                .map(data -> new PreciseElectricityResponseDto(data.getTime(), data.getKwh(), data.getBill()))
                 .collect(Collectors.toList());
     }
 

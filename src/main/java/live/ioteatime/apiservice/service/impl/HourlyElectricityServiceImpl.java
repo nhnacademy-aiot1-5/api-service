@@ -46,7 +46,7 @@ public class HourlyElectricityServiceImpl implements HourlyElectricityService {
 
         return totalKwh.entrySet()
                 .stream()
-                .map(entry -> new PreciseElectricityResponseDto(entry.getKey(), entry.getValue()))
+                .map(entry -> new PreciseElectricityResponseDto(entry.getKey(), entry.getValue(), null))
                 .collect(Collectors.toList());
     }
 

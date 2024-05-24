@@ -46,7 +46,7 @@ class HourlyElectricityControllerTest {
         LocalDateTime start = LocalDateTime.now();
         List<PreciseElectricityResponseDto> result = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            result.add(new PreciseElectricityResponseDto(start, 0.0));
+            result.add(new PreciseElectricityResponseDto(start, 0.0, 0L));
             start = start.plusMinutes(5);
         }
         return result;

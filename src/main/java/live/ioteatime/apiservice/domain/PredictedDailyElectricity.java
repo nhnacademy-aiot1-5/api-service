@@ -17,6 +17,7 @@ public class PredictedDailyElectricity {
     @Id
     LocalDateTime time;
     Double kwh;
+    Long bill;
     @Column(name = "organization_id")
     Integer organizationId;
     @Column(name = "channel_id")
