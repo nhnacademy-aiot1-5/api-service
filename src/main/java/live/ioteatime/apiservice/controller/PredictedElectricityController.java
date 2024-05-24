@@ -1,6 +1,5 @@
 package live.ioteatime.apiservice.controller;
 
-import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
 import live.ioteatime.apiservice.service.PredictedElectricityService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ public class PredictedElectricityController {
     private final PredictedElectricityService predictedElectricityService;
 
     @GetMapping
-    @VerifyOrganization
     public ResponseEntity<List<PreciseElectricityResponseDto>> getMonthlyPredictedValues(
             @RequestParam("organizationId") int organizationId,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
