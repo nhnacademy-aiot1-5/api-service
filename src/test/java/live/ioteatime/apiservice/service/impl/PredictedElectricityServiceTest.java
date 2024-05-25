@@ -72,7 +72,7 @@ class PredictedElectricityServiceTest {
     void getNextMonthPrediction() {
         given(predictedElectricityRepository.findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(LocalDateTime.now(), LocalDateTime.now(), 1, -1)).willReturn(predictedDailyElectricityList);
 
-        List<PreciseElectricityResponseDto> list =  predictedElectricityService.getCurrentMonthPredictions(LocalDateTime.now(), 1);
+        List<PreciseElectricityResponseDto> list =  predictedElectricityService.getNextMonthPrediction(LocalDateTime.now(), 1);
         list.add(preciseElectricityResponseDto1);
         list.add(preciseElectricityResponseDto2);
 
@@ -85,7 +85,7 @@ class PredictedElectricityServiceTest {
     void getThisMonthPrediction() {
         given(predictedElectricityRepository.findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(LocalDateTime.now(), LocalDateTime.now(), 1, -1)).willReturn(predictedDailyElectricityList);
 
-        List<PreciseElectricityResponseDto> list =  predictedElectricityService.getCurrentMonthPredictions(LocalDateTime.now(), 1);
+        List<PreciseElectricityResponseDto> list =  predictedElectricityService.getThisMonthPrediction(LocalDateTime.now(), 1);
         list.add(preciseElectricityResponseDto1);
         list.add(preciseElectricityResponseDto2);
 
