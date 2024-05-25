@@ -26,7 +26,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final UserRepository userRepository;
     private final BudgetHistoryRepository organizationBudgetHistoryRepository;
 
-    private Organization getOrganizationByUserId(String userId){
+    Organization getOrganizationByUserId(String userId){
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
