@@ -18,16 +18,12 @@ public class Outlier {
     @Id
     @Column(name = "outlier_id")
     int id;
-
     @Column
     String place;
-
     @Column
     String type;
-
-    @Column
-    int value;
-
+    @Column(name = "outlier_value")
+    int outlierValue;
     @Column
     int flag;
 }

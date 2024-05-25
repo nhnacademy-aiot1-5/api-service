@@ -4,11 +4,11 @@ import live.ioteatime.apiservice.domain.Outlier;
 import live.ioteatime.apiservice.dto.OutlierDto;
 import live.ioteatime.apiservice.repository.OutlierRepository;
 import live.ioteatime.apiservice.service.OutlierService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,7 +19,14 @@ public class OutlierServiceImpl implements OutlierService {
 
     @Override
     public List<OutlierDto> getUnsolvedOutlier() {
-        return outlierRepository.findAllByFlag(0);
+        List<Outlier> outlierList=  outlierRepository.findAllByFlag(0);
+        List<OutlierDto> outlierDtoList=new ArrayList<>();
+        for (Outlier outlier : outlierList) {
+            OutlierDto outlierDto=new OutlierDto();
+            BeanUtils.copyProperties(outlier,outlierDto);
+            outlierDtoList.add(outlierDto);
+        }
+        return outlierDtoList;
     }
 
     @Override
