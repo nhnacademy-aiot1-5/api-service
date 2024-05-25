@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
 
 class TopicServiceTest {
 
@@ -125,5 +126,17 @@ class TopicServiceTest {
 
     @Test
     void deleteTopic() {
+        given(topicRepository.countAllByMqttSensor_Id(anyInt())).willReturn(2);
+        given(mqttSensorRepository.findById(anyInt())).willReturn(Optional.of(mqttSensor));
+        doNothing().when(topicRepository).deleteById(anyInt());
+
+        // When
+        topicService.deleteTopic(mqttSensor.getId(), topic1.getId());
+
+        // Then
+        then(topicRepository).should().countAllByMqttSensor_Id(mqttSensor.getId());
+        then(topicRepository).should().deleteById(topic1.getId());
+        then(mqttSensorRepository).should().findById(mqttSensor.getId());
+        then(sensorAdaptor).should().addMqttBrokers(any());
     }
 }
