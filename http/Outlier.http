@@ -14,7 +14,7 @@ POST localhost:8090/outlier
 Content-Type: application/json
 
 {
-  "outlier_id": 2,
+  "outlier_id": 0,
   "place": "class_A",
   "type": "ac",
   "outlier_value": 4321,
