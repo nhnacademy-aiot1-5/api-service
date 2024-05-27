@@ -16,6 +16,6 @@ public class OutlierDto {
     String place;
     String type;
     @JsonProperty("outlier_value")
-    int outlierValue;
+    double outlierValue;
     int flag;
 }

@@ -21,7 +21,7 @@ public class Outlier {
     @Column
     String type;
     @Column(name = "outlier_value")
-    int outlierValue;
+    double outlierValue;
     @Column
     int flag;
 }
