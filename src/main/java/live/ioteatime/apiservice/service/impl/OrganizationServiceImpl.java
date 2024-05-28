@@ -68,15 +68,18 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public Organization updateName(String userId, String name) {
+    public OrganizationDto updateName(String userId, String name) {
         Organization organization = getOrganizationByUserId(userId);
-
         organization.setName(name);
-        return organizationRepository.save(organization);
+        organizationRepository.save(organization);
+
+        OrganizationDto organizationDto = new OrganizationDto();
+        BeanUtils.copyProperties(organization, organizationDto);
+        return organizationDto;
     }
 
     @Override
-    public Organization updateCode(String userId, String code) {
+    public OrganizationDto updateCode(String userId, String code) {
 
         Organization organization = getOrganizationByUserId(userId);
 
@@ -84,8 +87,10 @@ public class OrganizationServiceImpl implements OrganizationService {
             throw new OrganizationCodeAlreadyExistsException(code);
         }
         organization.setOrganizationCode(code);
-        return organizationRepository.save(organization);
+        organizationRepository.save(organization);
+
+        OrganizationDto organizationDto = new OrganizationDto();
+        BeanUtils.copyProperties(organization, organizationDto);
+        return organizationDto;
     }
-
-
 }

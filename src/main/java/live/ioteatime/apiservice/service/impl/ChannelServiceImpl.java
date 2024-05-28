@@ -15,12 +15,14 @@ import live.ioteatime.apiservice.repository.ModbusSensorRepository;
 import live.ioteatime.apiservice.repository.PlaceRepository;
 import live.ioteatime.apiservice.service.ChannelService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChannelServiceImpl implements ChannelService {
@@ -83,6 +85,10 @@ public class ChannelServiceImpl implements ChannelService {
         return channelDtoList;
     }
 
+    /**
+     * @param sensorId 센서아이디
+     * @return 센서에 채널이 1개 이상 존재하면 true, 그렇지 않으면 false
+     */
     @Override
     public boolean existChannelCheck(int sensorId) {
         return channelRepository.existsBySensor_Id(sensorId);
@@ -116,12 +122,7 @@ public class ChannelServiceImpl implements ChannelService {
         sensor.setChannelCount(channelCount);
         modbusSensorRepository.save(sensor);
 
-        AddModbusSensorRequest modbusSensorRequest = new AddModbusSensorRequest();
-        modbusSensorRequest.setName(sensor.getSensorName());
-        modbusSensorRequest.setHost(sensor.getIp());
-        modbusSensorRequest.setChannel(channel.getFunctionCode() + "/" + channel.getAddress() + "/" + channel.getType());
-
-        modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
+        sendRequestToRuleEngine(sensor.getId());
 
         return sensorId;
     }
@@ -142,29 +143,31 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     /**
-     * Controller의 updateChannelName에 사용되는 서비스로 ChannelDto에 담겨있는 ChannelName으로 변경합니다.
-     * @param channelId
-     * @param channelName 바꿀 채널의 아이디입니다.
-     * @return 채널의 센서 ID를 반환합니다.
+     * 채널 정보를 수정하고, 룰엔진에 수정 요청을 전송합니다.
+     * 채널 이름, Address, Type, Function-Code 만 수정 가능합니다.
+     * @param channelId 채널아이디
+     * @param channelDto 채널 정보 수정 요청
+     * @return 채널아이디
      */
     @Override
-    public int updateChannelName(int channelId, String channelName) {
+    public int updateChannelInfo(int channelId, ChannelDto channelDto) {
         Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
-        channel.setChannelName(channelName);
-        channelRepository.save(channel);
-        return channel.getSensor().getId();
-    }
-
-    @Override
-    public int updateChannelName(int channelId, ChannelDto channelDto) {
-        Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
+        channel.setChannelName(channelDto.getChannelName());
         channel.setAddress(channelDto.getAddress());
         channel.setType(channelDto.getType());
         channel.setFunctionCode(channelDto.getFunctionCode());
+
         channelRepository.save(channel);
+        sendRequestToRuleEngine(channel.getSensor().getId());
+
         return channel.getSensor().getId();
     }
 
+    /**
+     * 채널을 삭제하고, 룰엔진에 삭제 요청을 전송합니다.
+     * @param sensorId 센서아이디
+     * @param channelId 채널아이디
+     */
     @Override
     public void deleteChannel(int sensorId, int channelId) {
         Channel channel = channelRepository.findById(channelId).orElseThrow(ChannelNotFoundException::new);
@@ -174,6 +177,30 @@ public class ChannelServiceImpl implements ChannelService {
         ModbusSensor sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
         int channelCount = channelRepository.countBySensor_Id(sensorId);
         sensor.setChannelCount(channelCount);
+
         modbusSensorRepository.save(sensor);
+        sendRequestToRuleEngine(sensorId);
+    }
+
+    /**
+     * 센서의 채널이 추가, 변경, 삭제될 때 룰엔진 엔드포인트로 센서 정보를 전송합니다.
+     * @param sensorId 센서아이디
+     */
+    private void sendRequestToRuleEngine(int sensorId) {
+        ModbusSensor sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+
+        AddModbusSensorRequest modbusSensorRequest = new AddModbusSensorRequest();
+        modbusSensorRequest.setName(sensor.getSensorName());
+        modbusSensorRequest.setHost(sensor.getIp());
+
+        StringBuilder channels = new StringBuilder();
+        channelRepository.findAllBySensor_Id(sensor.getId())
+                .forEach(c -> channels.append(c.getFunctionCode() + "/" + c.getAddress() + "/" + c.getType() + ", "));
+        int length = channels.length();
+        channels.delete(length-2, length);
+        modbusSensorRequest.setChannel(channels.toString());
+        log.info("Send request to Rule Engine: URL=/modbus, method=POST, body=\"{}\"", modbusSensorRequest.getChannel());
+
+        modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
     }
 }

@@ -49,7 +49,7 @@ public class UserController {
      */
     @GetMapping("/{userId}/details")
     @Operation(summary = "유저 인증을 담당하는 API", description = "로그인 요청을 받았을 때 유저 ID와 유저 PASSWORD를 반환합니다.")
-    public ResponseEntity<UserDto> loadUserByUserName(@PathVariable String userId){
+    public ResponseEntity<UserDto> loadUserByUserName(@PathVariable String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.loadUserByUserName(userId));
     }
 
@@ -69,7 +69,7 @@ public class UserController {
                 .build().toUri();
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .location(location).body("Successfully registered: userId="+ createdUserId);
+                .location(location).body("Successfully registered: userId=" + createdUserId);
     }
 
     /**
@@ -81,7 +81,7 @@ public class UserController {
      */
     @PutMapping("/update-user")
     @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
-    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String userId, @RequestBody UserDto userDto){
+    public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String userId, @RequestBody UserDto userDto) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userDto));
     }
 
@@ -94,9 +94,8 @@ public class UserController {
     @PutMapping("/password")
     @Operation(summary = "유저의 비밀번호를 변경하는 API", description = "유저 비밀번호를 변경합니다.")
     public ResponseEntity<String> updateUserPassword(@RequestHeader(X_USER_ID) String userId,
-                                                     @RequestBody UpdateUserPasswordRequest updatePasswordRequest){
-        userService.updateUserPassword(userId, updatePasswordRequest);
-        return ResponseEntity.status(HttpStatus.OK).build();
+                                                     @RequestBody UpdateUserPasswordRequest updatePasswordRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserPassword(userId, updatePasswordRequest));
     }
 
     /**
@@ -106,7 +105,7 @@ public class UserController {
      */
     @GetMapping("/organization")
     @Operation(summary = "유저가 소속된 조직의 정보를 반환하는 API", description = "유저가 소속된 조직의 정보를 반환합니다.")
-    public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId){
+    public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId) {
         OrganizationDto organizationDto = userService.getOrganizationByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(organizationDto);
     }

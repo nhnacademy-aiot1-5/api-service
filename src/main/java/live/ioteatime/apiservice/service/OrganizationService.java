@@ -1,6 +1,5 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.dto.OrganizationDto;
 
 public interface OrganizationService {
@@ -8,7 +7,7 @@ public interface OrganizationService {
 
     OrganizationDto updateBudget(String userId, Long budget);
 
-    Organization updateName(String userId, String name);
+    OrganizationDto updateName(String userId, String name);
 
-    Organization updateCode(String userId, String code);
+    OrganizationDto updateCode(String userId, String code);
 }

@@ -3,8 +3,11 @@ package live.ioteatime.apiservice.service.impl;
 import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Role;
 import live.ioteatime.apiservice.domain.User;
+import live.ioteatime.apiservice.dto.OrganizationDto;
 import live.ioteatime.apiservice.dto.user.RegisterRequest;
+import live.ioteatime.apiservice.dto.user.UpdateUserPasswordRequest;
 import live.ioteatime.apiservice.dto.user.UserDto;
+import live.ioteatime.apiservice.exception.UnauthenticatedException;
 import live.ioteatime.apiservice.exception.UserAlreadyExistsException;
 import live.ioteatime.apiservice.exception.UserNotFoundException;
 import live.ioteatime.apiservice.repository.UserRepository;
@@ -37,20 +40,27 @@ class UserServiceTest {
     UserServiceImpl userService;
 
     User user;
+    Organization organization;
     UserDto userDto;
     RegisterRequest registerRequest;
+    OrganizationDto organizationDto;
+    UpdateUserPasswordRequest updateUserPasswordRequest;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        passwordEncoder = new BCryptPasswordEncoder();
+
+        organization = new Organization();
+        organization.setName("nhnacademy");
+        organization.setOrganizationCode("1234");
 
         user = new User();
         user.setId("ryu");
         user.setPassword(passwordEncoder.encode("password"));
         user.setName("seungjin");
         user.setRole(Role.GUEST);
-        user.setOrganization(new Organization());
+        user.setOrganization(organization);
+
 
         userDto = new UserDto();
         userDto.setId("ryu");
@@ -64,6 +74,15 @@ class UserServiceTest {
         registerRequest.setName("seungjin");
         registerRequest.setOrganizationName("nhnacademy");
         registerRequest.setOrganizationCode("1234");
+
+        organizationDto = new OrganizationDto();
+        organizationDto.setName("nhnacademy");
+        organizationDto.setOrganizationCode("1234");
+
+        updateUserPasswordRequest = new UpdateUserPasswordRequest();
+        updateUserPasswordRequest.setCurrentPassword("password");
+        updateUserPasswordRequest.setNewPassword("pwd");
+        updateUserPasswordRequest.setPasswordCheck("pwd");
 
     }
 
@@ -99,6 +118,7 @@ class UserServiceTest {
                 .isInstanceOf(UserAlreadyExistsException.class);
     }
 
+
     @Test
     @DisplayName("getUserInfo 성공")
     void getUserInfo() {
@@ -120,34 +140,6 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
     }
 
-    @Test
-    @DisplayName("updateUserRole 성공")
-    void updateUserRole() {
-
-        String id = "ryu";
-        given(userRepository.findById(any())).willReturn(Optional.of(user));
-
-        String response = userService.updateUserRole(id);
-        assertThat(response).isEqualTo("ryu");
-
-
-        user.setRole(Role.USER);
-        when(userRepository.findById(anyString())).thenReturn(Optional.of(user));
-
-        User result = userRepository.findById(id).get();
-        assertThat(result.getRole()).isEqualTo(Role.USER);
-
-    }
-
-    @Test
-    @DisplayName("updateUserRole 실패 - user not found")
-    void updateUserRoleFail() {
-        String id = "ryu";
-        given(userRepository.findById(any())).willReturn(Optional.empty());
-
-        assertThatThrownBy(() -> userService.updateUserRole(id))
-                .isInstanceOf(UserNotFoundException.class);
-    }
 
     @Test
     @DisplayName("updateUser 성공")
@@ -158,9 +150,9 @@ class UserServiceTest {
         BeanUtils.copyProperties(userDto, updatedUser);
         updatedUser.setOrganization(new Organization());
 
+        given(userRepository.save(any())).willReturn(updatedUser);
         when(userRepository.findById(anyString())).thenReturn(Optional.of(updatedUser));
 
-        given(userRepository.save(any())).willReturn(updatedUser);
         userService.updateUser(userDto);
 
         UserDto result = userService.getUserInfo("ryu");
@@ -179,4 +171,49 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
     }
 
+
+    @Test
+    @DisplayName("getOrganizationByUserId 성공")
+    void getOrganization(){
+        String id = "ryu";
+
+        given(userRepository.findById(any())).willReturn(Optional.of(user));
+
+        OrganizationDto response = userService.getOrganizationByUserId(id);
+
+        assertThat(response.getOrganizationCode()).isEqualTo("1234");
+        assertThat(response.getName()).isEqualTo("nhnacademy");
+    }
+
+    @Test
+    @DisplayName("getOrganizationByUserId 실패")
+    void getOrganizationFail(){
+        String id = "ryu";
+        given(userRepository.findById(any())).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userService.getOrganizationByUserId(id))
+                .isInstanceOf(UserNotFoundException.class);
+    }
+
+
+    @Test
+    @DisplayName("updateUserPassword 성공")
+    void updateUserPassword(){
+        given(userRepository.findById(anyString())).willReturn(Optional.of(user));
+        given(passwordEncoder.matches(any(), any())).willReturn(true);
+        assertThat(passwordEncoder.matches("password", user.getPassword())).isEqualTo(true);
+
+        when(userService.updateUserPassword(user.getId(), updateUserPasswordRequest)).thenReturn(user.getId());
+
+        assertThat(passwordEncoder.matches("pwd", user.getPassword())).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("updateUserPassword 실패")
+    void updateUserPasswordFail(){
+        given(userRepository.findById(anyString())).willReturn(Optional.of(user));
+        given(passwordEncoder.matches(any(), any())).willReturn(false);
+
+        assertThatThrownBy(() -> userService.updateUserPassword(user.getId(), updateUserPasswordRequest)).isInstanceOf(UnauthenticatedException.class);
+    }
 }

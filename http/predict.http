@@ -1,1 +1,6 @@
-GET http://localhost:8090/predicted?LocalDateTime=2024-05-11T00:00:00
+GET http://localhost:8090/predicted?requestTime=2024-05-17T00:00:00&organizationId=1
+X-USER-ID: asdf
+
+###
+GET http://localhost:8090/predicted/next-month?requestTime=2024-05-17T00:00:00&organizationId=1
+X-USER-ID: asdf

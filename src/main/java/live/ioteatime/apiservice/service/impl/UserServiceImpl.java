@@ -103,17 +103,6 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    /**
-     * @param userId 유저아이디
-     * @return userId 유저아이디
-     */
-    @Override
-    public String updateUserRole(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        user.setRole(Role.USER);
-        userRepository.save(user);
-        return user.getId();
-    }
 
     /**
      * @param userDto 유저 정보
@@ -152,7 +141,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUserPassword(String userId, UpdateUserPasswordRequest updatePasswordRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        if (! passwordEncoder.matches(updatePasswordRequest.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(updatePasswordRequest.getCurrentPassword(), user.getPassword())) {
             throw new UnauthenticatedException();
         }
 

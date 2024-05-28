@@ -23,9 +23,28 @@ public class PredictedElectricityController {
 
     @GetMapping
     public ResponseEntity<List<PreciseElectricityResponseDto>> getMonthlyPredictedValues(
+            @RequestParam("organizationId") int organizationId,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            @RequestParam("requestTime") LocalDateTime requestTime){
+            @RequestParam("requestTime") LocalDateTime requestTime) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(predictedElectricityService.getCurrentMonthPredictions(requestTime));
+                .body(predictedElectricityService.getCurrentMonthPredictions(requestTime, organizationId));
+    }
+
+    @GetMapping("/next-month")
+    public ResponseEntity<List<PreciseElectricityResponseDto>> getNextMonthPredictedValues(
+            @RequestParam("organizationId") int organizationId,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            @RequestParam("requestTime") LocalDateTime requestTime) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(predictedElectricityService.getNextMonthPrediction(requestTime, organizationId));
+    }
+
+    @GetMapping("/this-month")
+    public ResponseEntity<List<PreciseElectricityResponseDto>> getThisMonthPredictedValues(
+            @RequestParam("organizationId") int organizationId,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            @RequestParam("requestTime") LocalDateTime requestTime) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(predictedElectricityService.getThisMonthPrediction(requestTime, organizationId));
     }
 }
