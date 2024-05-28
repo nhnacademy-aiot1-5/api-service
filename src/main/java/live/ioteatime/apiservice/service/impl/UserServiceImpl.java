@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
      * @param orgCode 사용자 입력 조직코드
      * @return Organization 엔티티
      */
-    private Organization verifyAndRetrieveOrganization(String orgName, String orgCode){
+    Organization verifyAndRetrieveOrganization(String orgName, String orgCode){
         Organization organization = organizationRepository.findByOrganizationCode(orgCode);
         if(Objects.isNull(organization) || (!organization.getName().equals(orgName))){
             throw new OrganizationCodeNameMismatchException();
