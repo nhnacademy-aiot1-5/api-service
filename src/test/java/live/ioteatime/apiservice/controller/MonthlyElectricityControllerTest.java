@@ -37,9 +37,8 @@ class MonthlyElectricityControllerTest {
 
     @BeforeEach
     void setUp() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         localDateTime = LocalDateTime.of(2024, Month.MARCH, 31, 0, 0, 0, 0);
-        electricityResponseDto = new ElectricityResponseDto(localDateTime, 1000L, 1000L);
+        electricityResponseDto = new ElectricityResponseDto(localDateTime, 1000.0, 1000L);
     }
 
     @Test

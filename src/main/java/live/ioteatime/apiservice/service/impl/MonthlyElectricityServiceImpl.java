@@ -71,7 +71,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
         FluxTable fluxTable = queryApi.query(fluxQuery, organization).get(0);
         List<FluxRecord> records = fluxTable.getRecords();
 
-        long result = 0;
+        double result = 0;
         if (!records.isEmpty()) {
             FluxRecord firstRecord = records.get(0);
             FluxRecord lastRecord = records.get(records.size() - 1);
@@ -79,7 +79,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
             Double firstKwh = (Double) firstRecord.getValueByKey("_value");
             Double lastKwh = (Double) lastRecord.getValueByKey("_value");
 
-            result = (long) (lastKwh - firstKwh);
+            result = lastKwh - firstKwh;
         }
 
         return new ElectricityResponseDto(end, result, 0L);
@@ -90,7 +90,7 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
         List<Channel> channels = channelRepository.findAllByChannelName("main");
         LocalDateTime lastMonth = LocalDateTime.now().minusMonths(1).toLocalDate().atStartOfDay();
 
-        long kwh = 0;
+        double kwh = 0;
         for (Channel channel : channels) {
             int channelId = channel.getId();
             MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(channelId, lastMonth);
@@ -111,20 +111,20 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
 
         Map<LocalDateTime, ElectricityResponseDto> totalKwh = new HashMap<>();
         for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
-            totalKwh.put(date, new ElectricityResponseDto(date, 0L, null));
+            totalKwh.put(date, new ElectricityResponseDto(date, 0.0, null));
         }
 
         List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
-        for(Place place : placeList){
+        for (Place place : placeList) {
             Channel channel = channelRepository.findByPlaceAndChannelName(place, "main");
-            if(channel == null) {
+            if (channel == null) {
                 continue;
             }
             List<MonthlyElectricity> currentMonthDataList = monthlyElectricityRepository
                     .findAllByPkChannelIdAndPkTimeBetween(channel.getId(), start, end);
-            for(MonthlyElectricity data : currentMonthDataList) {
+            for (MonthlyElectricity data : currentMonthDataList) {
                 LocalDateTime key = data.getPk().getTime();
-                long kwh = totalKwh.get(key).getKwh();
+                double kwh = totalKwh.get(key).getKwh();
                 totalKwh.get(key).setKwh(kwh + data.getKwh());
             }
         }

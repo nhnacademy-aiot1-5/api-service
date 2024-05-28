@@ -23,7 +23,7 @@ public class DailyElectricity {
     @JoinColumn(name = "channel_id")
     @ManyToOne
     private Channel channel;
-    private Long kwh;
+    private Double kwh;
     private Long bill;
 
     @Embeddable

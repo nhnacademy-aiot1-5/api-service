@@ -40,7 +40,7 @@ class DailyElectricityControllerTest {
     void setUp() {
         electricityResponseDto = new ElectricityResponseDto(
                 LocalDateTime.of(2024,5,27,0,0,0,0),
-                123L, 50_000L);
+                123.0, 50_000L);
     }
 
     @Test
@@ -73,7 +73,7 @@ class DailyElectricityControllerTest {
     @Test
     void getLastDayElectricity() throws Exception {
         LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        ElectricityResponseDto response = new ElectricityResponseDto(today.minusDays(1), 100L, 1000L);
+        ElectricityResponseDto response = new ElectricityResponseDto(today.minusDays(1), 100.0, 1000L);
         given(electricityService.getLastElectricity()).willReturn(response);
 
         ResultActions result = mockMvc.perform(get("/daily/electricity/last"));
@@ -86,7 +86,7 @@ class DailyElectricityControllerTest {
     @Test
     void getCurrentDayElectricity() throws Exception {
         LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        ElectricityResponseDto response = new ElectricityResponseDto(today, 100L, 1000L);
+        ElectricityResponseDto response = new ElectricityResponseDto(today, 100.0, 1000L);
         given(electricityService.getCurrentElectricity()).willReturn(response);
 
         ResultActions result = mockMvc.perform(get("/daily/electricity/current"));

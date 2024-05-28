@@ -70,7 +70,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
         FluxTable fluxTable = queryApi.query(fluxQuery, organization).get(0);
         List<FluxRecord> records = fluxTable.getRecords();
 
-        long result = 0;
+        double result = 0;
         if (!records.isEmpty()) {
             FluxRecord firstRecord = records.get(0);
             FluxRecord lastRecord = records.get(records.size() - 1);
@@ -78,7 +78,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
             Double firstKwh = (Double) firstRecord.getValueByKey("_value");
             Double lastKwh = (Double) lastRecord.getValueByKey("_value");
 
-            result = (long) (lastKwh - firstKwh);
+            result = lastKwh - firstKwh;
         }
 
         return new ElectricityResponseDto(end, result, 0L);
@@ -89,7 +89,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
         List<Channel> channels = channelRepository.findAllByChannelName("main");
         LocalDateTime endOfDay = LocalDateTime.now().minusDays(1).toLocalDate().atStartOfDay();
 
-        long kwh = 0;
+        double kwh = 0;
         for (Channel channel : channels) {
             int channelId = channel.getId();
             DailyElectricity.Pk pk = new DailyElectricity.Pk(channelId, endOfDay);
@@ -108,7 +108,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
 
         Map<LocalDateTime, ElectricityResponseDto> totalKwh = new HashMap<>();
         for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
-            totalKwh.put(date, new ElectricityResponseDto(date, 0L, 0L));
+            totalKwh.put(date, new ElectricityResponseDto(date, (double) 0, 0L));
         }
 
         List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
@@ -121,7 +121,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
                     .findAllByPkChannelIdAndPkTimeBetween(channel.getId(), start, end);
             for (DailyElectricity data : currentMonthDataList) {
                 LocalDateTime key = data.getPk().getTime();
-                long kwh = totalKwh.get(key).getKwh();
+                double kwh = totalKwh.get(key).getKwh();
                 long bill = totalKwh.get(key).getBill();
                 totalKwh.get(key).setKwh(kwh + data.getKwh());
                 totalKwh.get(key).setBill(bill + data.getBill());
@@ -191,8 +191,8 @@ public class DailyElectricityServiceImpl implements ElectricityService {
                 LocalDateTime formattedTime = LocalDateTime
                         .parse(Objects.requireNonNull(r.getValueByKey("_time")).toString(), DateTimeFormatter.ISO_DATE_TIME)
                         .plusHours(9);
-                Long value = r.getValueByKey("_value") != null ?
-                        ((Double) Objects.requireNonNull(r.getValueByKey("_value"))).longValue() : 0L;
+                double value = r.getValueByKey("_value") != null ?
+                        ((Double) Objects.requireNonNull(r.getValueByKey("_value"))) : 0L;
 
                 results.merge(
                         formattedTime,
