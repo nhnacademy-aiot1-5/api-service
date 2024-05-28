@@ -3,6 +3,7 @@ package live.ioteatime.apiservice.controller;
 import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
 import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.ElectricityService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,12 +16,16 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Slf4j
 @WebMvcTest(MonthlyElectricityController.class)
 class MonthlyElectricityControllerTest {
     @Autowired
@@ -32,6 +37,7 @@ class MonthlyElectricityControllerTest {
 
     @BeforeEach
     void setUp() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         localDateTime = LocalDateTime.of(2024, Month.MARCH, 31, 0, 0, 0, 0);
         electricityResponseDto = new ElectricityResponseDto(localDateTime, 1000L, 1000L);
     }
@@ -41,16 +47,15 @@ class MonthlyElectricityControllerTest {
     void getMonthlyElectricity() throws Exception {
         // given
         given(electricityService.getElectricityByDate(
-                new ElectricityRequestDto(
-                        localDateTime,
-                        1
-                ))).willReturn(electricityResponseDto);
+                any(ElectricityRequestDto.class))).willReturn(electricityResponseDto);
+
         // when
         ResultActions resultActions = mockMvc.perform(
                 get("/monthly/electricity")
                         .param("localDateTime", String.valueOf(localDateTime))
                         .param("channelId", String.valueOf(1))
         );
+        resultActions.andDo(print());
         // then
         resultActions.andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -100,10 +105,7 @@ class MonthlyElectricityControllerTest {
     void getMonthlyElectricties() throws Exception {
         //given
         given(electricityService.getElectricitiesByDate(
-                new ElectricityRequestDto(
-                        localDateTime,
-                        1
-                ))).willReturn(List.of(electricityResponseDto));
+                any(ElectricityRequestDto.class))).willReturn(List.of(electricityResponseDto));
         //when
         ResultActions resultActions = mockMvc.perform(get("/monthly/electricities")
                 .param("localDateTime", String.valueOf(localDateTime))
