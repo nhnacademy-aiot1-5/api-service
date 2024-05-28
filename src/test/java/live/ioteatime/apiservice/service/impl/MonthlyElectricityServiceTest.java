@@ -25,12 +25,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class MonthlyElectricityServiceImplTest {
+class MonthlyElectricityServiceTest {
     @Mock
     private InfluxDBClient influxDBClient;
     @Mock

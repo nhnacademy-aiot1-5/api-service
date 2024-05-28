@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -27,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceTest {
     @Mock
@@ -36,6 +37,7 @@ class UserServiceTest {
     @Mock
     BCryptPasswordEncoder passwordEncoder;
 
+    @Spy
     @InjectMocks
     UserServiceImpl userService;
 
@@ -108,6 +110,17 @@ class UserServiceTest {
                 .isInstanceOf(UserNotFoundException.class);
     }
 
+    @Test
+    @DisplayName(("createUser 성공"))
+    void createUser() {
+        given(userRepository.existsById(registerRequest.getId())).willReturn(false);
+        given(passwordEncoder.encode(registerRequest.getPassword())).willReturn("encodedPassword");
+        doReturn(organization).when(userService).verifyAndRetrieveOrganization(anyString(), anyString());
+
+        String userId = userService.createUser(registerRequest);
+
+        assertThat(userId).isEqualTo("ryu");
+    }
     @Test
     @DisplayName("createUser 실패 - 이미 존재하는 유저일 때")
     void createUserFail() {
