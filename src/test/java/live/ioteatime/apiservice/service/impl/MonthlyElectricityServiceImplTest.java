@@ -32,8 +32,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class MonthlyElectricityServiceImplTest {
     @Mock
-    private InfluxDBClient influxDBClient;
-    @Mock
     private MonthlyElectricityRepository monthlyElectricityRepository;
     @Mock
     private ChannelRepository channelRepository;
@@ -54,7 +52,7 @@ class MonthlyElectricityServiceImplTest {
         );
         MonthlyElectricity mockMonthlyElectricity = new MonthlyElectricity();
         mockMonthlyElectricity.setPk(pk);
-        mockMonthlyElectricity.setKwh(100L);
+        mockMonthlyElectricity.setKwh(100.0);
         mockMonthlyElectricity.setBill(50L);
 
         given(monthlyElectricityRepository.findMonthlyElectricityByPk(any())).willReturn(Optional.of(mockMonthlyElectricity));
@@ -82,7 +80,7 @@ class MonthlyElectricityServiceImplTest {
         );
         MonthlyElectricity mockMonthlyElectricity = new MonthlyElectricity();
         mockMonthlyElectricity.setPk(pk);
-        mockMonthlyElectricity.setKwh(100L);
+        mockMonthlyElectricity.setKwh(100.0);
         mockMonthlyElectricity.setBill(50L);
 
         given(monthlyElectricityRepository.findAllByPkChannelIdAndPkTimeBetween(
@@ -122,11 +120,11 @@ class MonthlyElectricityServiceImplTest {
 
         MonthlyElectricity electricity1 = new MonthlyElectricity();
         electricity1.setPk(new MonthlyElectricity.Pk(1, lastMonth));
-        electricity1.setKwh(150L);
+        electricity1.setKwh(150.0);
         electricity1.setBill(0L);
         MonthlyElectricity electricity2 = new MonthlyElectricity();
         electricity2.setPk(new MonthlyElectricity.Pk(2, lastMonth));
-        electricity2.setKwh(180L);
+        electricity2.setKwh(180.0);
         electricity2.setBill(0L);
 
         when(channelRepository.findAllByChannelName("main")).thenReturn(channels);
@@ -175,11 +173,11 @@ class MonthlyElectricityServiceImplTest {
 
         MonthlyElectricity monthlyElectricity1 = new MonthlyElectricity();
         monthlyElectricity1.setPk(pk1);
-        monthlyElectricity1.setKwh(100L);
+        monthlyElectricity1.setKwh(100.0);
         monthlyElectricity1.setBill(0L);
         MonthlyElectricity monthlyElectricity2 = new MonthlyElectricity();
         monthlyElectricity2.setPk(pk2);
-        monthlyElectricity2.setKwh(200L);
+        monthlyElectricity2.setKwh(200.0);
         monthlyElectricity2.setBill(0L);
 
         List<MonthlyElectricity> electricityList1 = List.of(monthlyElectricity1);

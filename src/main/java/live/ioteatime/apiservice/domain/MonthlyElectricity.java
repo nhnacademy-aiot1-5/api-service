@@ -22,7 +22,7 @@ public class MonthlyElectricity {
     @ManyToOne
     private Channel channel;
 
-    private Long kwh;
+    private Double kwh;
     private Long bill;
 
     @Embeddable

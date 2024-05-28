@@ -1,7 +1,6 @@
 package live.ioteatime.apiservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
 import live.ioteatime.apiservice.service.HourlyElectricityService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ public class HourlyElectricityController {
 
     private final HourlyElectricityService hourlyElectricityService;
 
-    @VerifyOrganization
     @GetMapping("/electricities/total")
     @Operation(summary = "최근 1시간 kwh 사용량을 5분간격으로 계산하여 가져오는 API", description = "5분동안 몇kwh를 소비하였는지, 총 12개의 데이터를 반환합니다.")
     public ResponseEntity<List<PreciseElectricityResponseDto>> getOneHourTotalElectricties(@RequestParam int organizationId){
