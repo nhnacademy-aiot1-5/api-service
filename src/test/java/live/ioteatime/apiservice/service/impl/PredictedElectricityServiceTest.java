@@ -1,6 +1,6 @@
 package live.ioteatime.apiservice.service.impl;
 
-import live.ioteatime.apiservice.domain.PredictedDailyElectricity;
+import live.ioteatime.apiservice.domain.DailyPredictedElectricity;
 import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
 import live.ioteatime.apiservice.repository.PredictedElectricityRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,18 +25,18 @@ class PredictedElectricityServiceTest {
     @InjectMocks
     PredictedElectricityServiceImpl predictedElectricityService;
 
-    PredictedDailyElectricity predictedDailyElectricity1;
-    PredictedDailyElectricity predictedDailyElectricity2;
+    DailyPredictedElectricity predictedDailyElectricity1;
+    DailyPredictedElectricity predictedDailyElectricity2;
     PreciseElectricityResponseDto preciseElectricityResponseDto1;
     PreciseElectricityResponseDto preciseElectricityResponseDto2;
-    List<PredictedDailyElectricity> predictedDailyElectricityList;
+    List<DailyPredictedElectricity> predictedDailyElectricityList;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        predictedDailyElectricity1 = new PredictedDailyElectricity();
-        predictedDailyElectricity2 = new PredictedDailyElectricity();
+        predictedDailyElectricity1 = new DailyPredictedElectricity();
+        predictedDailyElectricity2 = new DailyPredictedElectricity();
 
         predictedDailyElectricity1.setTime(LocalDateTime.of(2020, 1, 1, 1, 1, 1));
         predictedDailyElectricity1.setKwh(12.3);
