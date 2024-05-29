@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.controller;
 
+import live.ioteatime.apiservice.domain.Outlier;
 import live.ioteatime.apiservice.dto.OutlierDto;
 import live.ioteatime.apiservice.service.OutlierService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class OutlierController {
     }
 
     @PostMapping("/outlier")
-    public ResponseEntity<Integer> createOutlier(@RequestBody OutlierDto outlierDto){
+    public ResponseEntity<Outlier> createOutlier(@RequestBody OutlierDto outlierDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(outlierService.createOutlier(outlierDto));
     }
 

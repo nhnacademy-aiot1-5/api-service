@@ -1,5 +1,6 @@
 package live.ioteatime.apiservice.service.impl;
 
+import live.ioteatime.apiservice.domain.Organization;
 import live.ioteatime.apiservice.domain.Outlier;
 import live.ioteatime.apiservice.dto.OutlierDto;
 import live.ioteatime.apiservice.repository.OutlierRepository;
@@ -30,12 +31,15 @@ public class OutlierServiceImpl implements OutlierService {
     }
 
     @Override
-    public int createOutlier(OutlierDto outlierDto) {
+    public Outlier createOutlier(OutlierDto outlierDto) {
         Outlier outlier = new Outlier();
         BeanUtils.copyProperties(outlierDto, outlier);
+        Organization organization = new Organization();
+        organization.setId(outlierDto.getOrganizationId());
+        outlier.setOrganization(organization);
         outlierRepository.save(outlier);
 
-        return outlier.getId();
+        return outlier;
     }
 
     @Override

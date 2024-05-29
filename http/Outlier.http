@@ -2,11 +2,12 @@ POST localhost:8090/outlier
 Content-Type: application/json
 
 {
-  "outlier_id": 1,
   "place": "office",
   "type": "ac",
-  "outlier_value": 12345,
-  "flag": 0
+  "time": 19721121,
+  "outlierValue": 12345,
+  "flag": 0,
+  "organizationId": 1
 }
 
 ###
@@ -14,11 +15,12 @@ POST localhost:8090/outlier
 Content-Type: application/json
 
 {
-  "outlier_id": 0,
   "place": "class_A",
   "type": "ac",
-  "outlier_value": 4321,
-  "flag": 0
+  "time": 11211972,
+  "outlierValue": 54321,
+  "flag": 0,
+  "organizationId": 1
 }
 
 ###
@@ -26,5 +28,5 @@ GET localhost:8090/outlier
 Content-Type: application/json
 
 ###
-PUT localhost:8090/outlier?id=2&flag=1
+PUT localhost:8090/outlier?id=1&flag=1
 Content-Type: application/json
