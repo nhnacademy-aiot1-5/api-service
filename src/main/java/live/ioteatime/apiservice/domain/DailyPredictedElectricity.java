@@ -10,10 +10,10 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "predicted_daily_electricity_consumption")
+@Table(name = "daily_predicted_electricity_consumption")
 @Getter
 @Setter
-public class PredictedDailyElectricity {
+public class DailyPredictedElectricity {
     @Id
     LocalDateTime time;
     Double kwh;

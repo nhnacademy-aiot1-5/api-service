@@ -1,13 +1,13 @@
 package live.ioteatime.apiservice.repository;
 
-import live.ioteatime.apiservice.domain.PredictedDailyElectricity;
+import live.ioteatime.apiservice.domain.DailyPredictedElectricity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface PredictedElectricityRepository extends JpaRepository<PredictedDailyElectricity, LocalDateTime> {
+public interface PredictedElectricityRepository extends JpaRepository<DailyPredictedElectricity, LocalDateTime> {
 
-    List<PredictedDailyElectricity> findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(
+    List<DailyPredictedElectricity> findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(
             LocalDateTime start, LocalDateTime end, int organizationId, int channelId);
 }
