@@ -20,8 +20,13 @@ public class Outlier {
     String place;
     @Column
     String type;
+    @Column
+    long time;
     @Column(name = "outlier_value")
     double outlierValue;
     @Column
     int flag;
+    @JoinColumn(name = "organization_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Organization organization;
 }
