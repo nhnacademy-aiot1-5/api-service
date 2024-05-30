@@ -21,8 +21,8 @@ public class OutlierController {
      * @return
      */
     @GetMapping("/outlier")
-    public ResponseEntity<List<OutlierDto>> getUnsolvedOutlier(){
-        return ResponseEntity.status(HttpStatus.OK).body(outlierService.getUnsolvedOutlier());
+    public ResponseEntity<List<OutlierDto>> getOutlierByOrganizationId(@RequestParam(name = "organizationId") int organizationId){
+        return ResponseEntity.status(HttpStatus.OK).body(outlierService.getOutlierByOrganizationId(organizationId));
     }
 
     @PostMapping("/outlier")
