@@ -69,7 +69,6 @@ public class BeforeExecuteMethodAspect {
      */
     @Before("mqttPointcut() && verifyOrganizationPointcut() && args(sensorId,*,*)")
     public void checkOrganizationMatchFotMqtt(int sensorId) {
-
         Organization sensorOrganization = mqttSensorRepository.findById(sensorId)
                 .orElseThrow(SensorNotFoundException::new).getOrganization();
         if (Objects.isNull(sensorOrganization)) {
@@ -82,7 +81,6 @@ public class BeforeExecuteMethodAspect {
 
     @Before("modbusPointcut() && verifyOrganizationPointcut() && args(sensorId,*,*)")
     public void checkOrganizationMatchForModbus(int sensorId) {
-
         Organization sensorOrganization = modbusSensorRepository.findById(sensorId)
                 .orElseThrow(SensorNotFoundException::new).getOrganization();
         if (Objects.isNull(sensorOrganization)) {

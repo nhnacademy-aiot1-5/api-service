@@ -1,5 +1,7 @@
 package live.ioteatime.apiservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.AdminOnly;
 import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.channel.ChannelDto;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/sensors/modbus")
+@Tag(name="Channel", description = "Modbus 센서 채널 API")
 public class ChannelController {
     private final ChannelService channelService;
 
@@ -28,6 +31,7 @@ public class ChannelController {
      */
     @GetMapping("/{sensorId}/channels")
     @VerifyOrganization
+    @Operation(summary = "채널 리스트 조회", description = "해당 센서의 전체 채널 리스트를 조회합니다.")
     public ResponseEntity<List<ChannelDto>> getChannels(@PathVariable("sensorId") int sensorId) {
         return ResponseEntity.status(HttpStatus.OK).body(channelService.getChannelList(sensorId));
     }
@@ -39,6 +43,7 @@ public class ChannelController {
      * @return 채널 리스트
      */
     @GetMapping("/channels/{placeId}")
+    @Operation(summary = "장소 리스트 조회", description = "조직의 전체 장소 리스트를 조회합니다.")
     public ResponseEntity<List<ChannelDto>> getChannelsFromPlace(@PathVariable("placeId") int placeId) {
         List<ChannelDto> channelDto = channelService.getChannelListByPlace(placeId);
         return ResponseEntity.status(HttpStatus.OK).body(channelDto);
@@ -52,6 +57,8 @@ public class ChannelController {
     @GetMapping("/{sensorId}/exist-channels")
     @AdminOnly
     @VerifyOrganization
+    @Operation(summary = "채널 존재 여부 조회",
+            description = "센서에 채널이 하나라도 존재하면 센서를 삭제할 수 없으므로, 해당 센서에 채널 존재 여부를 조회합니다.")
     public ResponseEntity<Boolean> existChannelCheck(@PathVariable("sensorId") int sensorId){
         return ResponseEntity.status(HttpStatus.OK).body(channelService.existChannelCheck(sensorId));
     }
@@ -65,6 +72,7 @@ public class ChannelController {
     @PostMapping("/{sensorId}/channels")
     @AdminOnly
     @VerifyOrganization
+    @Operation(summary = "채널 등록", description = "Modbus 센서의 채널을 등록합니다.")
     public ResponseEntity<Integer> createChannel(@PathVariable("sensorId") int sensorId, @RequestBody ChannelDto channelDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(channelService.createChannel(sensorId, channelDto));
     }
@@ -79,6 +87,7 @@ public class ChannelController {
     @PutMapping("/{channelId}/change-place")
     @AdminOnly
     @VerifyOrganization
+    @Operation(summary = "채널 장소 수정", description = "채널의 장소를 수정합니다.")
     public ResponseEntity<Integer> updateChannelPlace(@PathVariable("channelId") int channelId, String channelPlace) {
         return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelPlace(channelId, channelPlace));
     }
@@ -92,6 +101,7 @@ public class ChannelController {
     @AdminOnly
     @VerifyOrganization
     @PutMapping("/{channelId}/change-info")
+    @Operation(summary = "채널 정보 수정", description = "채널의 Address, Quantity, Function-code를 수정합니다.")
     public ResponseEntity<Integer> updateChannelInfo(@PathVariable("channelId") int channelId, @RequestBody ChannelDto channelDto) {
         return ResponseEntity.status(HttpStatus.OK).body(channelService.updateChannelInfo(channelId, channelDto));
     }
@@ -105,6 +115,7 @@ public class ChannelController {
     @AdminOnly
     @VerifyOrganization
     @DeleteMapping("/{sensorId}/channels/{channelId}")
+    @Operation(summary = "채널 삭제", description = "채널을 삭제합니다.")
     public ResponseEntity<String> deleteChannel(@PathVariable("sensorId") int sensorId, @PathVariable("channelId") int channelId) {
         channelService.deleteChannel(sensorId, channelId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

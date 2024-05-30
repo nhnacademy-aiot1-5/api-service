@@ -24,7 +24,7 @@ import java.net.URI;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
-@Tag(name = "USER 컨트롤러", description = "유저정보와 관련된 정보를 처리하는 컨트롤러입니다.")
+@Tag(name = "User", description = "회원 API")
 public class UserController {
     private final UserService userService;
     private final OrganizationService organizationService;
@@ -37,7 +37,7 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping
-    @Operation(summary = "유저 정보를 가져오는 API", description = "유저의 정보를 가져옵니다.")
+    @Operation(summary = "회원 단일 조회", description = "회원 아이디, 이름, 가입일, 권한, 조직 이름을 조회합니다.")
     public ResponseEntity<UserDto> getUserInfo(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(userId));
     }
@@ -48,7 +48,7 @@ public class UserController {
      * @return HttpStatus 200번 OK
      */
     @GetMapping("/{userId}/details")
-    @Operation(summary = "유저 인증을 담당하는 API", description = "로그인 요청을 받았을 때 유저 ID와 유저 PASSWORD를 반환합니다.")
+    @Operation(summary = "회원 아이디, 비밀번호 조회", description = "인증 서버가 로그인 요청을 처리할 때 사용합니다. 회원 아이디와 비밀번호를 반환합니다.")
     public ResponseEntity<UserDto> loadUserByUserName(@PathVariable String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.loadUserByUserName(userId));
     }
@@ -59,9 +59,8 @@ public class UserController {
      * @return HttpStatus 201번 Created
      */
     @PostMapping
-    @Operation(summary = "회원정보를 생성하는 API", description = "회원가입 페이지에서 받은 정보를 데이터베이스에 저장합니다.")
+    @Operation(summary = "회원 등록", description = "새로운 회원을 데이터베이스에 등록합니다.")
     public ResponseEntity<String> createUser(@RequestBody RegisterRequest registerRequest) {
-
         String createdUserId = userService.createUser(registerRequest);
 
         URI location = UriComponentsBuilder
@@ -80,7 +79,7 @@ public class UserController {
      * 게이트웨이에서 엔드포인트를 확인할 때 필터에 따른 부득이한 이유로 update-user가 붙게 되었습니다.
      */
     @PutMapping("/update-user")
-    @Operation(summary = "유저 정보를 업데이트하는 API", description = "유저 정보를 업데이트합니다.")
+    @Operation(summary = "회원 정보 수정", description = "회원 이름을 수정합니다.")
     public ResponseEntity<String> updateUser(@RequestHeader(X_USER_ID) String userId, @RequestBody UserDto userDto) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userDto));
     }
@@ -92,7 +91,7 @@ public class UserController {
      * @return HttpStatus 200 OK
      */
     @PutMapping("/password")
-    @Operation(summary = "유저의 비밀번호를 변경하는 API", description = "유저 비밀번호를 변경합니다.")
+    @Operation(summary = "회원 비밀번호 수정", description = "회원의 비밀번호를 수정합니다.")
     public ResponseEntity<String> updateUserPassword(@RequestHeader(X_USER_ID) String userId,
                                                      @RequestBody UpdateUserPasswordRequest updatePasswordRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserPassword(userId, updatePasswordRequest));
@@ -104,7 +103,7 @@ public class UserController {
      * @return HttpStatus 200 OK
      */
     @GetMapping("/organization")
-    @Operation(summary = "유저가 소속된 조직의 정보를 반환하는 API", description = "유저가 소속된 조직의 정보를 반환합니다.")
+    @Operation(summary = "조직 단일 조회", description = "회원이 소속된 조직의 이름과 현재 목표 금액을 조회합니다.")
     public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId) {
         OrganizationDto organizationDto = userService.getOrganizationByUserId(userId);
         return ResponseEntity.status(HttpStatus.OK).body(organizationDto);
@@ -116,7 +115,7 @@ public class UserController {
      * @return HttpStatus 200 Ok
      */
     @GetMapping("/budget")
-    @Operation(summary = "조직의 현재 설정 금액을 가져오는 API", description = "조직의 현재 설정금액을 가져옵니다.")
+    @Operation(summary = "조직 목표 요금 조회", description = "조직의 현재 목표 요금을 조회합니다.")
     public ResponseEntity<OrganizationDto> getBudget(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(organizationService.getBudget(userId));
     }

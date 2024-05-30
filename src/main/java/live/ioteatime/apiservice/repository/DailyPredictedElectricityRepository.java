@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface PredictedElectricityRepository extends JpaRepository<DailyPredictedElectricity, LocalDateTime> {
+public interface DailyPredictedElectricityRepository extends JpaRepository<DailyPredictedElectricity, LocalDateTime> {
 
     List<DailyPredictedElectricity> findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(
             LocalDateTime start, LocalDateTime end, int organizationId, int channelId);

@@ -1,5 +1,7 @@
 package live.ioteatime.apiservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.annotation.VerifyOrganization;
 import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
 import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
@@ -21,6 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/daily")
+@Tag(name = "Daily Electricity", description = "일별 전력량 API")
 public class DailyElectricityController {
     private final ElectricityService electricityService;
 
@@ -40,6 +43,9 @@ public class DailyElectricityController {
      * @return 시간과 전력량을 가진 응답 DTO 리스트
      */
     @GetMapping("/electricities")
+    @Operation(summary = "일별 전력량 조회",
+            description = "요청시간이 자정(00:00:00)이면, 요청일 기준 전월, 금월 2달치의 일별 전력량 데이터를 조회합니다. " +
+                    "요청시간이 자정이 아니라면, 요청일 기준 최근 24시간의 시간별 전력량 데이터를 조회합니다.")
     public ResponseEntity<List<ElectricityResponseDto>> getDailyElectricities(
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @RequestParam LocalDateTime localDateTime,
@@ -56,6 +62,7 @@ public class DailyElectricityController {
      */
     @GetMapping("/electricities/total")
     @VerifyOrganization
+    @Operation(summary = "금월 일별 총전력량 조회", description = "요청일 기준 달의 일별 전력량 데이터를 조회합니다.")
     public ResponseEntity<List<ElectricityResponseDto>> getcurrentMonthTotalElectricities(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                                     @RequestParam("localDateTime") LocalDateTime localDateTime,
                                                                                     @RequestParam("organizationId") int organizationId){
@@ -64,11 +71,13 @@ public class DailyElectricityController {
     }
 
     @GetMapping("/electricity/last")
+    @Operation(summary = "전일 총전력량 조회", description = "요청일 기준 전일 총전력량을 조회합니다.")
     public ResponseEntity<ElectricityResponseDto> getLastDayElectricity(){
         return ResponseEntity.ok(electricityService.getLastElectricity());
     }
 
     @GetMapping("/electricity/current")
+    @Operation(summary = "금일 총전력량 조회", description = "요청일의 총전력량을 조회합니다.")
     public ResponseEntity<ElectricityResponseDto> getCurrentDayElectricity(){
         return ResponseEntity.ok(electricityService.getCurrentElectricity());
     }

@@ -1,7 +1,7 @@
 package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
-import live.ioteatime.apiservice.repository.PredictedElectricityRepository;
+import live.ioteatime.apiservice.repository.DailyPredictedElectricityRepository;
 import live.ioteatime.apiservice.service.PredictedElectricityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PredictedElectricityServiceImpl implements PredictedElectricityService {
-    private final PredictedElectricityRepository predictedElectricityRepository;
+    private final DailyPredictedElectricityRepository predictedElectricityRepository;
 
     @Override
     public List<PreciseElectricityResponseDto> getCurrentMonthPredictions(LocalDateTime requestTime, int organizationId) {
-        LocalDateTime start = requestTime.withHour(0).withMinute(0).withSecond(0).withNano(0).plusDays(1);
+        LocalDateTime start = requestTime.withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end = YearMonth.from(requestTime).atEndOfMonth().atTime(0, 0, 0);
         return predictedElectricityRepository
                 .findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(start, end, organizationId, -1)
