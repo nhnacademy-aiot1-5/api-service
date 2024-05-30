@@ -6,7 +6,7 @@ import live.ioteatime.apiservice.dto.OutlierDto;
 import java.util.List;
 
 public interface OutlierService {
-    List<OutlierDto> getUnsolvedOutlier();
+    List<OutlierDto> getOutlierByOrganizationId(int organizationId);
 
     Outlier createOutlier(OutlierDto outlierDto);
 

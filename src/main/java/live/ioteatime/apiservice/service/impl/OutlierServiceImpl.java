@@ -19,8 +19,8 @@ public class OutlierServiceImpl implements OutlierService {
     private final OutlierRepository outlierRepository;
 
     @Override
-    public List<OutlierDto> getUnsolvedOutlier() {
-        List<Outlier> outlierList=  outlierRepository.findAllByFlag(0);
+    public List<OutlierDto> getOutlierByOrganizationId(int organizationId) {
+        List<Outlier> outlierList = outlierRepository.findAllByOrganization_Id(organizationId);
         List<OutlierDto> outlierDtoList=new ArrayList<>();
         for (Outlier outlier : outlierList) {
             OutlierDto outlierDto=new OutlierDto();
