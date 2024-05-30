@@ -202,5 +202,6 @@ public class ChannelServiceImpl implements ChannelService {
         log.info("Send request to Rule Engine: URL=/modbus, method=POST, body=\"{}\"", modbusSensorRequest.getChannel());
 
         modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
+        modbusSensorAdaptor.getUpdateCheck();
     }
 }
