@@ -13,6 +13,9 @@ public interface ModbusSensorAdaptor {
     @PostMapping("/modbus")
     ResponseEntity<String> addModbusSensor(@RequestBody AddModbusSensorRequest addSensorRequest);
 
+    @GetMapping("/update/mapping-table")
+    ResponseEntity<String> getUpdateCheck();
+
     @GetMapping("/delete/modbus/{fileName}")
     ResponseEntity<String> deleteModbusSensor(@PathVariable("fileName") String fileName);
 }
