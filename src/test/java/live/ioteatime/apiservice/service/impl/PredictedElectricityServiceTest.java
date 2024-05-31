@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.service.impl;
 
 import live.ioteatime.apiservice.domain.DailyPredictedElectricity;
 import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
-import live.ioteatime.apiservice.repository.PredictedElectricityRepository;
+import live.ioteatime.apiservice.repository.DailyPredictedElectricityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.BDDMockito.given;
 class PredictedElectricityServiceTest {
 
     @Mock
-    PredictedElectricityRepository predictedElectricityRepository;
+    DailyPredictedElectricityRepository predictedElectricityRepository;
 
     @InjectMocks
     PredictedElectricityServiceImpl predictedElectricityService;

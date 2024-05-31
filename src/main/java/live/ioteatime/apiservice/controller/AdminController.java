@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-@Tag(name = "ADMIN 컨트롤러", description = "어드민만 사용할 수 있는 컨트롤러입니다.")
+@Tag(name = "Admin", description = "관리자 API")
 public class AdminController {
     private final AdminService adminService;
     private final OrganizationService organizationService;
@@ -34,8 +34,8 @@ public class AdminController {
      */
     @GetMapping("/guests")
     @AdminOnly
-    @Operation(summary = "소직에 속한 유저중 유저의 권한이 GUEST인 유저들의 리스트를 가져오는 API",
-            description = "조직에 속한 유저중 유저의 권한이 GUEST인 유저들의 리스트를 가져옵니다.")
+    @Operation(summary = "권한이 GUEST인 회원 리스트 조회",
+            description = "조직에 속한 유저 중 권한이 GUEST인 유저들의 리스트를 조회합니다.")
     public ResponseEntity<List<UserDto>> getGuestUsers(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getGuestUsers(userId));
     }
@@ -48,8 +48,8 @@ public class AdminController {
      */
     @GetMapping("/users")
     @AdminOnly
-    @Operation(summary = "어드민이 속한 조직의 모든 유저들의 리스트를 가져오는 API",
-            description = "어드민이 속한 조직의 모든 유저들의 리스트를 가져옵니다.")
+    @Operation(summary = "회원 리스트 조회",
+            description = "조직의 모든 회원 리스트를 조회합니다.")
     public ResponseEntity<List<UserDto>> getUsers(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getUsers(userId));
     }
@@ -61,8 +61,8 @@ public class AdminController {
      */
     @GetMapping("/budget-histories")
     @AdminOnly
-    @Operation(summary = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져오는 API",
-            description = "어드민이 속한 조직의 요금 변경 내역 리스트를 가져옵니다.")
+    @Operation(summary = "조직 목표 요금 변경 내역 조회",
+            description = "조직의 모든 요금 변경 내역을 조회합니다.")
     public ResponseEntity<List<BudgetHistoryDto>> getBudgetHistory(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getBudgetHistory(userId));
     }
@@ -74,8 +74,8 @@ public class AdminController {
      */
     @GetMapping("/organization")
     @AdminOnly
-    @Operation(summary = "어드민이 속한 조직이름과 조직 코드를 확인하는 API",
-            description = "어드민이 속한 조직이름과 조직 코드를 가져옵니다.")
+    @Operation(summary = "조직 정보 조회",
+            description = "조직 이름과 조직 코드를 조회합니다.")
     public ResponseEntity<OrganizationDto> getOrganization(@RequestHeader(X_USER_ID) String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.getOrganization(userId));
     }
@@ -87,7 +87,8 @@ public class AdminController {
      */
     @GetMapping("/check-code")
     @AdminOnly
-    @Operation(summary = "조직 코드가 중복이 있는지 확인하는 API", description = "조직 코드가 이미 중복된 코드인지 확인합니다.")
+    @Operation(summary = "조직 코드 중복 조회",
+            description = "변경하려는 조직 코드가 중복된 코드인지 확인합니다.")
     public ResponseEntity<Boolean> isOrganizationCodeDuplicate(String code) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.isOrganizationCodeDuplicate(code));
     }
@@ -99,8 +100,8 @@ public class AdminController {
      */
     @PutMapping("/role")
     @AdminOnly
-    @Operation(summary = "유저 권한을 수정하는 API",
-            description = "ADMIN 유저가 GUEST 권한을 가진 유저의 권한을 GUEST에서 USER로 수정합니다.")
+    @Operation(summary = "회원 권한 수정",
+            description = "ADMIN 회원이 GUEST 권한을 가진 회원의 권한을 GUEST에서 USER로 수정합니다.")
     public ResponseEntity<UserDto> updateUserRole(String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(adminService.updateUserRole(userId));
     }
@@ -113,7 +114,7 @@ public class AdminController {
      */
     @PutMapping("/budget")
     @AdminOnly
-    @Operation(summary = "어드민이 속한 조직의 요금을 설정하는 API", description = "어드민이 속한 조직의 요금을 설정합니다.")
+    @Operation(summary = "조직 목표 요금 수정", description = "조직의 목표 요금을 수정합니다.")
     public ResponseEntity<OrganizationDto> updateBudget(@RequestHeader(X_USER_ID) String userId, Long budget) {
         return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateBudget(userId, budget));
     }
@@ -126,7 +127,7 @@ public class AdminController {
      */
     @PutMapping("/organization-name")
     @AdminOnly
-    @Operation(summary = "어드민이 속한 조직의 이름을 변경하는 API", description = "어드민이 속한 조직의 이름을 변경합니다.")
+    @Operation(summary = "조직 이름 수정", description = "조직의 이름을 수정합니다.")
     public ResponseEntity<OrganizationDto> updateOrganizationName(@RequestHeader(X_USER_ID) String userId, String name) {
         return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateName(userId, name));
     }
@@ -139,7 +140,7 @@ public class AdminController {
      */
     @PutMapping("/organization-code")
     @AdminOnly
-    @Operation(summary = "어드민이 속한 조직의 조직코드를 변경하는 API", description = "어드민이 속한 조직의 조직코드를 변경합니다.")
+    @Operation(summary = "조직코드 수정", description = "회원가입에 필요한 조직코드를 수정합니다.")
     public ResponseEntity<OrganizationDto> updateOrganizationCode(@RequestHeader(X_USER_ID) String userId, String code) {
         return ResponseEntity.status(HttpStatus.OK).body(organizationService.updateCode(userId, code));
     }

@@ -1,5 +1,7 @@
 package live.ioteatime.apiservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import live.ioteatime.apiservice.dto.electricity.ElectricityRequestDto;
 import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.ElectricityService;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/monthly")
+@Tag(name = "Monthly Electricity", description = "월별 전력량 API")
 public class MonthlyElectricityController {
     private final ElectricityService electricityService;
 
@@ -37,6 +40,7 @@ public class MonthlyElectricityController {
      * @return 조회된 월별 전력 사용량을 {@link ElectricityResponseDto} 객체로 반환합니다.
      */
     @GetMapping("/electricity")
+    @Operation(summary = "채널의 금월 전력량 조회", description = "해당 채널의 요청월의 전력량을 조회합니다.")
     public ResponseEntity<ElectricityResponseDto> getMonthlyElectricity(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                         @RequestParam LocalDateTime localDateTime,
                                                                         @RequestParam int channelId) {
@@ -45,11 +49,13 @@ public class MonthlyElectricityController {
     }
 
     @GetMapping("/electricity/last")
+    @Operation(summary = "전월 총전력량 조회", description = "전월의 모든 채널의 총전력량을 조회합니다.")
     public ResponseEntity<ElectricityResponseDto> getLastMonthElectricity(){
         return ResponseEntity.ok(electricityService.getLastElectricity());
     }
 
     @GetMapping("/electricity/current")
+    @Operation(summary = "금월 총전력량 조회", description = "금월의 모든 채널의 총전력량을 조회합니다.")
     public ResponseEntity<ElectricityResponseDto> getcurrentMonthElectricity(){
         return ResponseEntity.ok(electricityService.getCurrentElectricity());
     }
@@ -62,6 +68,7 @@ public class MonthlyElectricityController {
      * @return 조회된 모든 월별 전력 사용량 데이터를 {@link ElectricityResponseDto} 객체의 리스트로 반환합니다.
      */
     @GetMapping("/electricities")
+    @Operation(summary = "최근 1년 간 월별 전력량 조회", description = "해당 채널의 최근 1년 간 월별 전력량을 조회합니다.")
     public ResponseEntity<List<ElectricityResponseDto>> getMonthlyElectricties(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                                               @RequestParam LocalDateTime localDateTime,
                                                                               @RequestParam int channelId) {
