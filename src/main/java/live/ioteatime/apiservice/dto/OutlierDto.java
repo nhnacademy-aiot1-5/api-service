@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutlierDto {
+    int id;
     String place;
     String type;
     long time;
