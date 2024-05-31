@@ -104,7 +104,7 @@ public class DailyElectricityServiceImpl implements ElectricityService {
     @Override
     public List<ElectricityResponseDto> getTotalElectricitiesByDate(LocalDateTime localDateTime, int organizationId) {
         LocalDateTime start = localDateTime.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime end = localDateTime.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = localDateTime.minusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         Map<LocalDateTime, ElectricityResponseDto> totalKwh = new HashMap<>();
         for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
