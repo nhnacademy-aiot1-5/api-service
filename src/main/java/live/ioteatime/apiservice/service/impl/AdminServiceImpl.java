@@ -31,7 +31,7 @@ public class AdminServiceImpl implements AdminService {
     private final OrganizationRepository organizationRepository;
 
     /**
-     * UserList를 UserDtoList 로 변환하는 서비스 입니다.
+     * UserList를 UserDtoList 로 변환하는 메서드입니다.
      * @param users 유저의 리스트를 받아옵니다.
      * @return 변환한 UserDto의 리스트를 반환합니다.
      */

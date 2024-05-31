@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sensors/mqtt")
-@Tag(name = "Mqtt 센서 컨트롤러", description = "Mqtt 센서 관리에 사용하는 컨트롤러입니다.")
+@Tag(name = "Mqtt Sensor", description = "MQTT 센서 API")
 @RequiredArgsConstructor
 public class MqttSensorController {
 
@@ -31,7 +31,7 @@ public class MqttSensorController {
      */
     @GetMapping("/supported")
     @AdminOnly
-    @Operation(summary = "지원하는 MQTT 센서 리스트를 가져오는 API", description = "지원하는 모든 MQTT 센서 리스트를 반환합니다.")
+    @Operation(summary = "지원하는 MQTT 센서 리스트 조회", description = "서비스에서 지원하는 모든 MQTT 센서 리스트를 조회합니다.")
     public ResponseEntity<List<MqttSensorDto>> getSupportedMqttSensors() {
         return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getAllSupportedSensors());
     }
@@ -41,7 +41,7 @@ public class MqttSensorController {
      * @return 200 OK
      */
     @GetMapping("/list")
-    @Operation(summary = "모든 mqtt 센서들의 리스트를 가져오는 API", description = "소속 조직의 모든 mqtt 센서 리스트를 반환합니다.")
+    @Operation(summary = "MQTT 센서 리스트 조회", description = "소속 조직의 모든 MQTT 센서 리스트를 조회합니다.")
     public ResponseEntity<List<MqttSensorDto>> getMqttSensors(@RequestHeader(X_USER_ID) String userId){
         return ResponseEntity.status(HttpStatus.OK).body(
                 mqttSensorService.getOrganizationSensorsByUserId(userId));
@@ -53,8 +53,7 @@ public class MqttSensorController {
      * @return 성공 - 200 OK, 실패 - 404 NOT FOUND
      */
     @GetMapping("/{sensorId}")
-    @VerifyOrganization
-    @Operation(summary = "MQTT 센서 단일 조회 API")
+    @Operation(summary = "MQTT 센서 단일 조회", description = "MQTT 센서를 조회합니다.")
     public ResponseEntity<MqttSensorDto> getMqttSensor(@PathVariable("sensorId") int sensorId) {
         return ResponseEntity.status(HttpStatus.OK).body(mqttSensorService.getSensorById(sensorId));
     }
@@ -65,7 +64,7 @@ public class MqttSensorController {
      */
     @PostMapping
     @AdminOnly
-    @Operation(summary = "MQTT 센서를 추가하는 API", description = "MQTT 센서를 추가합니다.")
+    @Operation(summary = "MQTT 센서 등록", description = "MQTT 센서를 등록합니다.")
     public ResponseEntity<String> addMqttSensor(@RequestHeader(X_USER_ID) String userId,
                                                 @RequestBody MqttSensorRequest addSensorRequest){
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -80,7 +79,7 @@ public class MqttSensorController {
      */
     @PutMapping("/{sensorId}")
     @AdminOnly @VerifyOrganization
-    @Operation(summary = "MQTT 센서 정보를 수정하는 API", description = "MQTT 센서 정보를 수정합니다.")
+    @Operation(summary = "MQTT 센서 정보 수정", description = "MQTT 센서의 이름, ip, port, 장소를 수정합니다.")
     public ResponseEntity<String> updateMqttSensor(@PathVariable("sensorId") int sensorId,
                                                    @RequestBody MqttSensorRequest updateSensorRequest) {
         return ResponseEntity.ok().body("Sensor updated. id=" +
@@ -94,6 +93,7 @@ public class MqttSensorController {
      */
     @DeleteMapping("/{sensorId}")
     @AdminOnly @VerifyOrganization
+    @Operation(summary = "MQTT 센서 삭제", description = "MQTT 센서를 삭제합니다.")
     public ResponseEntity<String> deleteMqttSensor(@PathVariable("sensorId") int sensorId) {
         mqttSensorService.deleteSensorById(sensorId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
