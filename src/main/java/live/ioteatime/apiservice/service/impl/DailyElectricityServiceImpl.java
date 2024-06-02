@@ -104,28 +104,21 @@ public class DailyElectricityServiceImpl implements ElectricityService {
     @Override
     public List<ElectricityResponseDto> getTotalElectricitiesByDate(LocalDateTime localDateTime, int organizationId) {
         LocalDateTime start = localDateTime.withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime end = localDateTime.withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = localDateTime.minusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
 
         Map<LocalDateTime, ElectricityResponseDto> totalKwh = new HashMap<>();
         for (LocalDateTime date = start; !date.isAfter(end); date = date.plusDays(1)) {
             totalKwh.put(date, new ElectricityResponseDto(date, (double) 0, 0L));
         }
 
-        List<Place> placeList = placeRepository.findAllByOrganization_Id(organizationId);
-        for (Place place : placeList) {
-            Channel channel = channelRepository.findByPlaceAndChannelName(place, "main");
-            if (channel == null) {
-                continue;
-            }
-            List<DailyElectricity> currentMonthDataList = dailyElectricityRepository
-                    .findAllByPkChannelIdAndPkTimeBetween(channel.getId(), start, end);
-            for (DailyElectricity data : currentMonthDataList) {
-                LocalDateTime key = data.getPk().getTime();
-                double kwh = totalKwh.get(key).getKwh();
-                long bill = totalKwh.get(key).getBill();
-                totalKwh.get(key).setKwh(kwh + data.getKwh());
-                totalKwh.get(key).setBill(bill + data.getBill());
-            }
+        List<DailyElectricity> currentMonthDataList = dailyElectricityRepository.findAllByPkChannelIdAndPkTimeBetween(-1, start, end);
+
+        for (DailyElectricity data : currentMonthDataList) {
+            LocalDateTime key = data.getPk().getTime();
+            double kwh = totalKwh.get(key).getKwh();
+            long bill = totalKwh.get(key).getBill();
+            totalKwh.get(key).setKwh(kwh + data.getKwh());
+            totalKwh.get(key).setBill(bill + data.getBill());
         }
         return new ArrayList<>(totalKwh.values());
     }
