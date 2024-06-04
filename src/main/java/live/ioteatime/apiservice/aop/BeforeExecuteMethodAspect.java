@@ -56,11 +56,6 @@ public class BeforeExecuteMethodAspect {
     public void verifyOrganizationPointcut() {
     }
 
-    @Before("verifyOrganizationPointcut() && (args(organizationId,*) || args(organizationId))")
-    public void checkOrganizationMatch(int organizationId) {
-        checkOrganizationMatchesWithUserOrganization(organizationId);
-    }
-
     /**
      * 요청 헤더의 X-USER-ID로 검색한 유저가 속한 조직과, 요청 URL PathVariable 중 sensorId로 검색한 센서가 속한 조직이 일치하는지 체크합니다.
      * 일치하지 않으면 UnAuthorizedException을 던집니다.
@@ -126,4 +121,5 @@ public class BeforeExecuteMethodAspect {
             throw new UnauthorizedException();
         }
     }
+
 }
