@@ -162,7 +162,9 @@ public class ChannelServiceImpl implements ChannelService {
 
         sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
 
-        modbusSensorAdaptor.deleteModbusSensor(sensor.getSensorName() + sensor.getId());
+        log.info("Send request to Rule Engine: URL=/modbus, method=get, body=\"{}\"", sensor.getSensorName());
+
+        modbusSensorAdaptor.deleteModbusSensor(sensor.getSensorName());
         modbusSensorAdaptor.getUpdateCheck();
     }
 }
