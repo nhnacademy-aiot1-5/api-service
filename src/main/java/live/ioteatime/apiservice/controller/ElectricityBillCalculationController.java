@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/calculate")
 @Tag(name = "Electricity Bill Calculation", description = "전기 요금 계산 API")
 public class ElectricityBillCalculationController {
+
     private final ElectricityBillCalculationService electricityBillCalculationService;
 
     @GetMapping("/demand/{kwhUsage}")

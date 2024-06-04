@@ -11,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter @Setter
 public class ModbusSensor {
+
     @Id
     @Column(name = "sensor_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

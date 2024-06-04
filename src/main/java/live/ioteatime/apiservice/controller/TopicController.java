@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/sensors/mqtt/{sensorId}/topics")
 @Tag(name = "Topic", description = "MQTT 센서 토픽 API")
 public class TopicController {
+
     private final TopicService topicService;
 
     /**

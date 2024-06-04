@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Place", description = "장소 API")
 public class PlaceController {
+
     private final PlaceService placeService;
 
     @GetMapping("/place")
@@ -49,4 +50,5 @@ public class PlaceController {
         placeService.deletePlace(placeId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
 }

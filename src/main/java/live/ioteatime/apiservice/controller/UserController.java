@@ -26,6 +26,7 @@ import java.net.URI;
 @RequestMapping("/users")
 @Tag(name = "User", description = "회원 API")
 public class UserController {
+
     private final UserService userService;
     private final OrganizationService organizationService;
     private static final String X_USER_ID = "X-USER-ID";

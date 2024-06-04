@@ -6,12 +6,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class UpdateUserPasswordRequest {
+
     @JsonProperty("current_password")
     private String currentPassword;
+
     @JsonProperty("new_password")
     private String newPassword;
+
     @JsonProperty("password_check")
     private String passwordCheck;
+
 }

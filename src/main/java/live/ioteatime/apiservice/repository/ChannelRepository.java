@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ChannelRepository extends JpaRepository<Channel, Integer> {
+
     List<Channel> findAllBySensor_Id(Integer sensorId);
 
     List<Channel> findAllByPlace_Id(int placeId);
@@ -18,4 +19,5 @@ public interface ChannelRepository extends JpaRepository<Channel, Integer> {
     boolean existsBySensor_Id(int sensorId);
 
     Channel findByPlaceAndChannelName(Place place, String channelName);
+
 }

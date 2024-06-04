@@ -22,6 +22,7 @@ import java.util.List;
 @RequestMapping("/monthly")
 @Tag(name = "Monthly Electricity", description = "월별 전력량 API")
 public class MonthlyElectricityController {
+
     private final ElectricityService electricityService;
 
     /**
@@ -75,4 +76,5 @@ public class MonthlyElectricityController {
         return ResponseEntity.ok(electricityService.getElectricitiesByDate(
                 new ElectricityRequestDto(localDateTime, channelId)));
     }
+
 }

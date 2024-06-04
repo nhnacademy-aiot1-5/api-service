@@ -1,9 +1,6 @@
 package live.ioteatime.apiservice.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DailyElectricity {
+
     @EmbeddedId
     private Pk pk;
 
@@ -23,7 +21,9 @@ public class DailyElectricity {
     @JoinColumn(name = "channel_id")
     @ManyToOne
     private Channel channel;
+
     private Double kwh;
+
     private Long bill;
 
     @Embeddable
@@ -31,10 +31,12 @@ public class DailyElectricity {
     @NoArgsConstructor
     @Getter
     @Setter
+    @EqualsAndHashCode
     public static class Pk implements Serializable {
         @Column(name = "channel_id")
         private int channelId;
         @Column(name = "time")
         private LocalDateTime time;
     }
+
 }

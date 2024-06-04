@@ -7,14 +7,21 @@ import lombok.Setter;
 
 
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class RegisterRequest {
+
     private String id;
+
     @JsonProperty("pw")
     private String password;
+
     private String name;
+
     @JsonProperty("organization_name")
     private String organizationName;
+
     @JsonProperty("organization_code")
     private String organizationCode;
+
 }
