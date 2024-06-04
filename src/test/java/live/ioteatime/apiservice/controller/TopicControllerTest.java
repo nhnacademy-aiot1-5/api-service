@@ -135,7 +135,7 @@ class TopicControllerTest {
 
         result.andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(content().string("Successfully create topic"));
+                .andExpect(content().string("Topic registered: topicId=" + topic1.getId()));
     }
 
     @Test
@@ -150,7 +150,7 @@ class TopicControllerTest {
 
         result.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("Successfully update topic"));
+                .andExpect(content().string("Topic updated: topicId=" + topic1.getId()));
     }
 
     @Test
