@@ -105,7 +105,22 @@ public class ChannelServiceImpl implements ChannelService {
         sensor.setChannelCount(channelCount);
         modbusSensorRepository.save(sensor);
 
-        sendRequestToRuleEngine(sensor.getId());
+        sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+
+        AddModbusSensorRequest modbusSensorRequest = new AddModbusSensorRequest();
+        modbusSensorRequest.setName(sensor.getSensorName());
+        modbusSensorRequest.setHost(sensor.getIp());
+
+        StringBuilder channels = new StringBuilder();
+        channelRepository.findAllBySensor_Id(sensor.getId())
+                .forEach(c -> channels.append(c.getFunctionCode() + "/" + c.getAddress() + "/" + c.getType() + ", "));
+        int length = channels.length();
+        channels.delete(length - 2, length);
+        modbusSensorRequest.setChannel(channels.toString());
+        log.info("Send request to Rule Engine: URL=/modbus, method=POST, body=\"{}\"", modbusSensorRequest.getChannel());
+
+        modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
+        modbusSensorAdaptor.getUpdateCheck();
 
         return sensorId;
     }
@@ -128,7 +143,7 @@ public class ChannelServiceImpl implements ChannelService {
         channel.setFunctionCode(channelDto.getFunctionCode());
 
         channelRepository.save(channel);
-        sendRequestToRuleEngine(channel.getSensor().getId());
+        modbusSensorAdaptor.getUpdateCheck();
 
         return channel.getSensor().getId();
     }
@@ -144,29 +159,10 @@ public class ChannelServiceImpl implements ChannelService {
         sensor.setChannelCount(channelCount);
 
         modbusSensorRepository.save(sensor);
-        sendRequestToRuleEngine(sensorId);
-    }
 
-    /**
-     * 센서의 채널이 추가, 변경, 삭제될 때 룰엔진 엔드포인트로 센서 정보를 전송합니다.
-     * @param sensorId 센서아이디
-     */
-    private void sendRequestToRuleEngine(int sensorId) {
-        ModbusSensor sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
+        sensor = modbusSensorRepository.findById(sensorId).orElseThrow(SensorNotFoundException::new);
 
-        AddModbusSensorRequest modbusSensorRequest = new AddModbusSensorRequest();
-        modbusSensorRequest.setName(sensor.getSensorName());
-        modbusSensorRequest.setHost(sensor.getIp());
-
-        StringBuilder channels = new StringBuilder();
-        channelRepository.findAllBySensor_Id(sensor.getId())
-                .forEach(c -> channels.append(c.getFunctionCode() + "/" + c.getAddress() + "/" + c.getType() + ", "));
-        int length = channels.length();
-        channels.delete(length - 2, length);
-        modbusSensorRequest.setChannel(channels.toString());
-        log.info("Send request to Rule Engine: URL=/modbus, method=POST, body=\"{}\"", modbusSensorRequest.getChannel());
-
-        modbusSensorAdaptor.addModbusSensor(modbusSensorRequest);
+        modbusSensorAdaptor.deleteModbusSensor("modbus" + sensor.getId());
         modbusSensorAdaptor.getUpdateCheck();
     }
 }
