@@ -114,6 +114,6 @@ public class ModbusSensorServiceImpl implements ModbusSensorService {
         sensorRepository.deleteById(sensorId);
         modbusSensorAdaptor.deleteModbusSensor("modbus"+sensorId);
         modbusSensorAdaptor.getUpdateCheck();
-        log.debug("Send request to Rule Engine: URL=/delete/modbus/modbus{}, method=GET", sensorId);
+        log.info("Send request to Rule Engine: URL=/delete/modbus/modbus{}, method=GET", sensorId);
     }
 }
