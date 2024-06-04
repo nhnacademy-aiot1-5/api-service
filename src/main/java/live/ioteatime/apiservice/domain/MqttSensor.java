@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class MqttSensor {
+
     @Id
     @Column(name = "sensor_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +43,6 @@ public class MqttSensor {
     @JoinColumn(name = "place_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Place place;
-
 
     public void setInitialValues(MqttSensorRequest request, Organization organization, Place place) {
         BeanUtils.copyProperties(request, this);

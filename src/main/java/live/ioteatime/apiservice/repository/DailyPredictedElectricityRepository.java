@@ -10,4 +10,5 @@ public interface DailyPredictedElectricityRepository extends JpaRepository<Daily
 
     List<DailyPredictedElectricity> findAllByTimeBetweenAndOrganizationIdAndChannelIdOrderByTimeAsc(
             LocalDateTime start, LocalDateTime end, int organizationId, int channelId);
+
 }

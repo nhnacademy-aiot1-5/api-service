@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public class SensorRequest {
+
     @JsonProperty("sensor_name")
     private String sensorName;
 
@@ -21,4 +23,5 @@ public class SensorRequest {
 
     @JsonProperty("channel_count")
     private int channelCount;
+
 }

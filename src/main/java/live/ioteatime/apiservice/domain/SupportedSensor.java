@@ -8,8 +8,11 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "supported_sensors")
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class SupportedSensor {
+
     @Id
     @Column(name = "sensor_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +24,5 @@ public class SupportedSensor {
     @Column(name = "protocol")
     @Enumerated(EnumType.STRING)
     private Protocol protocol;
+
 }

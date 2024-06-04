@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Predicted Electricity", description = "전력량 예측 API")
 public class PredictedElectricityController {
+
     private final PredictedElectricityService predictedElectricityService;
 
     @GetMapping
@@ -52,4 +53,5 @@ public class PredictedElectricityController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(predictedElectricityService.getThisMonthPrediction(requestTime, organizationId));
     }
+
 }

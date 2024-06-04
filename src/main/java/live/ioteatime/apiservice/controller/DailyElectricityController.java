@@ -25,6 +25,7 @@ import java.util.List;
 @RequestMapping("/daily")
 @Tag(name = "Daily Electricity", description = "일별 전력량 API")
 public class DailyElectricityController {
+
     private final ElectricityService electricityService;
 
     /**
