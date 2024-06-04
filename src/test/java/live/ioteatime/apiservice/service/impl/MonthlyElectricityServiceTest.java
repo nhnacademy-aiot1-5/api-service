@@ -1,6 +1,5 @@
 package live.ioteatime.apiservice.service.impl;
 
-import com.influxdb.client.InfluxDBClient;
 import live.ioteatime.apiservice.domain.Channel;
 import live.ioteatime.apiservice.domain.MonthlyElectricity;
 import live.ioteatime.apiservice.domain.Organization;
@@ -110,36 +109,23 @@ class MonthlyElectricityServiceTest {
     @Test
     void getLastElectricity() {
         // Given
-        LocalDateTime lastMonth = LocalDateTime.now().minusMonths(1).toLocalDate().atStartOfDay();
+        LocalDateTime lastMonth = LocalDateTime.now().withDayOfMonth(1).minusDays(1).toLocalDate().atStartOfDay();
 
-        Channel mainChannel1 = new Channel();
-        mainChannel1.setId(1);
-        Channel mainChannel2 = new Channel();
-        mainChannel2.setId(2);
-        List<Channel> channels = Arrays.asList(mainChannel1, mainChannel2);
+        MonthlyElectricity electricity = new MonthlyElectricity();
+        electricity.setPk(new MonthlyElectricity.Pk(-1, lastMonth));
+        electricity.setKwh(150.0);
+        electricity.setBill(1000L);
 
-        MonthlyElectricity electricity1 = new MonthlyElectricity();
-        electricity1.setPk(new MonthlyElectricity.Pk(1, lastMonth));
-        electricity1.setKwh(150.0);
-        electricity1.setBill(0L);
-        MonthlyElectricity electricity2 = new MonthlyElectricity();
-        electricity2.setPk(new MonthlyElectricity.Pk(2, lastMonth));
-        electricity2.setKwh(180.0);
-        electricity2.setBill(0L);
-
-        when(channelRepository.findAllByChannelName("main")).thenReturn(channels);
         when(monthlyElectricityRepository.findMonthlyElectricityByPk(any()))
-                .thenReturn(Optional.of(electricity1));
-        when(monthlyElectricityRepository.findMonthlyElectricityByPk(any()))
-                .thenReturn(Optional.of(electricity2));
+                .thenReturn(Optional.of(electricity));
 
         // When
         ElectricityResponseDto responseDto = monthlyElectricityService.getLastElectricity();
 
         // Then
         assertNotNull(responseDto);
-        assertEquals(360L, responseDto.getKwh());
-        assertEquals(0L, responseDto.getBill());
+        assertEquals(150.0, responseDto.getKwh());
+        assertEquals(1000L, responseDto.getBill());
         assertEquals(lastMonth, responseDto.getTime());
     }
 

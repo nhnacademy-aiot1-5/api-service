@@ -100,7 +100,7 @@ class UserControllerTest {
 
         result.andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-                .andExpect(content().string("User not found: testId"));
+                .andExpect(content().string("회원을 찾을 수 없습니다: testId"));
     }
 
     @Test
@@ -127,7 +127,7 @@ class UserControllerTest {
 
         result.andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN))
-                .andExpect(content().string("User not found: testId"));
+                .andExpect(content().string("회원을 찾을 수 없습니다: testId"));
     }
 
     @Test
@@ -143,7 +143,7 @@ class UserControllerTest {
         result.andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().string(HttpHeaders.LOCATION, "https://www.ioteatime.live/mypage"))
-                .andExpect(content().string("Successfully registered: userId=testId"))
+                .andExpect(content().string("User registered: userId=testId"))
                 .andReturn();
     }
 
