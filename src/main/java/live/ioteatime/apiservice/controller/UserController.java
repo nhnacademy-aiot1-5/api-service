@@ -31,10 +31,10 @@ public class UserController {
     private static final String X_USER_ID = "X-USER-ID";
 
     /**
-     * 유저 아이디에 해당하는 유저의 정보를 반환하는 함수
+     * 회원을 단일 조회하는 메서드
      *
-     * @param userId 유저 아이디
-     * @return HttpStatus 200번 OK
+     * @param userId 회원 아이디
+     * @return 200 OK, 회원 정보
      */
     @GetMapping
     @Operation(summary = "회원 단일 조회", description = "회원 아이디, 이름, 가입일, 권한, 조직 이름을 조회합니다.")
@@ -43,9 +43,10 @@ public class UserController {
     }
 
     /**
-     * 로그인 요청이 들어왔을 때 유저의 UserDetails 정보를 반환하는 함수이다.
-     * @param userId 로그인 하는 유저의 아이디
-     * @return HttpStatus 200번 OK
+     * 로그인 요청이 들어왔을 때 회원의 UserDetails 정보를 반환하는 메서드
+     *
+     * @param userId 회원 아이디
+     * @return 200 OK, 회원 아이디, 비밀번호
      */
     @GetMapping("/{userId}/details")
     @Operation(summary = "회원 아이디, 비밀번호 조회", description = "인증 서버가 로그인 요청을 처리할 때 사용합니다. 회원 아이디와 비밀번호를 반환합니다.")
@@ -54,9 +55,10 @@ public class UserController {
     }
 
     /**
-     * 프론트에서 받아온 유저의 정보를 가지고 새로운 유저를 데이터베이스에 등록해주는 컨트롤러다.
-     * @param registerRequest 웹사이트에서 받아온 가입할 유저의 정보
-     * @return HttpStatus 201번 Created
+     * 새로운 회원을 데이터베이스에 등록하는 메서드
+     *
+     * @param registerRequest 웹사이트에서 받아온 가입할 회원의 정보
+     * @return 201 Created, 등록된 회원 아이디
      */
     @PostMapping
     @Operation(summary = "회원 등록", description = "새로운 회원을 데이터베이스에 등록합니다.")
@@ -68,14 +70,14 @@ public class UserController {
                 .build().toUri();
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .location(location).body("Successfully registered: userId=" + createdUserId);
+                .location(location).body("User registered: userId=" + createdUserId);
     }
 
     /**
-     * 유저 정보를 수정하는 컨트롤러
-     * 경로 : /users
-     * @param userDto 수정될 유저의 정보를 가지고 있는 Dto 클래스
-     * @return HttpStatus 200 OK
+     * 회원 정보를 수정하는 메서드
+     *
+     * @param userDto 수정할 회원의 정보
+     * @return 200 OK, 수정된 회원 아이디
      * 게이트웨이에서 엔드포인트를 확인할 때 필터에 따른 부득이한 이유로 update-user가 붙게 되었습니다.
      */
     @PutMapping("/update-user")
@@ -85,10 +87,11 @@ public class UserController {
     }
 
     /**
-     * 유저 비밀번호만 수정하는 핸들러
-     * @param userId 유저아이디
-     * @param updatePasswordRequest 기존 비밀번호, 새 비밀번호, 새 비밀번호 확인 이 바디에 실려서 들어옴
-     * @return HttpStatus 200 OK
+     * 회원 비밀번호를 수정하는 메서드
+     *
+     * @param userId 회원 아이디
+     * @param updatePasswordRequest 기존 비밀번호, 새 비밀번호, 새 비밀번호 확인
+     * @return 200 OK, 수정된 회원 아이디
      */
     @PutMapping("/password")
     @Operation(summary = "회원 비밀번호 수정", description = "회원의 비밀번호를 수정합니다.")
@@ -98,9 +101,10 @@ public class UserController {
     }
 
     /**
-     * 유저 소속 조직 정보를 리턴합니다.
-     * @param userId 유저아이디
-     * @return HttpStatus 200 OK
+     * 회원 소속 조직 정보를 조회하는 메서드
+     *
+     * @param userId 회원 아이디
+     * @return 200 OK, 조직 이름, 목표 금액
      */
     @GetMapping("/organization")
     @Operation(summary = "조직 단일 조회", description = "회원이 소속된 조직의 이름과 현재 목표 금액을 조회합니다.")
@@ -110,9 +114,10 @@ public class UserController {
     }
 
     /**
-     * 유저 정보 조직의 예산을 리턴합니다.
-     * @param userId
-     * @return HttpStatus 200 Ok
+     * 회원 소속 조직의 목표 요금을 조회하는 메서드
+     *
+     * @param userId 회원 아이디
+     * @return 200 OK, 조직 목표 요금
      */
     @GetMapping("/budget")
     @Operation(summary = "조직 목표 요금 조회", description = "조직의 현재 목표 요금을 조회합니다.")
