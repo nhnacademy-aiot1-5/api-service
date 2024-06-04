@@ -27,7 +27,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final BudgetHistoryRepository organizationBudgetHistoryRepository;
 
     Organization getOrganizationByUserId(String userId){
-
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Organization organization = user.getOrganization();
 
@@ -37,7 +36,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         return organization;
     }
-
 
     @Override
     public OrganizationDto getBudget(String userId) {
