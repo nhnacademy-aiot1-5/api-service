@@ -17,18 +17,25 @@ public class Channel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "channel_id")
     private int id;
+
     @Column(name = "channel_name")
     private String channelName;
+
     @Column
     private int address;
+
     @Column
     private String type;
+
     @Column(name = "function_code")
     private int functionCode;
+
     @JoinColumn(name = "sensor_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private ModbusSensor sensor;
+
     @JoinColumn(name = "place_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Place place;
+
 }
