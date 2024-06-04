@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ElectricityRequestDto {
+
     private LocalDateTime time;
+
     private int channelId;
+
 }

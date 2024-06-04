@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface OutlierRepository extends JpaRepository<Outlier, Integer> {
-//    List<Outlier> findAllByFlag(int flag);
+
     List<Outlier> findAllByOrganization_Id(int organizationId);
+
 }

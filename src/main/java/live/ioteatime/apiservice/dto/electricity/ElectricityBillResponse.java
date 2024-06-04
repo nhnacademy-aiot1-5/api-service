@@ -6,5 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ElectricityBillResponse {
+
     private Long electricityBill;
+
 }

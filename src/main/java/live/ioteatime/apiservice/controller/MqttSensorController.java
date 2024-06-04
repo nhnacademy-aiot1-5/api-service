@@ -25,7 +25,6 @@ public class MqttSensorController {
     private static final String X_USER_ID = "X-USER-ID";
     private final MqttSensorService mqttSensorService;
 
-
     /**
      * 등록 가능한 MQTT 센서 모델 리스트를 조회하는 메서드
      *

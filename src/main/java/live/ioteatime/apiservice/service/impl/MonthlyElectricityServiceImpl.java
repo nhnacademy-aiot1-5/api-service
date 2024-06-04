@@ -87,19 +87,18 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
 
     @Override
     public ElectricityResponseDto getLastElectricity() {
-        List<Channel> channels = channelRepository.findAllByChannelName("main");
-        LocalDateTime lastMonth = LocalDateTime.now().minusMonths(1).toLocalDate().atStartOfDay();
+        LocalDateTime lastMonth = LocalDateTime.now().withDayOfMonth(1).minusDays(1).toLocalDate().atStartOfDay();
+        MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(-1, lastMonth);
+        Optional<MonthlyElectricity> monthlyElectricity = monthlyElectricityRepository.findMonthlyElectricityByPk(pk);
 
         double kwh = 0;
-        for (Channel channel : channels) {
-            int channelId = channel.getId();
-            MonthlyElectricity.Pk pk = new MonthlyElectricity.Pk(channelId, lastMonth);
-            Optional<MonthlyElectricity> monthlyElectricity = monthlyElectricityRepository.findMonthlyElectricityByPk(pk);
-            if (monthlyElectricity.isPresent()) {
-                kwh += monthlyElectricity.get().getKwh();
-            }
+        long bill = 0L;
+        if (monthlyElectricity.isPresent()) {
+            kwh = monthlyElectricity.get().getKwh();
+            bill = monthlyElectricity.get().getBill();
         }
-        return new ElectricityResponseDto(lastMonth, kwh, 0L);
+
+        return new ElectricityResponseDto(lastMonth, kwh, bill);
     }
 
     @Override

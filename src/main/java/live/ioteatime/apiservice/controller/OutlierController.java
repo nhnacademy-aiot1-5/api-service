@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Outlier", description = "이상치 API")
 public class OutlierController {
+
     private final OutlierService outlierService;
 
     /**
@@ -40,4 +41,5 @@ public class OutlierController {
     public ResponseEntity<Integer> updateOutlier(@RequestParam(name = "id") int id, @RequestParam(name = "flag") int flag){
         return ResponseEntity.status(HttpStatus.OK).body(outlierService.updateOutlier(id, flag));
     }
+
 }
