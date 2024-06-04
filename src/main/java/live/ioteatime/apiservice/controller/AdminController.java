@@ -23,12 +23,14 @@ import java.util.List;
 @RequestMapping("/admin")
 @Tag(name = "Admin", description = "관리자 API")
 public class AdminController {
+
     private final AdminService adminService;
     private final OrganizationService organizationService;
     private static final String X_USER_ID = "X-USER-ID";
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 GUEST 권한을 가진 유저의 리스트를 가져옵니다.
+     *
      * @param userId 어드민의 아이디를 가져와 권한을 체크하는 동시에 어드민이 소속된 조직을 불러오는데 사용합니다.
      * @return GUEST 권한을 가진 유저의 리스트를 반환합니다. HttpStatus 200번 OK
      */
@@ -43,6 +45,7 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 조직에 속한 모든 유저의 리스트를 가져옵니다.
+     *
      * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
      * @return 모든 유저의 리스트를 반환합니다.
      */
@@ -56,6 +59,7 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 요금 변경 내역 리스트를 가져옵니다.
+     *
      * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
      * @return 요금 변경 내역리스트를 반환합니다.
      */
@@ -69,6 +73,7 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 조직 이름과 조직 코드를 가져옵니다.
+     *
      * @param userId 어드민의 아이디를 가져와 권한을 체크합니다.
      * @return 조직이름과 조직 코드를 반환합니다.
      */
@@ -82,6 +87,7 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 조직 코드를 수정하기 전 중복 체크를 하는 메서드입니다.
+     *
      * @param code 클라이언트에서 입력한 조직 코드 값입니다.
      * @return 데이터베이스에 중복되는 code값이 있으면 true, 없으면 false를 반환합니다.
      */
@@ -95,6 +101,7 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 회원가입한 유저의 권한을 GUEST에서 USER로 바꿔주는 메서드입니다.
+     *
      * @param userId 유저 권한을 GUEST -> USER로 바꿔줄 유저의 아이디
      * @return HttpStatus 200번 OK
      */
@@ -108,6 +115,7 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 요금을 수정하는 메서드입니다.
+     *
      * @param userId 조직을 가져오기 위한 어드민의 아이디
      * @param budget 수정할 요금
      * @return HttpStatus 200번 OK
@@ -121,8 +129,9 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 이름을 수정하는 메서드 입니다.
+     *
      * @param userId 조직을 가져오기 위한 어드민의 아이디
-     * @param name 수정할 조직 이름
+     * @param name   수정할 조직 이름
      * @return HttpStats 200번 OK
      */
     @PutMapping("/organization-name")
@@ -134,8 +143,9 @@ public class AdminController {
 
     /**
      * 어드민만 사용할 수 있는 컨트롤러로 어드민이 속한 조직의 조직코드를 수정하는 메서드 입니다.
+     *
      * @param userId 조직을 가져오기 위한 어드민의 아이디
-     * @param code 수정할 조직 코드
+     * @param code   수정할 조직 코드
      * @return HttpStatus 200번 OK
      */
     @PutMapping("/organization-code")
