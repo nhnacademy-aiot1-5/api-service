@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/sensors/modbus")
 @Tag(name="Channel", description = "Modbus 센서 채널 API")
 public class ChannelController {
+
     private final ChannelService channelService;
 
     /**
@@ -120,4 +121,5 @@ public class ChannelController {
         channelService.deleteChannel(sensorId, channelId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
 }
