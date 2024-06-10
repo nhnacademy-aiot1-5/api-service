@@ -1,6 +1,6 @@
 package live.ioteatime.apiservice.controller;
 
-import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.PredictedElectricityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,16 +30,16 @@ class PredictedElectricityControllerTest {
     @MockBean
     PredictedElectricityService predictedElectricityService;
 
-    PreciseElectricityResponseDto response1;
-    PreciseElectricityResponseDto response2;
-    PreciseElectricityResponseDto response3;
-    List<PreciseElectricityResponseDto> responseList;
+    ElectricityResponseDto response1;
+    ElectricityResponseDto response2;
+    ElectricityResponseDto response3;
+    List<ElectricityResponseDto> responseList;
 
     @BeforeEach
     void setUp() {
-        response1 = new PreciseElectricityResponseDto();
-        response2 = new PreciseElectricityResponseDto();
-        response3 = new PreciseElectricityResponseDto();
+        response1 = new ElectricityResponseDto();
+        response2 = new ElectricityResponseDto();
+        response3 = new ElectricityResponseDto();
         responseList = new ArrayList<>();
 
         response1.setTime(LocalDateTime.parse("2024-01-29T00:00:00"));

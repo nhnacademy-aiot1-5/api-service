@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.PredictedElectricityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,7 +26,7 @@ public class PredictedElectricityController {
 
     @GetMapping
     @Operation(summary = "금월 총전력량 예측 데이터 조회", description = "요청일부터 월말까지의 총전력량 예측 데이터를 조회합니다.")
-    public ResponseEntity<List<PreciseElectricityResponseDto>> getMonthlyPredictedValues(
+    public ResponseEntity<List<ElectricityResponseDto>> getMonthlyPredictedValues(
             @RequestParam("organizationId") int organizationId,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @RequestParam("requestTime") LocalDateTime requestTime) {
@@ -36,7 +36,7 @@ public class PredictedElectricityController {
 
     @GetMapping("/next-month")
     @Operation(summary = "다음 달 예측 전력량 조회")
-    public ResponseEntity<List<PreciseElectricityResponseDto>> getNextMonthPredictedValues(
+    public ResponseEntity<List<ElectricityResponseDto>> getNextMonthPredictedValues(
             @RequestParam("organizationId") int organizationId,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @RequestParam("requestTime") LocalDateTime requestTime) {
@@ -46,7 +46,7 @@ public class PredictedElectricityController {
 
     @GetMapping("/this-month")
     @Operation(summary = "이번 달 예측 전력량 조회")
-    public ResponseEntity<List<PreciseElectricityResponseDto>> getThisMonthPredictedValues(
+    public ResponseEntity<List<ElectricityResponseDto>> getThisMonthPredictedValues(
             @RequestParam("organizationId") int organizationId,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             @RequestParam("requestTime") LocalDateTime requestTime) {

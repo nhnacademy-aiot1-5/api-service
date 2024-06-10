@@ -1,6 +1,6 @@
 package live.ioteatime.apiservice.controller;
 
-import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.impl.HourlyElectricityServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ class HourlyElectricityControllerTest {
 
     @Test
     void getOneHourTotalElectricties() throws Exception {
-        List<PreciseElectricityResponseDto> responseDtoList = generateResponse();
+        List<ElectricityResponseDto> responseDtoList = generateResponse();
         given(hourlyElectricityService.getOneHourTotalElectricties(anyInt())).willReturn(responseDtoList);
 
         ResultActions result = mockMvc.perform(get("/hourly/electricities/total")
@@ -42,11 +42,11 @@ class HourlyElectricityControllerTest {
                 .andExpect(jsonPath("$", hasSize(12)));
     }
 
-    List<PreciseElectricityResponseDto> generateResponse() {
+    List<ElectricityResponseDto> generateResponse() {
         LocalDateTime start = LocalDateTime.now();
-        List<PreciseElectricityResponseDto> result = new ArrayList<>();
+        List<ElectricityResponseDto> result = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            result.add(new PreciseElectricityResponseDto(start, 0.0, 0L));
+            result.add(new ElectricityResponseDto(start, 0.0, 0L));
             start = start.plusMinutes(5);
         }
         return result;

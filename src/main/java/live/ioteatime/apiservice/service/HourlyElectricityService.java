@@ -1,9 +1,9 @@
 package live.ioteatime.apiservice.service;
 
-import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 
 import java.util.List;
 
 public interface HourlyElectricityService {
-    List<PreciseElectricityResponseDto> getOneHourTotalElectricties(int organizationId);
+    List<ElectricityResponseDto> getOneHourTotalElectricties(int organizationId);
 }
