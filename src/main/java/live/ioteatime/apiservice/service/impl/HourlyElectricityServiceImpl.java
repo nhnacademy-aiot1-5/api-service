@@ -3,7 +3,7 @@ package live.ioteatime.apiservice.service.impl;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.QueryApi;
 import com.influxdb.query.FluxRecord;
-import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.repository.PlaceRepository;
 import live.ioteatime.apiservice.service.HourlyElectricityService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class HourlyElectricityServiceImpl implements HourlyElectricityService {
      * @param organizationId 조직아이디
      * @return 최근 1시간동안의 5분 간격 전체 전력사용량 리스트
      */
-    public List<PreciseElectricityResponseDto> getOneHourTotalElectricties(int organizationId) {
+    public List<ElectricityResponseDto> getOneHourTotalElectricties(int organizationId) {
 
         LocalDateTime requestTime = LocalDateTime.now();
 
@@ -46,7 +46,7 @@ public class HourlyElectricityServiceImpl implements HourlyElectricityService {
 
         return totalKwh.entrySet()
                 .stream()
-                .map(entry -> new PreciseElectricityResponseDto(entry.getKey(), entry.getValue(), null))
+                .map(entry -> new ElectricityResponseDto(entry.getKey(), entry.getValue(), null))
                 .collect(Collectors.toList());
     }
 
