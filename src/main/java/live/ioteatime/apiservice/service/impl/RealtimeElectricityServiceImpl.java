@@ -47,6 +47,7 @@ public class RealtimeElectricityServiceImpl implements RealtimeElectricityServic
                 QueryApi queryApi = influxDBClient.getQueryApi();
                 List<FluxTable> tables = queryApi.query(query, organization);
                 if (tables.isEmpty() || channel.getChannelName().equals("main")){
+                    log.debug("이거 실행되면 오케이");
                     continue;
                 }
                 FluxTable table = tables.get(0);

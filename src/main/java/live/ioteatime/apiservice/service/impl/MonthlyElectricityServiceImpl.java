@@ -68,8 +68,13 @@ public class MonthlyElectricityServiceImpl implements ElectricityService {
 
         String fluxQuery = getKwhQuery("total", "main", start, end);
         QueryApi queryApi = influxDBClient.getQueryApi();
-        FluxTable fluxTable = queryApi.query(fluxQuery, organization).get(0);
-        List<FluxRecord> records = fluxTable.getRecords();
+        List<FluxRecord> records;
+        if (queryApi.query(fluxQuery, organization).size() > 0) {
+            FluxTable fluxTable = queryApi.query(fluxQuery, organization).get(0);
+            records = fluxTable.getRecords();
+        } else {
+            throw new ElectricityNotFoundException("getting current electricity not found");
+        }
 
         double result = 0;
         if (!records.isEmpty()) {

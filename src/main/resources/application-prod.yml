@@ -1,0 +1,34 @@
+discovery:
+  id: ${DISCOVERY_ID}
+  password: ${DISCOVERY_PASSWORD}
+  ip: ${DISCOVERY_IP}
+
+spring:
+  datasource:
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+  jpa:
+    database: MYSQL
+    database-platform: "org.hibernate.dialect.MySQL8Dialect"
+    show-sql: false
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+
+  influx: # 수정 해서 배포 필요
+    url: ${INFLUX_URL}
+    bucket: ${INFLUX_BUCKET}
+    org: ${INFLUX_ORG}
+    token: ${INFLUX_TOKEN}
+  sql:
+    init:
+      mode: always  # SQL 파일을 항상 실행하도록 설정
+      continue-on-error: true  # SQL 스크립트 실행 중 오류가 발생해도 계속 진행
+      data-locations: classpath:data-prod.sql
+
+eureka:
+  client:
+    enabled: true
