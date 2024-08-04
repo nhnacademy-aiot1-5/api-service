@@ -43,15 +43,14 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            grep -q 'export API_IMAGE_TAG=' ~/.bashrc && sed -i 's/export API_IMAGE_TAG=.*/export API_IMAGE_TAG=${{ github.sha }}/' ~/.bashrc || echo 'export API_IMAGE_TAG=${{ github.sha }}' >> ~/.bashrc
-            source ~/.bashrc
-            
             SERVICE_NAME="api-service"
             
             COMPOSE_DIR="./projects/docker-compose"
             
             cd $COMPOSE_DIR
             
+            echo "API_IMAGE_TAG=${{ github.sha }}" > .env
+            source ~/.bashrc
             RUNNING=$(docker-compose ps -q $SERVICE_NAME)
             
             if [ -n "$RUNNING" ]; then
