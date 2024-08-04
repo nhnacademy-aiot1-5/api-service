@@ -67,7 +67,13 @@ public class DailyElectricityServiceImpl implements ElectricityService {
 
         String fluxQuery = getKwhQuery("total", "main", start, end);
         QueryApi queryApi = influxDBClient.getQueryApi();
-        FluxTable fluxTable = queryApi.query(fluxQuery, organization).get(0);
+        List<FluxTable> fluxTables = queryApi.query(fluxQuery, organization);
+        FluxTable fluxTable;
+        if (!fluxTables.isEmpty()) {
+            fluxTable = fluxTables.get(0);
+        } else {
+            throw new ElectricityNotFoundException("getCurrentElectricity not found");
+        }
         List<FluxRecord> records = fluxTable.getRecords();
 
         double result = 0;

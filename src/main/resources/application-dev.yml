@@ -1,19 +1,36 @@
 discovery:
-  id: test
-  password: test
+  id: admin
+  password: admin
   ip: localhost
 
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
+    driver-class-name: "org.h2.Driver"
     url: jdbc:h2:file:./:testdb;MODE=MYSQL
     username: SA
     password:
+
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: "org.hibernate.dialect.H2Dialect"
+    show-sql: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always  # SQL 파일을 항상 실행하도록 설정
+      continue-on-error: true  # SQL 스크립트 실행 중 오류가 발생해도 계속 진행
+      data-locations: classpath:data-dev.sql
+
+  # 기타 설정은 그대로 유지
+  # todo: 여기는 도커 컨테이너 localhost:8086으로 변경해야 함
+  influx:
+    url: http://localhost:8086/
+    bucket: ioteatime
+    org: ioteatime
+    token: QNw1a2Yfda64kwI1RJ4pRXsrsMfu7D-M3k4jHKmZk6xFWUuVT_RGR16AvG0hYbeh6EBhNj5Vzzkfu3enGDYxRg==
 
 eureka:
   client:
-    enabled: false
+    enabled: true

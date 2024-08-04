@@ -2,7 +2,7 @@ package live.ioteatime.apiservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import live.ioteatime.apiservice.dto.electricity.PreciseElectricityResponseDto;
+import live.ioteatime.apiservice.dto.electricity.ElectricityResponseDto;
 import live.ioteatime.apiservice.service.HourlyElectricityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class HourlyElectricityController {
 
     @GetMapping("/electricities/total")
     @Operation(summary = "최근 1시간 전력량 조회", description = "최근 1시간 동안의 5분 단위 전력량을 조회합니다.")
-    public ResponseEntity<List<PreciseElectricityResponseDto>> getOneHourTotalElectricties(@RequestParam int organizationId) {
+    public ResponseEntity<List<ElectricityResponseDto>> getOneHourTotalElectricties(@RequestParam int organizationId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(hourlyElectricityService.getOneHourTotalElectricties(organizationId));
     }
