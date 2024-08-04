@@ -43,7 +43,9 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "export API_IMAGE_TAG=${{ github.sha }}" >> ~/.bashrc
+            grep -q 'export API_IMAGE_TAG=' ~/.bashrc && sed -i 's/export API_IMAGE_TAG=.*/export API_IMAGE_TAG=${{ github.sha }}/' ~/.bashrc || echo 'export API_IMAGE_TAG=${{ github.sha }}' >> ~/.bashrc
+            source ~/.bashrc
+            
             SERVICE_NAME="api-service"
             
             COMPOSE_DIR="./projects/docker-compose"
